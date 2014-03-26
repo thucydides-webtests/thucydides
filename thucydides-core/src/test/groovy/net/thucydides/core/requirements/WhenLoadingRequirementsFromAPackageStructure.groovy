@@ -15,7 +15,7 @@ class WhenLoadingRequirementsFromAPackageStructure extends Specification {
         given: "We are using the Annotation provider"
             def vars = new MockEnvironmentVariables()
             vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, ROOT_DIRECTORY)
-            RequirementsTagProvider capabilityProvider = new AnnotationBasedTagProvider(vars)
+            RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
         when: "We load the available requirements"
             def capabilities = capabilityProvider.getRequirements();
             def capabilityNames = capabilities.collect {it.name}
@@ -30,7 +30,7 @@ class WhenLoadingRequirementsFromAPackageStructure extends Specification {
         given: "We are using the Annotation provider"
             def vars = new MockEnvironmentVariables()
             vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, ROOT_DIRECTORY)
-            RequirementsTagProvider capabilityProvider = new AnnotationBasedTagProvider(vars)
+            RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
         when: "We load the available requirements"
             def capabilities = capabilityProvider.getRequirements()
             def ids = capabilities.collect {it.cardNumber}
@@ -42,7 +42,7 @@ class WhenLoadingRequirementsFromAPackageStructure extends Specification {
         given: "there is a Narrative annotation on a pacakge that does not have a title line"
             def vars = new MockEnvironmentVariables()
             vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, ROOT_DIRECTORY)
-            RequirementsTagProvider capabilityProvider = new AnnotationBasedTagProvider(vars)
+            RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
         when: "We try to load the capability from the package"
             def capabilities = capabilityProvider.getRequirements()
         then: "the capability should be found"
@@ -55,7 +55,7 @@ class WhenLoadingRequirementsFromAPackageStructure extends Specification {
         given: "We are using the default requirements provider"
             EnvironmentVariables vars = new MockEnvironmentVariables();
             vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, ROOT_DIRECTORY)
-            RequirementsTagProvider capabilityProvider = new AnnotationBasedTagProvider(vars)
+            RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
         and: "We define the root package in the 'thucydides.test.root' property"
             vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
         when: "We load requirements with nested capability directories and no .narrative files"
@@ -70,7 +70,7 @@ class WhenLoadingRequirementsFromAPackageStructure extends Specification {
         given: "We are using the default requirements provider"
             def vars = new MockEnvironmentVariables()
             vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, ROOT_DIRECTORY)
-            RequirementsTagProvider capabilityProvider = new AnnotationBasedTagProvider(vars)
+            RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
         when: "We load requirements with nested capabilities"
             def capabilities = capabilityProvider.getRequirements()
         then: "the nested requirements should be recorded"
@@ -83,7 +83,7 @@ class WhenLoadingRequirementsFromAPackageStructure extends Specification {
         given: "We are using default requirement package"
             def vars = new MockEnvironmentVariables()
             vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, ROOT_DIRECTORY)
-            RequirementsTagProvider capabilityProvider = new AnnotationBasedTagProvider(vars)
+            RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
         when: "We load requirements with nested requirement packages and no Narrative annotations"
             def capabilities = capabilityProvider.getRequirements()
         then: "The nested requirement are of type 'feature'"
@@ -98,7 +98,7 @@ class WhenLoadingRequirementsFromAPackageStructure extends Specification {
         and: "We define the requirement type hierarchy in the environment variables"
             vars.setProperty("thucydides.requirement.types","theme, epic, feature")
         vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, ROOT_DIRECTORY)
-        RequirementsTagProvider capabilityProvider = new AnnotationBasedTagProvider(vars)
+        RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
         when: "We load requirements with nested requirement pacakge"
             def capabilities = capabilityProvider.getRequirements()
         then: "the second-level requirement are of type 'epic'"
@@ -111,7 +111,7 @@ class WhenLoadingRequirementsFromAPackageStructure extends Specification {
             EnvironmentVariables vars = new MockEnvironmentVariables();
         and: "We define the requirement annotated directory in the environment variables"
             vars.setProperty("thucydides.annotated.requirements.dir", "otherannotatedstories")
-            RequirementsTagProvider capabilityProvider = new AnnotationBasedTagProvider(vars)
+            RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
         when: "We load requirements"
             def capabilities = capabilityProvider.getRequirements()
         then: "the requirements are the one found in otherannotatedstories"

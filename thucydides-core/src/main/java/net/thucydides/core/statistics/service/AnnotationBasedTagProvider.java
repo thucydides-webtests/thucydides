@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.requirements.CoreTagProvider;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Set;
  * Since there is no implicit structure in tags declared this way, capabilities need to
  * be distinguished using a special 'capability' tag.
  */
-public class AnnotationBasedTagProvider implements TagProvider {
+public class AnnotationBasedTagProvider implements TagProvider, CoreTagProvider {
 
     public AnnotationBasedTagProvider() {
     }

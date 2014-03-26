@@ -71,4 +71,5 @@ class WhenCheckingTestTags extends Specification {
             ClassWithTags   | "orange"          | "flavor:licorice"   | true
     }
 
+
 }

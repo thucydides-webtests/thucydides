@@ -910,7 +910,7 @@ public class TestOutcome {
             try {
                 Set<TestTag> providedTags = tagProvider.getTagsFor(this);
                 if (providedTags != null) {
-                    tags.addAll(tagProvider.getTagsFor(this));
+                    tags.addAll(providedTags);
                 }
             } catch(Throwable theTagProviderFailedBueThereIsntMuchWeCanDoAboutIt) {
                 logger.error("Tag provider " + tagProvider + " failure",

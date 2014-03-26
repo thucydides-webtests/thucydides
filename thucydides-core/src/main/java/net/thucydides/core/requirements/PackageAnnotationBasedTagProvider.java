@@ -39,7 +39,7 @@ import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_TEST_ROOT;
  * @see net.thucydides.core.annotations.Narrative
  * @see net.thucydides.core.ThucydidesSystemProperty#THUCYDIDES_TEST_ROOT
  */
-public class AnnotationBasedTagProvider extends AbstractRequirementsTagProvider implements RequirementsTagProvider {
+public class PackageAnnotationBasedTagProvider extends AbstractRequirementsTagProvider implements RequirementsTagProvider, OverridableTagProvider {
     private static final String DOT_REGEX = "\\.";
     private final static List<String> SUPPORTED_SUFFIXES = ImmutableList.of("story","feature");
 
@@ -52,11 +52,11 @@ public class AnnotationBasedTagProvider extends AbstractRequirementsTagProvider 
     SortedMap<String, Requirement> requirementsByPath = Maps.newTreeMap();
     Map<Requirement, String> requirementPaths = Maps.newHashMap();
 
-    public AnnotationBasedTagProvider() {
+    public PackageAnnotationBasedTagProvider() {
         this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
     }
 
-    public AnnotationBasedTagProvider(EnvironmentVariables vars) {
+    public PackageAnnotationBasedTagProvider(EnvironmentVariables vars) {
         super(vars);
         configuration = new SystemPropertiesConfiguration(environmentVariables);
         rootPackage = THUCYDIDES_TEST_ROOT.from(environmentVariables, rootDirectory);

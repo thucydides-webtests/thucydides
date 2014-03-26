@@ -83,7 +83,7 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
         given: "We are using the annotated provider"
             def vars = new MockEnvironmentVariables()
             vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, "annotatedstories")
-            RequirementsTagProvider capabilityProvider = new AnnotationBasedTagProvider(vars)
+            RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
         when: "We load requirements we have an annotated test"
             def story = new Story(Test1.class)
             def testOutcome = new TestOutcome("Title for test 1", Test1.class, story)

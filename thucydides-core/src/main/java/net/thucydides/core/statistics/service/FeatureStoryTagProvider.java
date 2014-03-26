@@ -8,6 +8,7 @@ import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.features.ApplicationFeature;
+import net.thucydides.core.requirements.CoreTagProvider;
 import net.thucydides.core.util.EnvironmentVariables;
 
 import java.util.Set;
@@ -16,7 +17,7 @@ import java.util.Set;
  * Legacy tag provider that builds tags based on the Feature/Story structure, if the @WithTag annotation is not used.
  * If the @WithTag annotation is used, @Feature classes will not be used.
  */
-public class FeatureStoryTagProvider implements TagProvider {
+public class FeatureStoryTagProvider implements TagProvider, CoreTagProvider {
 
     private final EnvironmentVariables environmentVariables;
 
@@ -37,10 +38,14 @@ public class FeatureStoryTagProvider implements TagProvider {
 
     private void addStoryTagIfPresent(TestOutcome testOutcome, Set<TestTag> tags) {
         Story story = testOutcome.getUserStory();
-        if (story != null) {
+        if (story != null && shouldAddStoryTags()) {
             String requirementType = environmentVariables.getProperty(ThucydidesSystemProperty.LOWEST_REQUIREMENT_TYPE, "story");
             tags.add(TestTag.withName(story.getName()).andType(requirementType));
         }
+    }
+
+    private boolean shouldAddStoryTags() {
+        return environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.USE_TEST_CASE_FOR_STORY_TAG,true);
     }
 
     private void addFeatureTagIfPresent(TestOutcome testOutcome, Set<TestTag> tags) {

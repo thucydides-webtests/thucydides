@@ -30,12 +30,9 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
 
     private List<RequirementsTagProvider> requirementsTagProviders;
 
-    private final EnvironmentVariables environmentVariables;
-
     @Inject
     public ClasspathRequirementsProviderService(ClasspathTagProviderService tagProviderService) {
         this.tagProviderService = tagProviderService;
-        environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
     }
 
 
@@ -51,45 +48,14 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
     private List<RequirementsTagProvider> loadRequirementsTagProviders() {
         List<RequirementsTagProvider> providers = new ArrayList<RequirementsTagProvider>();
 
-        List<TagProvider> tagProviders = active(tagProviderService.getTagProviders());
-        logger.info("Using requirements providers: {}", tagProviders);
+        List<TagProvider> tagProviders = tagProviderService.getTagProviders();
         for (TagProvider tagProvider : tagProviders) {
             if (tagProvider instanceof RequirementsTagProvider) {
-                logger.info("ADDING REQUIREMENTS PROVIDER " + tagProvider);
                 providers.add((RequirementsTagProvider)tagProvider);
             }
         }
-        removeDefaultProviderIfItIsNotFirstFrom(providers);
+
+        logger.info("Resolved requirements providers: {}", providers);
         return providers;
-    }
-
-    private List<TagProvider> active(List<TagProvider> requirementsProviders) {
-        boolean useDirectoryBasedRequirements =  environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.USE_REQUIREMENTS_DIRECTORY, true);
-
-        if (useDirectoryBasedRequirements) {
-            return requirementsProviders;
-        } else {
-            List<TagProvider> activeRequirementsProviders = Lists.newArrayList();
-            for (TagProvider provider : requirementsProviders) {
-                if (!(provider instanceof FileSystemRequirementsTagProvider)) {
-                    activeRequirementsProviders.add(provider);
-                }
-            }
-            return activeRequirementsProviders;
-        }
-    }
-
-
-    private void removeDefaultProviderIfItIsNotFirstFrom(List<RequirementsTagProvider> providers) {
-        int defaultProviderPos = -1;
-        for(int i = 0; i < providers.size(); i++) {
-            if (providers.get(i) instanceof  FileSystemRequirementsTagProvider) {
-                defaultProviderPos = i;
-                break;
-            }
-        }
-        if (defaultProviderPos > 0) {
-            providers.remove(defaultProviderPos);
-        }
     }
 }

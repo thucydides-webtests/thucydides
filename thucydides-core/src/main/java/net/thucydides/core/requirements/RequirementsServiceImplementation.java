@@ -37,7 +37,7 @@ public class RequirementsServiceImplementation implements RequirementsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequirementsTagProvider.class);
 
     private static final List<String> LOW_PRIORITY_PROVIDERS =
-            ImmutableList.of(AnnotationBasedTagProvider.class.getCanonicalName(),
+            ImmutableList.of(PackageAnnotationBasedTagProvider.class.getCanonicalName(),
                     FeatureStoryTagProvider.class.getCanonicalName(),
                     FileSystemRequirementsTagProvider.class.getCanonicalName());
 

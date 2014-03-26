@@ -38,7 +38,7 @@ import static net.thucydides.core.requirements.RequirementsPath.stripRootFromPat
  * This will typically be the directory structure containing the tests (for JUnit) or stories (e.g. for JBehave).
  * By default, the tests
  */
-public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagProvider implements RequirementsTagProvider {
+public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagProvider implements RequirementsTagProvider, OverridableTagProvider {
 
     private final static String DEFAULT_ROOT_DIRECTORY = "stories";
     private final static String DEFAULT_RESOURCE_DIRECTORY = "src/test/resources";

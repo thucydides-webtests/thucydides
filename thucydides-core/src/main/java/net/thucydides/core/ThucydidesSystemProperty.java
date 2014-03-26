@@ -408,7 +408,7 @@ public enum ThucydidesSystemProperty {
      * If you are using the File System Requirements provider, Thucydides will expect this directory structure to exist
      * at the top of the requirements tree. If you want to exclude packages in a requirements definition and start at a
      * lower level in the hierarchy, use the thucydides.requirement.exclusions property.
-     * This is also used by the AnnotationBasedTagProvider to know where to look for annotated requirements.
+     * This is also used by the PackageAnnotationBasedTagProvider to know where to look for annotated requirements.
      */
     THUCYDIDES_TEST_ROOT("thucydides.test.root"),
 
@@ -547,6 +547,12 @@ public enum ThucydidesSystemProperty {
      * If you are using external requirements, you may not want to display these tags on the dashboard.
      */
     SHOW_RELATED_TAGS("show.related.tags"),
+
+    /**
+     * If set to true (the default value), a story tag will be extracted from the test case or feature file
+     * containing the test.
+     */
+    USE_TEST_CASE_FOR_STORY_TAG("use.test.case.for.story.tag"),
 
     /**
      * Display the pie charts on the dashboard by default.

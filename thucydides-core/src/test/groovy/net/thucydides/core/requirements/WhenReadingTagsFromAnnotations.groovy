@@ -41,7 +41,7 @@ class WhenReadingTagsFromAnnotations extends Specification {
     def "should read requirements from test annotations defined in THUCYDIDES_TEST_ROOT"() {
         given:
             environmentVariables.setProperty("thucydides.test.root","annotatedstories")
-            def tagProvider = new AnnotationBasedTagProvider(environmentVariables)
+            def tagProvider = new PackageAnnotationBasedTagProvider(environmentVariables)
         when:
             def requirements = tagProvider.getRequirements()
         then:
@@ -55,10 +55,10 @@ class WhenReadingTagsFromAnnotations extends Specification {
     def "should read requirements from the stored JSON file if the classes are unavailable"() {
         given:
             environmentVariables.setProperty("thucydides.test.root","annotatedstories")
-            def tagProvider = new AnnotationBasedTagProvider(environmentVariables)
+            def tagProvider = new PackageAnnotationBasedTagProvider(environmentVariables)
             tagProvider.getRequirements()
         and:
-            def anotherTagProvider = new AnnotationBasedTagProvider(environmentVariables) {
+            def anotherTagProvider = new PackageAnnotationBasedTagProvider(environmentVariables) {
 
                 @Override
                 protected List<Class<?>> loadClasses() {
@@ -77,7 +77,7 @@ class WhenReadingTagsFromAnnotations extends Specification {
 
     def "should return no requirements if nothing is available"() {
         given:
-            def anotherTagProvider = new AnnotationBasedTagProvider(environmentVariables) {
+            def anotherTagProvider = new PackageAnnotationBasedTagProvider(environmentVariables) {
 
             @Override
             protected List<Class<?>> loadClasses() {
@@ -93,7 +93,7 @@ class WhenReadingTagsFromAnnotations extends Specification {
     def "should find correct requirement for a test outcome based on its package"() {
         given:
             environmentVariables.setProperty("thucydides.test.root","annotatedstories")
-            def tagProvider = new AnnotationBasedTagProvider(environmentVariables)
+            def tagProvider = new PackageAnnotationBasedTagProvider(environmentVariables)
         and:
             def testOutcome = TestOutcome.forTest("someTest", Test1)
         when:
@@ -107,7 +107,7 @@ class WhenReadingTagsFromAnnotations extends Specification {
     def "should get all tags for a given outcome"() {
         given:
             environmentVariables.setProperty("thucydides.test.root","annotatedstories")
-            def tagProvider = new AnnotationBasedTagProvider(environmentVariables)
+            def tagProvider = new PackageAnnotationBasedTagProvider(environmentVariables)
         and:
             def testOutcome = TestOutcome.forTest("someTest", BigPotatoeTest1)
         when:
@@ -119,7 +119,7 @@ class WhenReadingTagsFromAnnotations extends Specification {
     def "should get all tags for non-JUnit outcomes"() {
         given:
             environmentVariables.setProperty("thucydides.test.root","annotatedstories")
-            def tagProvider = new AnnotationBasedTagProvider(environmentVariables)
+            def tagProvider = new PackageAnnotationBasedTagProvider(environmentVariables)
         and:
             def testOutcome = TestOutcome.forTestInStory("some test", Story.called("SomeStory").withPath("potatoes/big_potatoes/SomeStory.story"))
         when:
@@ -131,7 +131,7 @@ class WhenReadingTagsFromAnnotations extends Specification {
     def "should find correct requirement for a given test tag"() {
         given:
             environmentVariables.setProperty("thucydides.test.root","annotatedstories")
-            def tagProvider = new AnnotationBasedTagProvider(environmentVariables)
+            def tagProvider = new PackageAnnotationBasedTagProvider(environmentVariables)
         and:
             def tag = TestTag.withName("Apples").andType("capability")
         when:
@@ -145,7 +145,7 @@ class WhenReadingTagsFromAnnotations extends Specification {
     def "should return absent for an unknown requirement"() {
         given:
             environmentVariables.setProperty("thucydides.test.root","annotatedstories")
-            def tagProvider = new AnnotationBasedTagProvider(environmentVariables)
+            def tagProvider = new PackageAnnotationBasedTagProvider(environmentVariables)
         and:
             def tag = TestTag.withName("Apples").andType("unknown")
         when:
