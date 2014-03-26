@@ -46,11 +46,11 @@
 
             gridPadding:{top:0, bottom:38, left:0, right:0},
             seriesColors:['#30cb23',
-                <#if (successfulManualTests)>'#28a818',</#if>
+                <#if (successfulManualTests)>'#009818',</#if>
                 '#a2f2f2',
-                <#if (pendingManualTests)>'#8be1df',</#if>
+                <#if (pendingManualTests)>'#8bb1df',</#if>
                 '#f8001f',
-                <#if (failingManualTests)>'#e20019',</#if>
+                <#if (failingManualTests)>'#a20019',</#if>
                 '#fc6e1f'],
             seriesDefaults:{
                 renderer:$.jqplot.PieRenderer,
@@ -219,7 +219,7 @@
 
                             <#assign totalCount = testOutcomes.totalTests.total >
                             <#assign successCount = testOutcomes.totalTests.withResult("success") >
-                            <#assign pendingCount = testOutcomes.totalTests.withResult("pending") >
+                            <#assign pendingCount = testOutcomes.totalTests.withIndeterminateResult() >
                             <#assign failureCount = testOutcomes.totalTests.withResult("failure") >
                             <#assign errorCount = testOutcomes.totalTests.withResult("error") >
                             <#assign failureOrErrorCount = testOutcomes.totalTests.withFailureOrError() >
@@ -270,7 +270,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>
+                                        <td style="vertical-align: text-top;">
                                             <div id="test_results_pie_chart"></div>
                                         </td>
                                         <td class="related-tags-section">
@@ -295,7 +295,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>
+                                        <td style="vertical-align: text-top;">
                                             <div id="weighted_test_results_pie_chart"></div>
                                         </td>
                                         <td class="related-tags-section">
@@ -435,7 +435,7 @@
             <#foreach tagName in tagNames>
                 <#assign tagTitle = inflection.of(tagName).asATitle() >
                 <#assign tagReport = absoluteReportName.forTag(tagName) >
-                <#assign outcomesForTag = outcomesForType.withTag(tagName) >
+                <#assign outcomesForTag = testOutcomes.withTag(tagName) >  <!-- outcomesForType.withTag(tagName)-->
                 <#if outcomesForTag.result == "FAILURE">
                     <#assign outcome_icon = "fail.png">
                     <#assign outcome_text = "failure-color">

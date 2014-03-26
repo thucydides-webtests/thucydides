@@ -58,11 +58,11 @@
         ], {
             gridPadding:{top:0, bottom:38, left:0, right:0},
             seriesColors:['#30cb23',
-                <#if (successfulManualTests)>'#28a818',</#if>
+                <#if (successfulManualTests)>'#009818',</#if>
                 '#a2f2f2',
-                <#if (pendingManualTests)>'#8be1df',</#if>
+                <#if (pendingManualTests)>'#8bb1df',</#if>
                 '#f8001f',
-                <#if (failingManualTests)>'#e20019',</#if>
+                <#if (failingManualTests)>'#a20019',</#if>
                 '#fc6e1f'],
             seriesDefaults:{
                 renderer:$.jqplot.PieRenderer,
@@ -166,25 +166,30 @@
 <div class="table">
 <#if (requirements.parentRequirement.isPresent())>
 <div>
-    <#assign parentTitle = inflection.of(requirements.parentRequirement.get().name).asATitle() >
-    <#assign parentType = inflection.of(requirements.parentRequirement.get().type).asATitle() >
-    <#if (requirements.parentRequirement.get().cardNumber?has_content) >
-        <#assign issueNumber = "[" + formatter.addLinks(requirements.parentRequirement.get().cardNumber) + "]" >
+    <#assign parentRequirement = requirements.parentRequirement.get() >
+    <#assign parentTitle = inflection.of(parentRequirement.name).asATitle() >
+    <#assign parentType = inflection.of(parentRequirement.type).asATitle() >
+    <#if (parentRequirement.cardNumber?has_content) >
+        <#assign issueNumber = "[" + formatter.addLinks(parentRequirement.cardNumber) + "]" >
     <#else>
         <#assign issueNumber = "">
     </#if>
     <h2>${parentType}: ${issueNumber} ${parentTitle}</h2>
 
-    <#if requirements.parentRequirement.get().narrative.renderedText?has_content>
+    <#if parentRequirement.narrative.renderedText?has_content>
         <div class="requirementNarrativeTitle">
-            ${formatter.renderDescription(requirements.parentRequirement.get().narrative.renderedText)}
+            ${formatter.renderDescription(parentRequirement.narrative.renderedText)}
         </div>
     </#if>
 
-    <#foreach customField in requirements.parentRequirement.get().customFields >
-        <#if requirements.parentRequirement.get().getCustomField(customField).present>
-            <a href="javaScript:void(0)" class="read-more-link"><img src="images/plus.png" height="15" /><h3><span class="custom-field-title">${customField}</span></h3></a>
-            <div class="read-more-text">${requirements.parentRequirement.get().getCustomField(customField).get()}</div>
+    <#foreach customField in parentRequirement.customFields >
+        <#if parentRequirement.getCustomField(customField).present>
+            <div>
+                <a href="javaScript:void(0)" class="read-more-link"><img src="images/plus.png" height="15" />
+                    <span class="custom-field-title">${customField}</span>
+                </a>
+                <div class="requirementNarrativeField read-more-text">${parentRequirement.getCustomField(customField).get().renderedText}</div>
+            </div>
         </#if>
     </#foreach>
 </div>
@@ -434,7 +439,7 @@ Estimated unimplemented or pending requirements: ${pending}">
 
     <div id="test-tabs">
         <ul>
-            <li><a href="#test-tabs-1">Tests (${testOutcomes.total})</a></li>
+            <li><a href="#test-tabs-1">Acceptance Tests (${testOutcomes.total})</a></li>
         </ul>
         <div id="test_list_tests" class="table">
             <div class="test-results">
@@ -442,7 +447,7 @@ Estimated unimplemented or pending requirements: ${pending}">
                     <thead>
                     <tr>
                         <th width="30" class="test-results-heading">&nbsp;</th>
-                        <th width="%" class="test-results-heading">Tests</th>
+                        <th width="%" class="test-results-heading">Acceptance Tests</th>
                         <th width="70" class="test-results-heading">Steps</th>
                         <#if reportOptions.showStepDetails>
                             <th width="65" class="test-results-heading">Fail</th>

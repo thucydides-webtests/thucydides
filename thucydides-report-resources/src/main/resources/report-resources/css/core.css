@@ -178,6 +178,10 @@ body {
     padding: 4px;
 }
 
+.custom-field-title {
+
+}
+
 .test-case-title {
     margin: 2px;
     font-family:euphemia, verdana, sans-serif; font-size:18px; color: #88a717; font-style:italic; font-weight:normal; font-size-adjust:inherit;
@@ -935,6 +939,23 @@ h4 {
     border: #6495ed solid thin;
     padding: 8px;
 }
+.requirementNarrativeField {
+    color: #0d78ae;
+    font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:normal;
+    border: #6495ed solid thin;
+    padding: 8px;
+}
+
+.requirementNarrativeField ul,ol {
+    margin-left: 15px;
+}
+
+.custom-field-title {
+    color:blue;
+    font-family:euphemia, verdana, sans-serif; font-size:16px;
+    font-weight: bold; color: #0d78ae; font-style:italic;
+    margin: 4px;
+}
 
 .cardNumber
 {
@@ -968,6 +989,15 @@ h4 {
     font-family:euphemia, verdana, sans-serif;font-size: 14px; font-weight:normal;
 }
 
+.test {
+    color: #30cb23;
+    color: #009818;
+    color: #a2f2f2;
+    color: #8bb1df;
+    color: #f8001f;
+    color: #a20019;
+    color: #fc6e1f;
+}
 .datagrid table { border-collapse: collapse; text-align: left; width: 100%; }
 .datagrid {
     font: normal 15px/150% euphemia, verdana, sans-serif;
@@ -1093,7 +1123,7 @@ table.coverage_data td {
 
 }
 .read-more-link img{
-    margin-bottom:-5px;
+    margin-bottom:-2px;
 }
 .read-more-text{
     display:none;
