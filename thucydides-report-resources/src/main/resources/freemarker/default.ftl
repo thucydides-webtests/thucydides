@@ -251,7 +251,7 @@
                         <#assign errorMessageTitle = "">
                     </#if>
                     <td width="%" colspan="4">
-                        <span class="error-message" title="${errorMessageTitle}">${step.shortErrorMessage!''}</span>
+                        <span class="error-message" title="${errorMessageTitle}"><pre>${step.shortErrorMessage!''}</pre></span>
                     </td>
                 </tr>
             </#if>
