@@ -67,4 +67,9 @@ public class DemoSiteSteps extends ScenarioSteps {
 
     @Step
     public void do_something_else() {}
+
+    @Step
+    public void throw_exception() {
+        throw new IllegalArgumentException();
+    }
 }

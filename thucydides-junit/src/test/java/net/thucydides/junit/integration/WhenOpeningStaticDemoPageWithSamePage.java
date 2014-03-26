@@ -48,4 +48,9 @@ public class WhenOpeningStaticDemoPageWithSamePage {
         steps.onSamePage(DemoSiteSteps.class).do_something();
         steps.onSamePage(DemoSiteSteps.class).should_have_selected_value("3");
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void should_throw_correct_exception() {
+        steps.throw_exception();
+    }
 }

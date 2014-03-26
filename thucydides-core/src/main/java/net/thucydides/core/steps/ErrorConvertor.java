@@ -15,7 +15,11 @@ public class ErrorConvertor implements Serializable {
         this.throwable = throwable;
     }
 
-    public AssertionError convertToAssertion() {
-        return new WebdriverAssertionError(throwable);
+    public Throwable convertToAssertion() {
+        if (RuntimeException.class.isAssignableFrom(throwable.getClass())) {
+            return throwable;
+        } else {
+            return new WebdriverAssertionError(throwable);
+        }
     }
 }

@@ -217,7 +217,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             result = invokeMethod(obj, method, args, proxy);
         } catch (Throwable generalException) {
             error = generalException;
-            AssertionError assertionError = forError(error).convertToAssertion();
+            Throwable assertionError = forError(error).convertToAssertion();
             notifyStepStarted(method, args);
             notifyOfStepFailure(method, args, assertionError);
         }
@@ -274,7 +274,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         return result;
     }
 
-    private void logStepFailure(Method method, Object[] args, AssertionError assertionError) throws Throwable {
+    private void logStepFailure(Method method, Object[] args, Throwable assertionError) throws Throwable {
         notifyOfStepFailure(method, args, assertionError);
         LOGGER.info("STEP FAILED: {} - {}", method.getName(), assertionError.getMessage());
     }

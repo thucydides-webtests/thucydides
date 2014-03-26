@@ -652,7 +652,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
         verify(listener).stepFailed(argument.capture());
         assertThat(argument.getValue().getDescription().getStepClass().getName(), is(SimpleTestScenarioSteps.class.getName()));
         assertThat(argument.getValue().getDescription().getName(), is("failing_web_step"));
-        assertThat(argument.getValue().getException().getClass().getName(), is(WebdriverAssertionError.class.getName()));
+        assertThat(argument.getValue().getException().getClass().getName(), is(WebDriverException.class.getName()));
 
         verify(listener, times(1)).stepFailed(any(StepFailure.class));
 
