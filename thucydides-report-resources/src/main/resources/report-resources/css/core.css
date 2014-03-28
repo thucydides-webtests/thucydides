@@ -799,6 +799,8 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
     border: 1px;
     border-color: #e7e8e3;
     border-style: solid;
+    table-layout: fixed;
+
 }
 
 .step-table th {
@@ -807,6 +809,14 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
 
 .step-table td {
     padding: 5px;
+}
+
+td.step-icon {
+    padding: 5px;
+}
+
+.step-description {
+    overflow-x: auto;
 }
 
 .step-table-separator td {

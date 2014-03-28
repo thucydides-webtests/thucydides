@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.html;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Key;
@@ -10,11 +11,15 @@ import net.thucydides.core.reports.renderer.Asciidoc;
 import net.thucydides.core.reports.renderer.MarkupRenderer;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.AggregateTranslator;
 import org.apache.commons.lang3.text.translate.CharSequenceTranslator;
 import org.apache.commons.lang3.text.translate.EntityArrays;
 import org.apache.commons.lang3.text.translate.LookupTranslator;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +41,7 @@ public class Formatter {
     private final static String ISSUE_LINK_FORMAT = "<a target=\"_blank\" href=\"{0}\">{1}</a>";
     private static final String ELIPSE = "&hellip;";
     private static final String ASCIIDOC = "asciidoc";
+    private static final String NEW_LINE = System.getProperty("line.separator");
 
     private final IssueTracking issueTracking;
     private final EnvironmentVariables environmentVariables;
@@ -145,7 +151,7 @@ public class Formatter {
 
     public String convertAnyTables(String text) {
         if (shouldFormatEmbeddedTables() && containsEmbeddedTable(text)) {
-            String unformattedTable = getEmbeddedTable(text);
+            String unformattedTable = getFirstEmbeddedTable(text);
             ExampleTable table = new ExampleTable(unformattedTable);
 
             text = text.replace(unformattedTable, table.inHtmlFormat());
@@ -170,21 +176,26 @@ public class Formatter {
         return text.indexOf("|");
     }
 
-    private String getEmbeddedTable(String text) {
-        int startIndex = firstPipeIndex(text);
-        int endIndex = lastPipeIndex(text);
-        return text.substring(startIndex, endIndex);
-    }
-
-    private int lastPipeIndex(String text) {
-        int lastPipe = text.lastIndexOf("|");
-
-        return (lastPipe + 2 < text.length()) ?  lastPipe + 2 : text.length();
-    }
-
-    private int firstPipeIndex(String text) {
-        int firstPipe = positionOfFirstPipeIn(text);
-        return (firstPipe > 0) ? firstPipe - 1 : 0;
+    private String getFirstEmbeddedTable(String text) {
+        BufferedReader reader = new BufferedReader(new StringReader(text));
+        StringBuffer tableText = new StringBuffer();
+        boolean inTable = false;
+        try {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!inTable && line.contains("|")){
+                    inTable = true;
+                } else if (inTable && !line.contains("|")){
+                    break;
+                }
+                if (inTable) {
+                    tableText.append(line).append(NEW_LINE);
+                }
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not process embedded table", e);
+        }
+        return tableText.toString().trim();
     }
 
     private final CharSequenceTranslator ESCAPE_SPECIAL_CHARS = new AggregateTranslator(

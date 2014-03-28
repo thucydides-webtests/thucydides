@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class ReadingTableData extends FluentElementAPITestsBaseClass {
 
     @Before
     public void openStaticPage() {
-        htmlUnitDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
+        htmlUnitDriver = new WebDriverFacade(PhantomJSDriver.class, new WebDriverFactory());
         page = new StaticSitePage(htmlUnitDriver, 1);
         page.setWaitForTimeout(500);
         page.open();
@@ -133,9 +134,9 @@ public class ReadingTableData extends FluentElementAPITestsBaseClass {
         List<Map<Object, String>> tableRows = HtmlTable.rowsFrom(page.clients_with_nested_cells);
 
         assertThat(tableRows.size(), is(3));
-        assertThat(tableRows.get(0), allOf(hasEntry("First Names", "TimothyTim"), hasEntry("Last Name", "Brooke-Taylor"), hasEntry("Favorite Colour", "Red")));
-        assertThat(tableRows.get(1), allOf(hasEntry("First Names", "GraemeGarry"), hasEntry("Last Name", "Garden"), hasEntry("Favorite Colour", "Green")));
-        assertThat(tableRows.get(2), allOf(hasEntry("First Names", "WilliamBill"),hasEntry("Last Name", "Oddie"), hasEntry("Favorite Colour","Blue")));
+        assertThat(tableRows.get(0), allOf(hasEntry("First Names", "Timothy Tim"), hasEntry("Last Name", "Brooke-Taylor"), hasEntry("Favorite Colour", "Red")));
+        assertThat(tableRows.get(1), allOf(hasEntry("First Names", "Graeme Garry"), hasEntry("Last Name", "Garden"), hasEntry("Favorite Colour", "Green")));
+        assertThat(tableRows.get(2), allOf(hasEntry("First Names", "William Bill"),hasEntry("Last Name", "Oddie"), hasEntry("Favorite Colour","Blue")));
 
     }
 

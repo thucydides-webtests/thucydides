@@ -24,7 +24,8 @@
         // Results table
         $('#tag-list-table').dataTable( {
             "aaSorting": [[ 1, "asc" ]],
-            "bJQueryUI": true
+            "bJQueryUI": true,
+            "iDisplayLength": 25
         } );
     })
     ;

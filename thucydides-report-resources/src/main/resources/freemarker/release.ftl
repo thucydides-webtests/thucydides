@@ -48,6 +48,7 @@
                 "aaSorting": [
                     [ 2, "asc" ]
                 ],
+                "iDisplayLength": 25,
                 "bJQueryUI": true
             });
 

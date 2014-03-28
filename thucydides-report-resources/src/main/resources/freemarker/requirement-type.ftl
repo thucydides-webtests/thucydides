@@ -38,19 +38,22 @@
             "aaSorting": [
                 [ 2, "asc" ]
             ],
-            "bJQueryUI": true
+            "bJQueryUI": true,
+            "iDisplayLength": 25
         });
         $('#test-results-table').dataTable({
             "aaSorting": [
                 [ 2, "asc" ]
             ],
-            "bJQueryUI": true
+            "bJQueryUI": true,
+            "iDisplayLength": 25
         });
         $('#examples-table').dataTable({
             "aaSorting": [
                 [ 2, "asc" ]
             ],
-            "bJQueryUI": true
+            "bJQueryUI": true,
+            "iDisplayLength": 25
         });
         $("#tabs").tabs();
         $("#test-tabs").tabs();

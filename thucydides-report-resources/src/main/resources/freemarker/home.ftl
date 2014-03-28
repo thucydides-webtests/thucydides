@@ -138,7 +138,8 @@
         // Results table
         $('#test-results-table').dataTable( {
             "aaSorting": [[ 1, "asc" ]],
-            "bJQueryUI": true
+            "bJQueryUI": true,
+            "iDisplayLength": 25
         } );
 
         // Pie charts

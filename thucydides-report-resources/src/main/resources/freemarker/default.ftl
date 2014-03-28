@@ -145,8 +145,8 @@
 <div>
     <table class="step-table">
         <tr class="step-titles">
-            <th width="40"><#if (testOutcome.manual)><img src="images/worker.png" title="Manual test"/></#if>&nbsp;</th>
-            <th width="%" class="greentext"><#if (testOutcome.manual)>Manual </#if>Steps</th>
+            <th width="65"><#if (testOutcome.manual)><img src="images/worker.png" title="Manual test"/></#if>&nbsp;</th>
+            <th width="755"  class="greentext"><#if (testOutcome.manual)>Manual </#if>Steps</th>
         <#if testOutcome.hasScreenshots()>
             <th width="120" class="greentext">Screenshot</th>
         </#if>
@@ -207,7 +207,7 @@
                 <#assign showAccordion = false/>
             </#if>
             <tr class="test-${step.result}">
-                <td width="40">
+                <td width="60" class="step-icon">
                     <#if step_number?has_content><a name="${step_number}"/></#if>
                     <#if showAccordion>
                         <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')" style="display:block">
@@ -218,14 +218,16 @@
                              src="images/${step_outcome_icon}" class="${step_class_root}-icon"/>
                     </#if>
                 </td>
-                <td width="%">
-                    <#if showAccordion>
-                    <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')" style="display:block">
-                    </#if>
-                    <span class="${step_class_root}-step">${formatter.formatWithFields(step.description,testOutcome.exampleFields)}</span>
-                    <#if showAccordion>
-                    </a>
-                    </#if>
+                <td>
+                    <div class="step-description">
+                        <#if showAccordion>
+                        <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')" style="display:block">
+                        </#if>
+                        <span class="${step_class_root}-step">${formatter.formatWithFields(step.description,testOutcome.exampleFields)}</span>
+                        <#if showAccordion>
+                        </a>
+                        </#if>
+                    </div>
                 </td>
                 <#if testOutcome.hasScreenshots()>
                     <td width="100" class="${step.result}-text">
@@ -315,6 +317,7 @@
     $('.example-table table').dataTable( {
         "aaSorting": [[ 1, "asc" ]],
         "bJQueryUI": true,
+        "iDisplayLength": 25,
         "sScrollX": "100%",
         "sScrollXInner": "100%",
         "bScrollCollapse": true

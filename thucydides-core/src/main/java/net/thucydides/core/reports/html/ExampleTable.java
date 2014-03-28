@@ -1,6 +1,7 @@
 package net.thucydides.core.reports.html;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -9,17 +10,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static org.apache.commons.collections.IteratorUtils.toList;
+
 public class ExampleTable {
+    private static final String SQUARE_BRACKETS_OR_WHITE_SPACE = "[] \t";
     List<String> headers;
     List<List<String>> rows = Lists.newArrayList();
 
     final static Pattern NEW_LINE = Pattern.compile("(\\r\\n)|(\\n)|(\\r)");
 
-    public ExampleTable(String unformattedTable) {
-            String tableContents = unformattedTable.substring(unformattedTable.indexOf("|") + 1, unformattedTable.lastIndexOf("|"));
-
-            Iterator<String> lineIter = Splitter.on(NEW_LINE).omitEmptyStrings().trimResults().split(tableContents).iterator();
-            List<String> lines = IteratorUtils.toList(lineIter);
+    public ExampleTable(String tableContents) {
+            List<String> lines = toList(Splitter.on(NEW_LINE)
+                    .omitEmptyStrings()
+                    .trimResults(CharMatcher.anyOf(SQUARE_BRACKETS_OR_WHITE_SPACE))
+                    .split(tableContents).iterator());
             addHeaderFrom(lines.get(0));
             for(int row = 1; row < lines.size(); row++) {
                 addRowFrom(lines.get(row));
@@ -43,7 +47,7 @@ public class ExampleTable {
             line = line.substring(0,line.length() - 1);
         }
 
-        return IteratorUtils.toList(Splitter.on("|").trimResults().split(line).iterator());
+        return toList(Splitter.on("|").trimResults().split(line).iterator());
     }
 
     public String inHtmlFormat() {
