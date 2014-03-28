@@ -33,6 +33,7 @@ import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.Augmenter;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -168,6 +169,7 @@ public class WebDriverFactory {
             } else if (isAnHtmlUnitDriver(driverClass)) {
                 driver = htmlunitDriver();
             } else if (isAPhantomJSDriver(driverClass)) {
+                setPhantomJSPathIfNotSet();
                 driver = phantomJSDriver();
             } else if (isAChromeDriver(driverClass)) {
                 driver = chromeDriver();
@@ -187,6 +189,15 @@ public class WebDriverFactory {
             return driver;
         } catch (Exception cause) {
             throw new UnsupportedDriverException("Could not instantiate " + driverClass, cause);
+        }
+    }
+
+    // IntelliJ in Mac OS X does not pick up environment variables. So to get PhantomJS working in IDE mode for the
+    // Thucydides tests, add the 'phantomjs.binary.path' property into a thucydides.properties file in your home directory.
+    private void setPhantomJSPathIfNotSet() {
+        String phantomJSPath = environmentVariables.getProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY);
+        if (StringUtils.isNotEmpty(phantomJSPath)) {
+            System.setProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, phantomJSPath);
         }
     }
 
