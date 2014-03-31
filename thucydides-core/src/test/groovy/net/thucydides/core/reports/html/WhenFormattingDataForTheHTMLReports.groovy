@@ -163,4 +163,16 @@ class WhenFormattingDataForTheHTMLReports extends Specification {
         embeddedTable == "<table class='embedded'><thead><th>owner</th><th>points</th></thead><tbody><tr><td>Jane</td><td>80000</td></tr><tr><td>Joe</td><td>50000</td></tr></tbody></table>"
     }
 
+    def "should identify a table within a step using new lines"() {
+        given:
+        def singleCellTable = "A table like this:\n| owner | points |\n| Jane  | 80000  |\n| Joe   | 50000  |]"
+
+        def formatter = new Formatter(issueTracking);
+        when:
+        def embeddedTable = formatter.convertAnyTables(singleCellTable)
+        then:
+        embeddedTable == "A table like this:\n<table class='embedded'><thead><th>owner</th><th>points</th></thead><tbody><tr><td>Jane</td><td>80000</td></tr><tr><td>Joe</td><td>50000</td></tr></tbody></table>"
+
+    }
+
 }

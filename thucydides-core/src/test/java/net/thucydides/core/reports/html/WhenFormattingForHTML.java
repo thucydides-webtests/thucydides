@@ -238,6 +238,17 @@ public class WhenFormattingForHTML {
     }
 
     @Test
+    public void should_convert_embedded_text_tables__with_square_brackets_into_html_tables() {
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.convertAnyTables("A table:\n[| name | age |\n|Bill|20|]");
+
+        assertThat(formattedValue, is("A table:\n<table class='embedded'><thead><th>name</th><th>age</th></thead><tbody><tr><td>Bill</td><td>20</td></tr></tbody></table>"));
+    }
+
+
+    @Test
     public void should_ignore_isolated_pipes() {
         when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn(null);
         Formatter formatter = new Formatter(issueTracking);
