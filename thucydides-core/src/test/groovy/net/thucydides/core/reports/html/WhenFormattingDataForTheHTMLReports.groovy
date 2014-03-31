@@ -172,7 +172,28 @@ class WhenFormattingDataForTheHTMLReports extends Specification {
         def embeddedTable = formatter.convertAnyTables(singleCellTable)
         then:
         embeddedTable == "A table like this:<br><table class='embedded'><thead><th>owner</th><th>points</th></thead><tbody><tr><td>Jane</td><td>80000</td></tr><tr><td>Joe</td><td>50000</td></tr></tbody></table>"
-
     }
 
+    def "should identify a table within a step using NL new lines"() {
+        given:
+        def singleCellTable = "A table like this:\r[| owner | points |\r| Jane  | 80000  |\r| Joe   | 50000  |]"
+
+        def formatter = new Formatter(issueTracking);
+        when:
+        def embeddedTable = formatter.convertAnyTables(singleCellTable)
+        then:
+        embeddedTable == "A table like this:<br><table class='embedded'><thead><th>owner</th><th>points</th></thead><tbody><tr><td>Jane</td><td>80000</td></tr><tr><td>Joe</td><td>50000</td></tr></tbody></table>"
+    }
+
+
+    def "should identify a table within a step using Windows new lines"() {
+        given:
+        def singleCellTable = "A table like this:\r\n[| owner | points |\r\n| Jane  | 80000  |\r\n| Joe   | 50000  |]"
+
+        def formatter = new Formatter(issueTracking);
+        when:
+        def embeddedTable = formatter.convertAnyTables(singleCellTable)
+        then:
+        embeddedTable == "A table like this:<br><table class='embedded'><thead><th>owner</th><th>points</th></thead><tbody><tr><td>Jane</td><td>80000</td></tr><tr><td>Joe</td><td>50000</td></tr></tbody></table>"
+    }
 }
