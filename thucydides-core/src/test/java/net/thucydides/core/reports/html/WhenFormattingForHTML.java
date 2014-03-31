@@ -234,7 +234,7 @@ public class WhenFormattingForHTML {
 
         String formattedValue = formatter.convertAnyTables("A table:\n| name | age |\n|Bill|20|");
 
-        assertThat(formattedValue, is("A table:\n<table class='embedded'><thead><th>name</th><th>age</th></thead><tbody><tr><td>Bill</td><td>20</td></tr></tbody></table>"));
+        assertThat(formattedValue, is("A table:<br><table class='embedded'><thead><th>name</th><th>age</th></thead><tbody><tr><td>Bill</td><td>20</td></tr></tbody></table>"));
     }
 
     @Test
@@ -244,7 +244,7 @@ public class WhenFormattingForHTML {
 
         String formattedValue = formatter.convertAnyTables("A table:\n[| name | age |\n|Bill|20|]");
 
-        assertThat(formattedValue, is("A table:\n<table class='embedded'><thead><th>name</th><th>age</th></thead><tbody><tr><td>Bill</td><td>20</td></tr></tbody></table>"));
+        assertThat(formattedValue, is("A table:<br><table class='embedded'><thead><th>name</th><th>age</th></thead><tbody><tr><td>Bill</td><td>20</td></tr></tbody></table>"));
     }
 
 

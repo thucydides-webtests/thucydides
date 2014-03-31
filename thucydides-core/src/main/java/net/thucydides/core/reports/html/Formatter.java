@@ -154,7 +154,8 @@ public class Formatter {
             String unformattedTable = getFirstEmbeddedTable(text);
             ExampleTable table = new ExampleTable(unformattedTable);
 
-            text = text.replace(unformattedTable, table.inHtmlFormat());
+            text = text.replace(unformattedTable, table.inHtmlFormat())
+                       .replaceAll(newLineUsedIn(text),"<br>");
 
         }
         return text;
@@ -180,6 +181,7 @@ public class Formatter {
         BufferedReader reader = new BufferedReader(new StringReader(text));
         StringBuffer tableText = new StringBuffer();
         boolean inTable = false;
+        String newLine = newLineUsedIn(text);
         try {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -189,13 +191,25 @@ public class Formatter {
                     break;
                 }
                 if (inTable) {
-                    tableText.append(line).append(NEW_LINE);
+                    tableText.append(line).append(newLine);
                 }
             }
         } catch (IOException e) {
             throw new IllegalArgumentException("Could not process embedded table", e);
         }
         return tableText.toString().trim();
+    }
+
+    private String newLineUsedIn(String text) {
+        if (text.contains("\r\n")) {
+            return "\r\n";
+        } else if (text.contains("\n")) {
+            return "\n";
+        } else if (text.contains("\r")) {
+            return "\r";
+        } else {
+            return NEW_LINE;
+        }
     }
 
     private final CharSequenceTranslator ESCAPE_SPECIAL_CHARS = new AggregateTranslator(
