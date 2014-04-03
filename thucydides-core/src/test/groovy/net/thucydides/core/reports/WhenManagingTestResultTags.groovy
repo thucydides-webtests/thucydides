@@ -12,7 +12,7 @@ class WhenManagingTestResultTags extends Specification {
             testOutcomes.tests[0].addTags([TestTag.withName("chocolate").andType("flavor")])
             testOutcomes.tests[0].addTags([TestTag.withName("orange").andType("color")])
         then:
-            testOutcomes.tagNames == ['chocolate','orange','purchase new widget', 'widget feature']
+            testOutcomes.tagNames == ['Purchase new widget', 'Widget feature', 'chocolate','orange']
     }
 
     def "should list all of the tag types"() {

@@ -167,7 +167,7 @@ public class TestOutcomes {
 
     private void addTagNamesFrom(TestOutcome outcome, Set<String> tags) {
         for (TestTag tag : outcome.getTags()) {
-            String normalizedForm = tag.getName().toLowerCase();
+            String normalizedForm = tag.getName();
             if (!tags.contains(normalizedForm)) {
                 tags.add(normalizedForm);
             }
@@ -176,7 +176,7 @@ public class TestOutcomes {
 
     private void addTagTypesFrom(TestOutcome outcome, Set<String> tags) {
         for (TestTag tag : outcome.getTags()) {
-            String normalizedForm = tag.getType().toLowerCase();
+            String normalizedForm = tag.getType();
             if (!tags.contains(normalizedForm)) {
                 tags.add(normalizedForm);
             }

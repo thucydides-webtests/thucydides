@@ -49,7 +49,7 @@ class WhenProcessingTestOutcomes extends Specification {
         when:
             def tagTypes = testOutcomes.getTagTypes()
         then:
-            tagTypes == ["epic", "feature", "story"]
+            tagTypes == ["Feature", "Story", "epic", "feature", "story"]
     }
 
     def "should list all the tags for the test outcomes"() {
@@ -58,7 +58,7 @@ class WhenProcessingTestOutcomes extends Specification {
         when:
             def tags = testOutcomes.getTagNames()
         then:
-            tags == ["a feature", "a story", "an epic", "another different story", "another story"]
+            tags == ["A Feature", "A Story", "a feature", "a story", "an epic", "another different story", "another story"]
     }
 
     def "should list all the tags of a given type for the test outcomes"() {
