@@ -67,7 +67,9 @@ public class RetryFilteringRunNotifier extends RunNotifierDecorator {
             super.fireTestIgnored(lastIgnored);
         }
 
-        super.fireTestFinished(lastDescription);
+        if (lastDescription != null) {
+            super.fireTestFinished(lastDescription);
+        }
     }
 
     public void reset() {
