@@ -150,15 +150,20 @@ public class Formatter {
     }
 
     public String convertAnyTables(String text) {
+        text = convertNonStandardNLChars(text);
         if (shouldFormatEmbeddedTables() && containsEmbeddedTable(text)) {
             String unformattedTable = getFirstEmbeddedTable(text);
             ExampleTable table = new ExampleTable(unformattedTable);
 
             text = text.replace(unformattedTable, table.inHtmlFormat())
-                       .replaceAll(newLineUsedIn(text),"<br>");
+                    .replaceAll(newLineUsedIn(text),"<br>");
 
         }
         return text;
+    }
+
+    private String convertNonStandardNLChars(String text) {
+        return StringUtils.replace(text, "␤", NEW_LINE);
     }
 
     private boolean shouldFormatEmbeddedTables() {
@@ -187,7 +192,7 @@ public class Formatter {
             while ((line = reader.readLine()) != null) {
                 if (!inTable && line.contains("|")){
                     inTable = true;
-                } else if (inTable && !line.contains("|")){
+                } else if (inTable && !line.contains("|") && !(isBlank(line))){
                     break;
                 }
                 if (inTable) {
@@ -198,6 +203,10 @@ public class Formatter {
             throw new IllegalArgumentException("Could not process embedded table", e);
         }
         return tableText.toString().trim();
+    }
+
+    private boolean isBlank(String line) {
+        return (StringUtils.isBlank(line.trim()));
     }
 
     private String newLineUsedIn(String text) {

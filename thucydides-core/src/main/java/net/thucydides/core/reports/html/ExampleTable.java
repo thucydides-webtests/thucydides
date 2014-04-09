@@ -13,11 +13,11 @@ import java.util.regex.Pattern;
 import static org.apache.commons.collections.IteratorUtils.toList;
 
 public class ExampleTable {
-    private static final String SQUARE_BRACKETS_OR_WHITE_SPACE = "[] \t";
+    private static final String SQUARE_BRACKETS_OR_WHITE_SPACE = "[]［］ \t";
     List<String> headers;
     List<List<String>> rows = Lists.newArrayList();
 
-    final static Pattern NEW_LINE = Pattern.compile("(\\r\\n)|(\\n)|(\\r)");
+    final static Pattern NEW_LINE = Pattern.compile("(\\r\\n)|(\\n)|(\\r)|(␤)|(\\r␤)");
 
     public ExampleTable(String tableContents) {
             List<String> lines = toList(Splitter.on(NEW_LINE)

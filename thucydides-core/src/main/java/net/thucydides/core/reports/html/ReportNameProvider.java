@@ -45,20 +45,20 @@ public class ReportNameProvider {
     }
 
     public String forTag(String tag) {
-        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "tag_" + tag);
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "tag_" + tag.toLowerCase());
     }
 
     public String forTag(TestTag tag) {
-        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "tag_" + tag.getType() + "_" + tag.getName());
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "tag_" + tag.getType().toLowerCase() + "_" + tag.getName().toLowerCase());
     }
 
 
     public String forTagType(String tagType) {
-        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "tagtype_" + tagType);
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "tagtype_" + tagType.toLowerCase());
     }
 
     public String forRequirementType(String tagType) {
-        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "requirement_type_" + tagType);
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "requirement_type_" + tagType.toLowerCase());
     }
 
     public ReportNameProvider withPrefix(String prefix) {
@@ -69,7 +69,7 @@ public class ReportNameProvider {
         if (tag.equals(TestTag.EMPTY_TAG)) {
             return new ReportNameProvider();
         } else {
-            return new ReportNameProvider(tag.getType() + ":" + tag.getName());
+            return new ReportNameProvider(tag.getType().toLowerCase() + ":" + tag.getName().toLowerCase());
         }
     }
 

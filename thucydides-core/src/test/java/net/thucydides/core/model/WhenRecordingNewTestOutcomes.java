@@ -1053,7 +1053,7 @@ public class WhenRecordingNewTestOutcomes {
 
     @Test
     public void we_can_record_the_lifetime_of_a_test_run() throws InterruptedException {
-        Thread.sleep(10);
+        Thread.sleep(100);
         testOutcome.recordDuration();
         assertThat(testOutcome.getDuration(), is(greaterThanOrEqualTo(10L)));
         assertThat(testOutcome.getDuration(), is(lessThan(5000L)));

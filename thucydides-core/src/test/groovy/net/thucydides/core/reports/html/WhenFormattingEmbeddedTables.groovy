@@ -18,6 +18,29 @@ class WhenFormattingEmbeddedTables extends Specification {
             exampleTable.rows == [["Joe"]]
     }
 
+    def "should format tables with Windows-specific new line chars"() {
+        given:
+        def tableText = """
+| NAME |␤| Joe  |
+"""
+        when:
+        def exampleTable = new ExampleTable(tableText)
+        then:
+        exampleTable.headers == ["NAME"]
+        and:
+        exampleTable.rows == [["Joe"]]
+    }
+
+    def "should format tables with composite Windows-specific new line chars"() {
+        given:
+        def tableText = "| NAME |\r␤| Joe  |"
+        when:
+        def exampleTable = new ExampleTable(tableText)
+        then:
+        exampleTable.headers == ["NAME"]
+        and:
+        exampleTable.rows == [["Joe"]]
+    }
     def "should format multi-column tables"() {
         given:
             def tableText = """

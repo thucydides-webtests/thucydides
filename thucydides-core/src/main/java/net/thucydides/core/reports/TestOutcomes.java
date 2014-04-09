@@ -62,7 +62,6 @@ public class TestOutcomes {
     private final Optional<TestOutcomes> rootOutcomes;
     private final double estimatedAverageStepCount;
     private final EnvironmentVariables environmentVariables;
-    //private final RequirementsConfiguration requirementsConfiguration;
     private final RequirementsService requirementsService;
 
     /**
@@ -86,7 +85,6 @@ public class TestOutcomes {
         this.label = label;
         this.rootOutcomes = Optional.fromNullable(rootOutcomes);
         this.environmentVariables = environmentVariables;
-        //this.requirementsConfiguration = new RequirementsConfiguration(environmentVariables);
         this.requirementsService = Injectors.getInjector().getInstance(RequirementsService.class);
     }
 
