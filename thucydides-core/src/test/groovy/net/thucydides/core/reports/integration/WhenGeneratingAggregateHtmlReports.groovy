@@ -107,7 +107,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         given: "We generate reports from a directory containing features and stories only"
             reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
         when: "we view the report"
-            driver = new FirefoxDriver()
+            driver = new PhantomJSDriver();
             driver.get reportHomePageUrl();
         then: "we should see a Releases tab"
             def releasesLink = driver.findElement(By.linkText("Releases"))
@@ -122,7 +122,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         given: "We generate reports from a directory containing features and stories only"
             reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
         when: "we view the release report"
-            driver = new FirefoxDriver();
+            driver = new PhantomJSDriver();
             driver.get reportHomePageUrl();
             def releasesLink = driver.findElement(By.linkText("Releases"))
             releasesLink.click();
