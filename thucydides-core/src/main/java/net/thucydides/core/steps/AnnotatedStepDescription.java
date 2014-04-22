@@ -8,6 +8,8 @@ import net.thucydides.core.annotations.StepGroup;
 import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.annotations.Title;
+import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.reports.html.Formatter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
@@ -204,6 +206,7 @@ public final class AnnotatedStepDescription {
 
         return humanize(description.getName());
     }
+
 
     private String annotatedStepNameWithParameters(String annotatedStepTemplate) {
         String annotatedStepName = annotatedStepTemplate;

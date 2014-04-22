@@ -338,7 +338,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         StringBuilder testName = new StringBuilder(method.getName());
         testName.append(": ");
         if (addMarkup) {
-           testName.append("{");
+           testName.append("<span class='step-parameter'>");
         }
         boolean isFirst = true;
         for (Object arg : args) {
@@ -349,7 +349,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             isFirst = false;
         }
         if (addMarkup) {
-            testName.append("}");
+            testName.append("</span>");
         }
         return testName.toString();
     }

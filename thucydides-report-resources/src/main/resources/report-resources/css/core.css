@@ -1268,3 +1268,7 @@ ul.second-level-requirements  {
 .togglePieChart a:hover {
     color: yellow;
 }
+
+.step-parameter {
+    color: darkblue;
+}

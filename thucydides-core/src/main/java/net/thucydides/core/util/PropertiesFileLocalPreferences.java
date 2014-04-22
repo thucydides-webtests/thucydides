@@ -65,9 +65,9 @@ public class PropertiesFileLocalPreferences implements LocalPreferences {
     }
 
     private void updatePreferencesFrom(File preferencesFile) throws IOException {
-        LOGGER.info("LOADING LOCAL THUCYDIDES PROPERTIES FROM {} ", preferencesFile.getAbsolutePath());
         if (preferencesFile.exists()) {
             Properties localPreferences = new Properties();
+            LOGGER.info("LOADING LOCAL THUCYDIDES PROPERTIES FROM {} ", preferencesFile.getAbsolutePath());
             localPreferences.load(new FileInputStream(preferencesFile));
             setUndefinedSystemPropertiesFrom(localPreferences);
         }
