@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.anyObject;
@@ -248,7 +249,8 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
         TestStep firstStep = testOutcome.getTestSteps().get(0);
 
-        assertThat(firstStep.getDescription(), is("Step with a parameter: {proportionOf}"));
+        assertThat(firstStep.getDescription(), containsString("Step with a parameter:"));
+        assertThat(firstStep.getDescription(), containsString("proportionOf"));
     }
 
     @Test
@@ -262,7 +264,8 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         TestOutcome testOutcome = executedScenarios.get(0);
         TestStep secondStep = testOutcome.getTestSteps().get(1);
 
-        assertThat(secondStep.getDescription(), is("Step with two parameters: {proportionOf, 2}"));
+        assertThat(secondStep.getDescription(), containsString("Step with two parameters"));
+        assertThat(secondStep.getDescription(), containsString("proportionOf, 2"));
     }
 
 

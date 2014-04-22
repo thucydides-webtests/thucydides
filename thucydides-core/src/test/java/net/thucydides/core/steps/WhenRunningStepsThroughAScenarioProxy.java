@@ -398,7 +398,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         verify(listener).stepStarted(argument.capture());
 
-        assertThat(argument.getValue().getName(), is("step_with_parameter: {Joe}"));
+        assertThat(argument.getValue().getName(), is("step_with_parameter: <span class='step-parameter'>Joe</span>"));
     }
 
     @Test
@@ -411,7 +411,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         verify(listener).stepStarted(argument.capture());
 
-        assertThat(argument.getValue().getName(), is("step_with_parameters: {Joe, 10}"));
+        assertThat(argument.getValue().getName(), is("step_with_parameters: <span class='step-parameter'>Joe, 10</span>"));
     }
 
     @Test
@@ -425,7 +425,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         verify(listener).stepStarted(argument.capture());
 
-        assertThat(argument.getValue().getName(), is("step_with_parameters: {[1, 2, 3]}"));
+        assertThat(argument.getValue().getName(), is("step_with_parameters: <span class='step-parameter'>[1, 2, 3]</span>"));
     }
 
     @Test
@@ -439,7 +439,7 @@ public class WhenRunningStepsThroughAScenarioProxy {
 
         verify(listener).stepStarted(argument.capture());
 
-        assertThat(argument.getValue().getName(), is("step_with_array: {{1,2,3}}"));
+        assertThat(argument.getValue().getName(), is("step_with_array: <span class='step-parameter'>{1,2,3}</span>"));
     }
 
 
