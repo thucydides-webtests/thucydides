@@ -31,7 +31,7 @@ public class WhenManipulatingSystemProperties {
 
     @Test
     public void should_be_able_to_read_a_numerical_thucydides_system_property() {
-        System.setProperty("thucycides.step.delay","10");
+        System.setProperty("thucydides.step.delay","10");
         Integer storedValue = ThucydidesSystemProperties.getProperties().getIntegerValue(ThucydidesSystemProperty.THUCYDIDES_STEP_DELAY, 0);
 
         assertThat(storedValue, is(10));

@@ -579,62 +579,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return ReportService.getDefaultReporters();
     }
 
-
     public boolean isAWebTest() {
         return TestCaseAnnotations.isWebTest(getTestClass().getJavaClass());
-    }
-    private WebDriver driver;
-    private String baseUrl;
-    private boolean acceptNextAlert = true;
-    private StringBuffer verificationErrors = new StringBuffer();
-
-    @Before
-    public void setUp() throws Exception {
-        driver = new FirefoxDriver();
-        baseUrl = "http://www.trademe.co.nz/";
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-    }
-
-    @Test
-    public void testRegistration() throws Exception {
-        driver.get("http://www.trademe.co.nz");
-        driver.findElement(By.linkText("Register")).click();
-        driver.findElement(By.id("LoginDetails_EmailAddressTextBox")).clear();
-        driver.findElement(By.id("LoginDetails_EmailAddressTextBox")).sendKeys("joe@bloggs.com");
-        driver.findElement(By.id("LoginDetails_PasswordTextBox")).clear();
-        driver.findElement(By.id("LoginDetails_PasswordTextBox")).sendKeys("secret");
-        driver.findElement(By.id("LoginDetails_ConfirmPasswordTextBox")).clear();
-        driver.findElement(By.id("LoginDetails_ConfirmPasswordTextBox")).sendKeys("secret");
-        driver.findElement(By.id("LoginDetails_UserNameTextBox")).clear();
-        driver.findElement(By.id("LoginDetails_UserNameTextBox")).sendKeys("joebloggs");
-        driver.findElement(By.id("ContactDetails_FirstNameTextBox")).clear();
-        driver.findElement(By.id("ContactDetails_FirstNameTextBox")).sendKeys("Joe");
-        driver.findElement(By.id("ContactDetails_LastNameTextBox")).clear();
-        driver.findElement(By.id("ContactDetails_LastNameTextBox")).sendKeys("Bloggs"   );
-        driver.findElement(By.id("ContactDetails_GenderMale")).click();
-        new Select(driver.findElement(By.id("ContactDetails_DobDay"))).selectByVisibleText("3");
-        new Select(driver.findElement(By.id("ContactDetails_DobMonth"))).selectByVisibleText("April");
-        driver.findElement(By.id("ContactDetails_DobYear")).clear();
-        driver.findElement(By.id("ContactDetails_DobYear")).sendKeys("1975");
-        new Select(driver.findElement(By.id("ContactDetails_ContactPhoneAreaCodeDropDown"))).selectByVisibleText("04");
-        driver.findElement(By.id("ContactDetails_ContactPhoneTextBox")).clear();
-        driver.findElement(By.id("ContactDetails_ContactPhoneTextBox")).sendKeys("12345678");
-        driver.findElement(By.id("ContactDetails_StreetAddress_Address1TextBox")).clear();
-        driver.findElement(By.id("ContactDetails_StreetAddress_Address1TextBox")).sendKeys("1 main street");
-        driver.findElement(By.id("ContactDetails_StreetAddress_CityTextBox")).clear();
-        driver.findElement(By.id("ContactDetails_StreetAddress_CityTextBox")).sendKeys("Sydney");
-        driver.findElement(By.id("ContactDetails_StreetAddress_PostcodeTextBox")).clear();
-        driver.findElement(By.id("ContactDetails_StreetAddress_PostcodeTextBox")).sendKeys("2000");
-        new Select(driver.findElement(By.id("ContactDetails_ClosestSuburbDropDown")))
-                         .selectByVisibleText("Auckland - Auckland City");
-        driver.findElement(By.id("TnCCheckbox")).click();
-        driver.findElement(By.id("SubmitButton")).click();
-        driver.findElement(By.id("SubmitButton")).click();
-        try {
-            assertTrue(driver.findElement(By.cssSelector("BODY")).getText()
-                             .matches("^[\\s\\S]*Thank you for registering![\\s\\S]*$"));
-        } catch (Error e) {
-            verificationErrors.append(e.toString());
-        }
     }
 }

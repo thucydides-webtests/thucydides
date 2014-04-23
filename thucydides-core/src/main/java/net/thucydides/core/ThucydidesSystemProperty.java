@@ -135,7 +135,7 @@ public enum ThucydidesSystemProperty {
      * If this is set to true, test result tables will display a breakdown of the steps by result.
      * This is false by default.
      */
-    THUCYDIDES_REPORT_SHOW_STEP_DETAILS,
+    THUCYDIDES_REPORTS_SHOW_STEP_DETAILS,
 
     /**
      * Show statistics for manual tests in the test reports.
@@ -258,11 +258,12 @@ public enum ThucydidesSystemProperty {
 
     /**
      * Enable applets in Firefox.
+     * Use the system property 'security.enable_java'.
      * Applets slow down webdriver, so are disabled by default.
      */
-    SECURITY_ENABLE_JAVA,
+    SECURITY_ENABLE_JAVA("security.enable_java"),
 
-    THUCYDIDES_ACTIVTE_HIGHLIGHTING,
+    THUCYDIDES_ACTIVATE_HIGHLIGHTING,
 
     /**
      * Batch strategy to use for parallel batches.
@@ -288,12 +289,13 @@ public enum ThucydidesSystemProperty {
     /**
      * HTTP Proxy URL configuration for Firefox and PhantomJS
      */
-    THUCYDIDES_PROXY_HTTP("thucydides.proxy.http"),
+    THUCYDIDES_PROXY_HTTP,
 
     /**
      * HTTP Proxy port configuration for Firefox and PhantomJS
+     * Use 'thucydides.proxy.http_port'
      */
-    THUCYDIDES_PROXY_HTTP_PORT,
+    THUCYDIDES_PROXY_HTTP_PORT("thucydides.proxy.http_port"),
 
     /**
      * HTTP Proxy type configuration for Firefox and PhantomJS
@@ -460,7 +462,7 @@ public enum ThucydidesSystemProperty {
      * This is the list of capability types to be used when reading capabilities from the file system
      * and when organizing the reports. It is a comma-separated list of tags.The default value is: capability, feature
      */
-    THUCYDIDES_DATA_DIRECTORY,
+    THUCYDIDES_DATA_DIR,
 
     /**
      * Allows you to override the default thucydides.properties location for properties file.

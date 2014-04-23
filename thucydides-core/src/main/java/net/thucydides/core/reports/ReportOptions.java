@@ -11,7 +11,7 @@ import static net.thucydides.core.ThucydidesSystemProperty.SHOW_PIE_CHARTS;
 import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_REPORT_SHOW_PROGRESS;
 import static net.thucydides.core.ThucydidesSystemProperty.SHOW_RELATED_TAGS;
 import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_REPORT_SHOW_RELEASES;
-import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_REPORT_SHOW_STEP_DETAILS;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_REPORTS_SHOW_STEP_DETAILS;
 import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_REPORT_SHOW_TAG_MENUS;
 
 /**
@@ -33,7 +33,7 @@ public class ReportOptions {
     final private boolean displayPiechart;
 
     public ReportOptions(EnvironmentVariables environmentVariables) {
-        showStepDetails = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_STEP_DETAILS.from(environmentVariables, "false"));
+        showStepDetails = Boolean.valueOf(THUCYDIDES_REPORTS_SHOW_STEP_DETAILS.from(environmentVariables, "false"));
         showManualTests = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_MANUAL_TESTS.from(environmentVariables, "true"));
         showReleases = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_RELEASES.from(environmentVariables, "true"));
         showProgress = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_PROGRESS.from(environmentVariables, "false"));

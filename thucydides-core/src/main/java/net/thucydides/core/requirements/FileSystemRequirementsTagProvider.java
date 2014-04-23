@@ -126,7 +126,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
 
     private Optional<String> getRootDirectoryPath() throws IOException {
 
-        if (ThucydidesSystemProperty.TEST_REQUIREMENTS_ROOT.isDefinedIn(environmentVariables)){
+        if (ThucydidesSystemProperty.THUCYDIDES_TEST_REQUIREMENTS_BASEDIR.isDefinedIn(environmentVariables)){
             return getRootDirectoryFromRequirementsBaseDir();
         } else {
             Optional<String> rootDirectoryOnClasspath = getRootDirectoryFromClasspath();
@@ -160,7 +160,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     private Optional<String> getRootDirectoryFromRequirementsBaseDir() {
         if (configuredRelativeRootDirectory == null) {
             configuredRelativeRootDirectory
-                    = getRootDirectoryFromParentDir(ThucydidesSystemProperty.TEST_REQUIREMENTS_ROOT
+                    = getRootDirectoryFromParentDir(ThucydidesSystemProperty.THUCYDIDES_TEST_REQUIREMENTS_BASEDIR
                                                                              .from(environmentVariables,""));
         }
         return configuredRelativeRootDirectory;

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -49,7 +50,7 @@
     </developers>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <surefire.version>2.15</surefire.version>
+        <surefire.version>2.17</surefire.version>
         <junit.version>4.11</junit.version>
         <selenium.version>2.41.0</selenium.version>
         <hamcrest.version>1.3</hamcrest.version>
@@ -57,6 +58,7 @@
         <groovy.version>2.0.5</groovy.version>
         <checkstyle.rules>https://thucydides.sonar.cloudbees.com/profiles/export?format=checkstyle&amp;language=java&amp;name=Wakaleo%2520Way</checkstyle.rules>
         <compiler.options>-nowarn</compiler.options>
+        <argLine></argLine>
     </properties>
     <build>
         <plugins>
@@ -139,6 +141,7 @@
                 <version>${surefire.version}</version>
                 <configuration>
                     <skip>true</skip>
+                    <!--<argLine>${argLine}</argLine>-->
                 </configuration>
                 <executions>
                     <execution>
@@ -149,8 +152,7 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
-                            <!--<forkCount>2C</forkCount>-->
-                            <argLine>-Xmx512m -XX:MaxPermSize=128m</argLine>
+                            <!--<argLine>${argLine} -Xmx512m -XX:MaxPermSize=128m</argLine>-->
                             <includes>
                                 <include>**/When*.*</include>
                                 <include>**/*Test.*</include>
@@ -175,8 +177,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <!--<forkCount>2C</forkCount>-->
-                            <argLine>-Xmx512m</argLine>
+                            <!--<argLine>${argLine} -Xmx512m</argLine>-->
                             <skip>false</skip>
                             <excludes>
                                 <exclude>**/Abstract*.*</exclude>
@@ -353,9 +354,23 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>com.atlassian.maven.plugins</groupId>
-                        <artifactId>maven-clover2-plugin</artifactId>
-                        <version>3.1.11</version>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.7.0.201403182114</version>
+                        <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>report</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

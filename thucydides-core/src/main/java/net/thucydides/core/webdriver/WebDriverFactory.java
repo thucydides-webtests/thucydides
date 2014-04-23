@@ -556,7 +556,7 @@ public class WebDriverFactory {
 
     private Dimension getRequestedBrowserSize() {
         int height = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.THUCYDIDES_BROWSER_HEIGHT, DEFAULT_HEIGHT);
-        int width = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.SNAPSHOT_WIDTH, DEFAULT_WIDTH);
+        int width = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.THUCYDIDES_BROWSER_WIDTH, DEFAULT_WIDTH);
         return new Dimension(width, height);
     }
 
@@ -569,7 +569,7 @@ public class WebDriverFactory {
     }
 
     private boolean browserDimensionsSpecified() {
-        String snapshotWidth = environmentVariables.getProperty(ThucydidesSystemProperty.SNAPSHOT_WIDTH);
+        String snapshotWidth = environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_BROWSER_WIDTH);
         String snapshotHeight = environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_BROWSER_HEIGHT);
         return (snapshotWidth != null) || (snapshotHeight != null);
     }

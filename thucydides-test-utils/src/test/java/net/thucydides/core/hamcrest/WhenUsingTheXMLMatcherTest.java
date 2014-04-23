@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-public class WhenUsingTheXMLMatcher {
+public class WhenUsingTheXMLMatcherTest {
 
     @Test
     public void should_match_identical_xml_documents() {
