@@ -10,7 +10,6 @@ import net.thucydides.core.annotations.TestCaseAnnotations;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.BatchManagerProvider;
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
@@ -428,7 +427,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     private void clearMetadataIfRequired() {
-        if (!configuration.getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.MAINTAIN_SESSION, false)) {
+        if (!configuration.getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.THUCYDIDES_MAINTAIN_SESSION, false)) {
             Thucydides.getCurrentSession().clearMetaData();
         }
     }

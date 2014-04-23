@@ -27,7 +27,7 @@ public class SystemPropertiesIssueTracking implements IssueTracking {
             return environmentVariables.getProperty(ThucydidesSystemProperty.JIRA_URL.getPropertyName())
                                          + "/browse/" + "{0}";
         } else {
-            return environmentVariables.getProperty(ThucydidesSystemProperty.ISSUE_TRACKER_URL.getPropertyName());
+            return environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_ISSUE_TRACKER_URL.getPropertyName());
         }
     }
 
@@ -36,7 +36,7 @@ public class SystemPropertiesIssueTracking implements IssueTracking {
             return environmentVariables.getProperty(ThucydidesSystemProperty.JIRA_URL.getPropertyName())
                     + "/browse/" + getJiraProjectSuffix() + "{0}";
         } else {
-            return environmentVariables.getProperty(ThucydidesSystemProperty.ISSUE_TRACKER_URL.getPropertyName());
+            return environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_ISSUE_TRACKER_URL.getPropertyName());
         }
     }
 

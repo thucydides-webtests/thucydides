@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ch.lambdaj.Lambda.convert;
-import static net.thucydides.core.ThucydidesSystemProperty.DRIVER_CAPABILITIES;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_DRIVER_CAPABILITIES;
 
 /**
  * A set of user-defined capabilities to be used to configure the WebDriver driver.
@@ -31,7 +31,7 @@ class CapabilitySet {
     public Map<String,Object> getCapabilities() {
         Map<String,Object> capabilitiesMap = Maps.newHashMap();
 
-        String specifiedCapabilities = environmentVariables.getProperty(DRIVER_CAPABILITIES);
+        String specifiedCapabilities = environmentVariables.getProperty(THUCYDIDES_DRIVER_CAPABILITIES);
         if (StringUtils.isNotEmpty(specifiedCapabilities)) {
             Iterable<String> capabilityValues = Splitter.on(CAPABILITY_SEPARATOR).trimResults().split(specifiedCapabilities);
             capabilitiesMap = addCapabilityMapValues(capabilityValues);

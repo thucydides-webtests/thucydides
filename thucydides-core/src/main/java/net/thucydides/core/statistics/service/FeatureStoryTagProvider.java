@@ -39,7 +39,7 @@ public class FeatureStoryTagProvider implements TagProvider, CoreTagProvider {
     private void addStoryTagIfPresent(TestOutcome testOutcome, Set<TestTag> tags) {
         Story story = testOutcome.getUserStory();
         if (story != null && shouldAddStoryTags()) {
-            String requirementType = environmentVariables.getProperty(ThucydidesSystemProperty.LOWEST_REQUIREMENT_TYPE, "story");
+            String requirementType = environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_LOWEST_REQUIREMENT_TYPE, "story");
             tags.add(TestTag.withName(story.getName()).andType(requirementType));
         }
     }

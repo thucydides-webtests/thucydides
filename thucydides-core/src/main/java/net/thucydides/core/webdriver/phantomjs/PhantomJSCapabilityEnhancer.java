@@ -18,35 +18,35 @@ public class PhantomJSCapabilityEnhancer {
     }
 
     public void enhanceCapabilities(DesiredCapabilities capabilities) {
-        if (environmentVariables.getProperty(ThucydidesSystemProperty.PHANTOMJS_PATH) != null) {
+        if (environmentVariables.getProperty(ThucydidesSystemProperty.PHANTOMJS_BINARY_PATH) != null) {
             capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
-                    environmentVariables.getProperty(ThucydidesSystemProperty.PHANTOMJS_PATH));
+                    environmentVariables.getProperty(ThucydidesSystemProperty.PHANTOMJS_BINARY_PATH));
         }
 
         ArrayList<String> cliArgs = Lists.newArrayList();
         setSecurityOptions(cliArgs);
-        if (StringUtils.isNotEmpty(ThucydidesSystemProperty.PROXY_URL.from(environmentVariables))) {
+        if (StringUtils.isNotEmpty(ThucydidesSystemProperty.THUCYDIDES_PROXY_HTTP.from(environmentVariables))) {
             setProxyOptions(cliArgs);
         }
-        if (StringUtils.isNotEmpty(ThucydidesSystemProperty.REMOTE_URL.from(environmentVariables))) {
+        if (StringUtils.isNotEmpty(ThucydidesSystemProperty.WEBDRIVER_REMOTE_URL.from(environmentVariables))) {
             setRemoteOptions(cliArgs);
         }
         capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cliArgs.toArray(new String[]{}));
     }
 
     private void setRemoteOptions(ArrayList<String> cliArgs) {
-        cliArgs.add("--webdriver-selenium-grid-hub=" + ThucydidesSystemProperty.REMOTE_URL.from(environmentVariables));
+        cliArgs.add("--webdriver-selenium-grid-hub=" + ThucydidesSystemProperty.WEBDRIVER_REMOTE_URL.from(environmentVariables));
         if (StringUtils.isNotEmpty(ThucydidesSystemProperty.PHANTOMJS_WEBDRIVER_PORT.from(environmentVariables))) {
             cliArgs.add("--webdriver=" + ThucydidesSystemProperty.PHANTOMJS_WEBDRIVER_PORT.from(environmentVariables));
         }
     }
 
     private void setProxyOptions(ArrayList<String> cliArgs) {
-        String proxyUrl = ThucydidesSystemProperty.PROXY_URL.from(environmentVariables);
-        String proxyPort = ThucydidesSystemProperty.PROXY_PORT.from(environmentVariables);
-        String proxyType = ThucydidesSystemProperty.PROXY_TYPE.from(environmentVariables);
-        String proxyUser = ThucydidesSystemProperty.PROXY_USER.from(environmentVariables);
-        String proxyPassword = ThucydidesSystemProperty.PROXY_PASSWORD.from(environmentVariables);
+        String proxyUrl = ThucydidesSystemProperty.THUCYDIDES_PROXY_HTTP.from(environmentVariables);
+        String proxyPort = ThucydidesSystemProperty.THUCYDIDES_PROXY_HTTP_PORT.from(environmentVariables);
+        String proxyType = ThucydidesSystemProperty.THUCYDIDES_PROXY_TYPE.from(environmentVariables);
+        String proxyUser = ThucydidesSystemProperty.THUCYDIDES_PROXY_USER.from(environmentVariables);
+        String proxyPassword = ThucydidesSystemProperty.THUCYDIDES_PROXY_PASSWORD.from(environmentVariables);
         if (StringUtils.isEmpty(proxyPort)) {
             cliArgs.add("--proxy=" + proxyUrl);
         } else {

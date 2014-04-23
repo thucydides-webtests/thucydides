@@ -90,7 +90,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         when:
             customReport.issueTrackerUrl = "http://my.issue.tracker"
         then:
-            1 * mockSystemProperties.setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL,"http://my.issue.tracker")
+            1 * mockSystemProperties.setValue(ThucydidesSystemProperty.THUCYDIDES_ISSUE_TRACKER_URL,"http://my.issue.tracker")
 
     }
 

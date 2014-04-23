@@ -18,6 +18,8 @@ import java.net.ServerSocket;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import static net.thucydides.core.webdriver.WebDriverFactory.getDriverFrom;
+
 public class BrowserMobFixtureService implements FixtureService {
 
     public static final int DEFAULT_PORT = 5555;
@@ -95,7 +97,7 @@ public class BrowserMobFixtureService implements FixtureService {
     }
 
     private boolean shouldActivateBrowserMobWithDriver(String filter, EnvironmentVariables environmentVariables) {
-        String currentDriver = environmentVariables.getProperty(ThucydidesSystemProperty.DRIVER);
+        String currentDriver = getDriverFrom(environmentVariables);
         List allowedBrowsers = Lists.newArrayList(Splitter.on(",").trimResults().split(filter.toLowerCase()));
         return StringUtils.isEmpty(currentDriver) || allowedBrowsers.contains(currentDriver.toLowerCase());
     }

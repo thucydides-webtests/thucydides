@@ -104,7 +104,7 @@ public abstract class HtmlReporter extends ThucydidesReporter {
     private void updateResourceDirectoryFromSystemPropertyIfDefined() {
 
         String systemDefinedResourceDirectory
-             = getEnvironmentVariables().getProperty(ThucydidesSystemProperty.REPORT_RESOURCE_PATH.getPropertyName());
+             = getEnvironmentVariables().getProperty(ThucydidesSystemProperty.THUCYDIDES_REPORT_RESOURCES.getPropertyName());
         if (systemDefinedResourceDirectory != null) {
             setResourceDirectory(systemDefinedResourceDirectory);
         }

@@ -131,7 +131,7 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
 
         Locale.setDefault(Locale.ENGLISH);
 
-        updateSystemProperty(ThucydidesSystemProperty.PROJECT_KEY.getPropertyName(), projectKey, Thucydides.getDefaultProjectKey());
+        updateSystemProperty(ThucydidesSystemProperty.THUCYDIDES_PROJECT_KEY.getPropertyName(), projectKey, Thucydides.getDefaultProjectKey());
 
         updateSystemProperty("thucydides.statistics.driver_class", statisticsDriver);
         updateSystemProperty("thucydides.statistics.url", statisticsUrl);

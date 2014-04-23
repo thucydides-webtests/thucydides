@@ -41,7 +41,7 @@ public class ReleaseManager {
     public ReleaseManager(EnvironmentVariables environmentVariables, ReportNameProvider reportNameProvider) {
         this.reportNameProvider = reportNameProvider;
         this.requirementsService = Injectors.getInjector().getInstance(RequirementsService.class);
-        String typeValues = ThucydidesSystemProperty.RELEASE_TYPES.from(environmentVariables, DEFAULT_RELEASE_TYPES);
+        String typeValues = ThucydidesSystemProperty.THUCYDIDES_RELEASE_TYPES.from(environmentVariables, DEFAULT_RELEASE_TYPES);
         releaseTypes = Splitter.on(",").trimResults().splitToList(typeValues);
     }
 

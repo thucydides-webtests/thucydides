@@ -10,9 +10,9 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.thucydides.core.ThucydidesSystemProperty.BATCH_COUNT;
-import static net.thucydides.core.ThucydidesSystemProperty.BATCH_NUMBER;
-import static net.thucydides.core.ThucydidesSystemProperty.BATCH_SIZE;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_BATCH_COUNT;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_BATCH_NUMBER;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_BATCH_SIZE;
 
 /**
  * Manages running test cases (i.e. test classes) in batches.
@@ -36,13 +36,13 @@ public class SystemVariableBasedBatchManager implements BatchManager {
     @Inject
     public SystemVariableBasedBatchManager(EnvironmentVariables environmentVariables) {
         this.batchCount = getBatchCountFrom(environmentVariables);
-        this.batchNumber = environmentVariables.getPropertyAsInteger(BATCH_NUMBER.getPropertyName(), 0);
+        this.batchNumber = environmentVariables.getPropertyAsInteger(THUCYDIDES_BATCH_NUMBER.getPropertyName(), 0);
     }
 
     private int getBatchCountFrom(EnvironmentVariables environmentVariables) {
-        int batchCountValue = environmentVariables.getPropertyAsInteger(BATCH_SIZE.getPropertyName(), 0);
+        int batchCountValue = environmentVariables.getPropertyAsInteger(THUCYDIDES_BATCH_SIZE.getPropertyName(), 0);
         if (batchCountValue == 0) {
-            batchCountValue = environmentVariables.getPropertyAsInteger(BATCH_COUNT.getPropertyName(), 0);
+            batchCountValue = environmentVariables.getPropertyAsInteger(THUCYDIDES_BATCH_COUNT.getPropertyName(), 0);
         }
         return batchCountValue;
     }

@@ -147,7 +147,7 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
     @Test
     public void a_batch_runner_can_be_overridden_using_system_property() throws InitializationError {
 
-//        environmentVariables.setProperty(ThucydidesSystemProperty.BATCH_STRATEGY.getPropertyName(), BatchStrategy.DIVIDE_BY_TEST_COUNT.name());
+//        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_BATCH_STRATEGY.getPropertyName(), BatchStrategy.DIVIDE_BY_TEST_COUNT.name());
         environmentVariables.setProperty("thucydides.batch.strategy", "DIVIDE_BY_TEST_COUNT");
 
         ThucydidesRunner  runner = getTestRunnerUsing(SuccessfulSingleTestScenario.class);

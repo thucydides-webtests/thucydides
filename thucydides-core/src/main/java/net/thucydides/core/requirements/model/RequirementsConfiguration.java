@@ -21,7 +21,7 @@ public class RequirementsConfiguration {
     }
 
     public List<String> getRequirementTypes() {
-        String requirementTypes = ThucydidesSystemProperty.REQUIREMENT_TYPES.from(environmentVariables);
+        String requirementTypes = ThucydidesSystemProperty.THUCYDIDES_REQUIREMENT_TYPES.from(environmentVariables);
         if (StringUtils.isNotEmpty(requirementTypes)) {
             Iterator<String> types = Splitter.on(",").trimResults().split(requirementTypes).iterator();
             return Lists.newArrayList(types);
@@ -31,8 +31,8 @@ public class RequirementsConfiguration {
     }
 
     public String getDefaultRootDirectory() {
-        if (ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.isDefinedIn(environmentVariables)) {
-            return ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.from(environmentVariables);
+        if (ThucydidesSystemProperty.THUCYDIDES_ANNOTATED_REQUIREMENTS_DIR.isDefinedIn(environmentVariables)) {
+            return ThucydidesSystemProperty.THUCYDIDES_ANNOTATED_REQUIREMENTS_DIR.from(environmentVariables);
         }
         return DEFAULT_ROOT_DIRECTORY;
     }

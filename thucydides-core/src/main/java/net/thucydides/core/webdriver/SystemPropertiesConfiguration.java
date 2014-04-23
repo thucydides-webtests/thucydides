@@ -10,9 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 
-import static net.thucydides.core.ThucydidesSystemProperty.BASE_URL;
+import static net.thucydides.core.ThucydidesSystemProperty.WEBDRIVER_BASE_URL;
 import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_STORE_HTML_SOURCE;
 import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_TAKE_SCREENSHOTS;
+import static net.thucydides.core.webdriver.WebDriverFactory.getDriverFrom;
 
 /**
  * Centralized configuration of the test runner. You can configure the output
@@ -26,7 +27,7 @@ public class SystemPropertiesConfiguration implements Configuration {
      * Use the 'webdriver.driver' property to tell Thucydides what browser to
      * run the tests in.
      */
-    public static final String WEBDRIVER_DRIVER = ThucydidesSystemProperty.DRIVER.getPropertyName();
+    public static final String WEBDRIVER_DRIVER = ThucydidesSystemProperty.WEBDRIVER_DRIVER.getPropertyName();
 
     /**
      * The default browser is Firefox.
@@ -44,7 +45,7 @@ public class SystemPropertiesConfiguration implements Configuration {
      * Use this property to define the output directory in which reports will be
      * stored.
      */
-    public static final String OUTPUT_DIRECTORY_PROPERTY = ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName();
+    public static final String OUTPUT_DIRECTORY_PROPERTY = ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName();
 
     private static final String MAVEN_BUILD_DIRECTORY = "project.build.directory";
 
@@ -112,7 +113,8 @@ public class SystemPropertiesConfiguration implements Configuration {
      * Get the currently-configured browser type.
      */
     public SupportedWebDriver getDriverType() {
-        String driverType = environmentVariables.getProperty(WEBDRIVER_DRIVER, DEFAULT_WEBDRIVER_DRIVER);
+
+        String driverType = getDriverFrom(environmentVariables, DEFAULT_WEBDRIVER_DRIVER);
         return lookupSupportedDriverTypeFor(driverType);
     }
 
@@ -144,7 +146,7 @@ public class SystemPropertiesConfiguration implements Configuration {
     public int getStepDelay() {
         int stepDelay = 0;
 
-        String stepDelayValue = getEnvironmentVariables().getProperty(ThucydidesSystemProperty.STEP_DELAY.getPropertyName());
+        String stepDelayValue = getEnvironmentVariables().getProperty(ThucydidesSystemProperty.THUCYDIDES_STEP_DELAY.getPropertyName());
         if ((stepDelayValue != null) && (!stepDelayValue.isEmpty())) {
             stepDelay = Integer.valueOf(stepDelayValue);
         }
@@ -155,7 +157,7 @@ public class SystemPropertiesConfiguration implements Configuration {
     public int getElementTimeout() {
         int elementTimeout = DEFAULT_ELEMENT_TIMEOUT_SECONDS;
 
-        String stepDelayValue = getEnvironmentVariables().getProperty(ThucydidesSystemProperty.ELEMENT_TIMEOUT.getPropertyName());
+        String stepDelayValue = getEnvironmentVariables().getProperty(ThucydidesSystemProperty.THUCYDIDES_TIMEOUT.getPropertyName());
         if ((stepDelayValue != null) && (!stepDelayValue.isEmpty())) {
             elementTimeout = Integer.valueOf(stepDelayValue);
         }
@@ -165,7 +167,7 @@ public class SystemPropertiesConfiguration implements Configuration {
 
     public boolean getUseUniqueBrowser() {
         boolean uniqueBrowser = false;
-        String uniqueBrowserValue = getEnvironmentVariables().getProperty(ThucydidesSystemProperty.UNIQUE_BROWSER.getPropertyName());
+        String uniqueBrowserValue = getEnvironmentVariables().getProperty(ThucydidesSystemProperty.THUCYDIDES_USE_UNIQUE_BROWSER.getPropertyName());
         if (uniqueBrowserValue != null) {
             uniqueBrowser = Boolean.valueOf(uniqueBrowserValue);
         }
@@ -191,16 +193,16 @@ public class SystemPropertiesConfiguration implements Configuration {
     }
 
     public double getEstimatedAverageStepCount() {
-        return getEnvironmentVariables().getPropertyAsInteger(ThucydidesSystemProperty.ESTIMATED_AVERAGE_STEP_COUNT.getPropertyName(),
+        return getEnvironmentVariables().getPropertyAsInteger(ThucydidesSystemProperty.THUCYDIDES_ESTIMATED_AVERAGE_STEP_COUNT.getPropertyName(),
                 DEFAULT_ESTIMATED_AVERAGE_STEP_COUNT);
     }
 
     public boolean onlySaveFailingScreenshots() {
-        return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), false);
+        return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.THUCYDIDES_ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), false);
     }
 
     public boolean takeVerboseScreenshots() {
-        return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.VERBOSE_SCREENSHOTS.getPropertyName(), false);
+        return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.THUCYDIDES_VERBOSE_SCREENSHOTS.getPropertyName(), false);
     }
 
     public Optional<TakeScreenshots> getScreenshotLevel() {
@@ -232,7 +234,7 @@ public class SystemPropertiesConfiguration implements Configuration {
 
     public int getRestartFrequency() {
         return environmentVariables.getPropertyAsInteger(
-                        ThucydidesSystemProperty.RESTART_BROWSER_FREQUENCY.getPropertyName(),0);
+                        ThucydidesSystemProperty.THUCYDIDES_RESTART_BROWSER_FREQUENCY.getPropertyName(),0);
 
     }
 
@@ -247,7 +249,7 @@ public class SystemPropertiesConfiguration implements Configuration {
      * It is also the base URL used to build relative paths.
      */
     public String getBaseUrl() {
-        return environmentVariables.getProperty(BASE_URL.getPropertyName(), defaultBaseUrl);
+        return environmentVariables.getProperty(WEBDRIVER_BASE_URL.getPropertyName(), defaultBaseUrl);
     }
     /**
      * Transform a driver type into the SupportedWebDriver enum. Driver type can

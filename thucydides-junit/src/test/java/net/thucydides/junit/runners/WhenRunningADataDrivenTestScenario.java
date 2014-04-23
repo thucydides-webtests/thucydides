@@ -174,7 +174,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void a_separate_xml_report_should_be_generated_for_each_scenario() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                                          outputDirectory.getAbsolutePath());
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
@@ -189,7 +189,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void a_separate_xml_report_should_be_generated_for_each_scenario_when_using_data_from_a_CSV_file() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleCSVDataDrivenScenario.class);
@@ -204,7 +204,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void xml_report_contents_should_reflect_the_test_data() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
@@ -222,7 +222,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void xml_report_contents_should_reflect_the_test_data_from_the_csv_file() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleCSVDataDrivenScenario.class);
@@ -262,7 +262,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_test_data_is_provided_for_a_step_a_single_test_should_be_executed() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                                          outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(SamplePassingScenarioWithTestSpecificData.class);
@@ -277,7 +277,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_a_step_fails_for_a_row_the_other_rows_should_be_executed() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataAndAFailingTestSample.class);
@@ -297,7 +297,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_a_step_is_skipped_for_a_row_the_other_rows_should_be_executed() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataAndAFailingTestSample.class);
@@ -318,7 +318,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void browser_should_be_restarted_periodically_if_requested() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(), outputDirectory.getAbsolutePath());
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(), outputDirectory.getAbsolutePath());
         environmentVariables.setProperty("thucydides.restart.browser.frequency","5");
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleSingleSessionDataDrivenScenario.class);
@@ -331,7 +331,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_a_step_fails_for_a_row_the_other_rows_should_not_be_skipped() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataAndAFailingTestSample.class);
@@ -353,7 +353,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_a_parameterized_test_fails_outside_a_step_a_failure_should_be_recorded() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                 outputDirectory.getAbsolutePath());
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenarioWithExternalFailure.class);
@@ -371,7 +371,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_a_step_fails_with_an_error_for_a_row_the_other_rows_should_be_executed() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataAndABreakingTestSample.class);
@@ -508,7 +508,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_test_data_is_provided_for_a_step_then_a_step_should_be_reported_for_each_data_row() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataSample.class);
@@ -528,7 +528,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_test_data_is_provided_for_a_nested_step_then_a_step_should_be_reported_for_each_data_row() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                 outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithNestedTestSpecificDataSample.class);
@@ -548,7 +548,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_test_data_is_provided_for_a_deeply_nested_step_then_a_step_should_be_reported_for_each_data_row() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                 outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithDeeplyNestedTestSpecificDataSample.class);
@@ -567,7 +567,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void test_step_data_should_appear_in_the_step_titles() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
         ThucydidesRunner runner = getNormalTestRunnerUsing(ScenarioWithTestSpecificDataSample.class);
@@ -594,7 +594,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void running_a_simple_parameterized_test_should_produce_an_outcome_per_data_row() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                 outputDirectory.getAbsolutePath());
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SimpleSuccessfulParametrizedTestSample.class);
@@ -611,7 +611,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void when_the_Concurrent_annotation_is_used_tests_should_be_run_in_parallel() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                             outputDirectory.getAbsolutePath());
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleParallelDataDrivenScenario.class);
@@ -746,7 +746,7 @@ public class WhenRunningADataDrivenTestScenario {
     public void a_separate_html_report_should_be_generated_from_each_scenario() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.OUTPUT_DIRECTORY.getPropertyName(),
+        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
                                          outputDirectory.getAbsolutePath());
 
         ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);

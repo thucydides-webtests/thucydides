@@ -1,9 +1,10 @@
 package net.thucydides.core.webdriver;
 
 import com.google.common.base.Preconditions;
-import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.util.EnvironmentVariables;
+
+import static net.thucydides.core.webdriver.WebDriverFactory.getDriverFrom;
 
 /**
  * A description goes here.
@@ -20,7 +21,7 @@ public class ProvidedDriverConfiguration {
     }
 
     public boolean isProvided() {
-        return ThucydidesSystemProperty.DRIVER.from(environmentVariables,"").equals("provided");
+        return getDriverFrom(environmentVariables).equals("provided");
     }
 
     public DriverSource getDriverSource() {
@@ -39,6 +40,6 @@ public class ProvidedDriverConfiguration {
     }
 
     public String getDriverName() {
-        return environmentVariables.getProperty(ThucydidesSystemProperty.PROVIDED_DRIVER_TYPE);
+        return environmentVariables.getProperty(ThucydidesSystemProperty.WEBDRIVER_PROVIDED_TYPE);
     }
 }

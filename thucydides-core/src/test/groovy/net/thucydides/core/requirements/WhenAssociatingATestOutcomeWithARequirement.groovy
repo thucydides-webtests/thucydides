@@ -82,7 +82,7 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
     def "Should find the direct parent requirement of a test outcome from an annotated story"(){
         given: "We are using the annotated provider"
             def vars = new MockEnvironmentVariables()
-            vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, "annotatedstories")
+            vars.setProperty(ThucydidesSystemProperty.THUCYDIDES_ANNOTATED_REQUIREMENTS_DIR.propertyName, "annotatedstories")
             RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
         when: "We load requirements we have an annotated test"
             def story = new Story(Test1.class)

@@ -59,8 +59,8 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
 
     public static String getDefaultRootDirectoryPathFrom(EnvironmentVariables environmentVariables) {
 
-        if (ThucydidesSystemProperty.REQUIREMENTS_DIRECTORY.isDefinedIn(environmentVariables)) {
-            return ThucydidesSystemProperty.REQUIREMENTS_DIRECTORY.from(environmentVariables);
+        if (ThucydidesSystemProperty.THUCYDIDES_REQUIREMENTS_DIR.isDefinedIn(environmentVariables)) {
+            return ThucydidesSystemProperty.THUCYDIDES_REQUIREMENTS_DIR.from(environmentVariables);
         }
         if (ThucydidesSystemProperty.THUCYDIDES_TEST_ROOT.isDefinedIn(environmentVariables)) {
             return ThucydidesSystemProperty.THUCYDIDES_TEST_ROOT.from(environmentVariables);
@@ -475,7 +475,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     }
 
     public Optional<String> getResourceDirectory() {
-        if (ThucydidesSystemProperty.REQUIREMENTS_DIRECTORY.isDefinedIn(environmentVariables)) {
+        if (ThucydidesSystemProperty.THUCYDIDES_REQUIREMENTS_DIR.isDefinedIn(environmentVariables)) {
             return Optional.absent();
         } else {
             return Optional.of(DEFAULT_RESOURCE_DIRECTORY);

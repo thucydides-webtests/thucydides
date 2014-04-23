@@ -89,12 +89,13 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
+                <version>2.9.1</version>
                 <configuration>
-                    <source>1.5</source>
+                    <source>1.7</source>
                     <aggregate>true</aggregate>
                     <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
                     <docletArtifact>
@@ -110,6 +111,7 @@
                         -collpackages java.util.*
                         -qualify
                     </additionalparam>
+                    <additionalparam>-Xdoclint:none</additionalparam>
                     <useStandardDocletOptions>true</useStandardDocletOptions>
                 </configuration>
             </plugin>
@@ -393,9 +395,9 @@
                                     <groupId>org.apache.maven.plugins</groupId>
                                     <artifactId>maven-javadoc-plugin
                                     </artifactId>
-                                    <version>2.9</version>
+                                    <version>2.9.1</version>
                                     <configuration>
-                                        <source>1.5</source>
+                                        <source>1.7</source>
                                         <aggregate>true</aggregate>
                                         <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
                                         <docletArtifact>
@@ -410,6 +412,7 @@
                                             java.util.*
                                             -qualify
                                         </additionalparam>
+                                        <additionalparam>-Xdoclint:none</additionalparam>
                                         <useStandardDocletOptions>true</useStandardDocletOptions>
                                     </configuration>
                                 </plugin>

@@ -28,7 +28,7 @@ public class FilePathParser {
         localizedPath = injectVariable(localizedPath, "user.dir", environmentVariables.getProperty("user.dir"));
         localizedPath = injectVariable(localizedPath, "APPDATA", environmentVariables.getValue("APPDATA"));
         localizedPath = injectVariable(localizedPath, "DATADIR",
-                                        ThucydidesSystemProperty.DATA_DIRECTORY.from(environmentVariables));
+                                        ThucydidesSystemProperty.THUCYDIDES_DATA_DIRECTORY.from(environmentVariables));
 
         return localizedPath;
     }

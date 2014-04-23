@@ -23,7 +23,7 @@ public class ElementLocatorFactorySelector {
     }
 
     public ElementLocatorFactory getLocatorFor(WebDriver driver) {
-        String locatorType = ThucydidesSystemProperty.LOCATOR_FACTORY.from(environmentVariables,"SmartElementLocatorFactory");
+        String locatorType = ThucydidesSystemProperty.THUCYDIDES_LOCATOR_FACTORY.from(environmentVariables,"SmartElementLocatorFactory");
         if (locatorType.equals("AjaxElementLocatorFactory")) {
             return new AjaxElementLocatorFactory(driver, timeoutInSeconds);
         } else if (locatorType.equals("DefaultElementLocatorFactory")) {

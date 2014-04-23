@@ -55,7 +55,7 @@ public class TestCountListener implements StepListener {
     }
 
     private LoggingLevel getLoggingLevel() {
-        String logLevel = ThucydidesSystemProperty.LOGGING.from(environmentVariables, LoggingLevel.NORMAL.name());
+        String logLevel = ThucydidesSystemProperty.THUCYDIDES_LOGGING.from(environmentVariables, LoggingLevel.NORMAL.name());
 
         return LoggingLevel.valueOf(logLevel);
     }

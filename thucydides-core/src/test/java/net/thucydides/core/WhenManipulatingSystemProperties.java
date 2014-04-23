@@ -32,7 +32,7 @@ public class WhenManipulatingSystemProperties {
     @Test
     public void should_be_able_to_read_a_numerical_thucydides_system_property() {
         System.setProperty("thucycides.step.delay","10");
-        Integer storedValue = ThucydidesSystemProperties.getProperties().getIntegerValue(ThucydidesSystemProperty.STEP_DELAY, 0);
+        Integer storedValue = ThucydidesSystemProperties.getProperties().getIntegerValue(ThucydidesSystemProperty.THUCYDIDES_STEP_DELAY, 0);
 
         assertThat(storedValue, is(10));
     }
@@ -40,7 +40,7 @@ public class WhenManipulatingSystemProperties {
     @Test
     public void should_return_default_value_if_numerical_system_property_not_provided() {
         System.clearProperty("thucycides.step.delay");
-        Integer storedValue = ThucydidesSystemProperties.getProperties().getIntegerValue(ThucydidesSystemProperty.STEP_DELAY, 20);
+        Integer storedValue = ThucydidesSystemProperties.getProperties().getIntegerValue(ThucydidesSystemProperty.THUCYDIDES_STEP_DELAY, 20);
 
         assertThat(storedValue, is(20));
     }
@@ -48,7 +48,7 @@ public class WhenManipulatingSystemProperties {
     @Test
     public void should_be_able_to_read_a_boolean_thucydides_system_property() {
         System.setProperty("thucycides.use.unique.browser","true");
-        Boolean storedValue = ThucydidesSystemProperties.getProperties().getBooleanValue (ThucydidesSystemProperty.UNIQUE_BROWSER, true);
+        Boolean storedValue = ThucydidesSystemProperties.getProperties().getBooleanValue (ThucydidesSystemProperty.THUCYDIDES_USE_UNIQUE_BROWSER, true);
 
         assertThat(storedValue, is(true));
     }
@@ -56,7 +56,7 @@ public class WhenManipulatingSystemProperties {
     @Test
     public void should_be_able_to_read_a_false_boolean_thucydides_system_property() {
         System.setProperty("thucydides.use.unique.browser","false");
-        Boolean storedValue = ThucydidesSystemProperties.getProperties().getBooleanValue (ThucydidesSystemProperty.UNIQUE_BROWSER, true);
+        Boolean storedValue = ThucydidesSystemProperties.getProperties().getBooleanValue (ThucydidesSystemProperty.THUCYDIDES_USE_UNIQUE_BROWSER, true);
 
         assertThat(storedValue, is(false));
     }
@@ -64,7 +64,7 @@ public class WhenManipulatingSystemProperties {
     @Test
     public void should_be_able_to_read_a_boolean_thucydides_system_property_using_the_default_value() {
         System.clearProperty("thucycides.use.unique.browser");
-        Boolean storedValue = ThucydidesSystemProperties.getProperties().getBooleanValue (ThucydidesSystemProperty.UNIQUE_BROWSER, true);
+        Boolean storedValue = ThucydidesSystemProperties.getProperties().getBooleanValue (ThucydidesSystemProperty.THUCYDIDES_USE_UNIQUE_BROWSER, true);
 
         assertThat(storedValue, is(true));
     }

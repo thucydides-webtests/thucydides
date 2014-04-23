@@ -17,7 +17,7 @@ class WhenGeneratingRequirementsReportData extends Specification {
     def requirementsProviders
     def setup() {
         def vars = new MockEnvironmentVariables()
-        vars.setProperty(ThucydidesSystemProperty.ANNOTATED_REQUIREMENTS_DIRECTORY.propertyName, ROOT_DIRECTORY)
+        vars.setProperty(ThucydidesSystemProperty.THUCYDIDES_ANNOTATED_REQUIREMENTS_DIR.propertyName, ROOT_DIRECTORY)
         requirementsProviders = [new FileSystemRequirementsTagProvider(), new PackageAnnotationBasedTagProvider(vars)]
     }
 

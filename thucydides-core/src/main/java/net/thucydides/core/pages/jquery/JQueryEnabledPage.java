@@ -33,7 +33,7 @@ public class JQueryEnabledPage {
 
     public boolean isJQueryEnabled() {
         boolean jqueryIntegrationEnabled =
-                    Boolean.valueOf(ThucydidesSystemProperty.JQUERY_INTEGRATION
+                    Boolean.valueOf(ThucydidesSystemProperty.THUCYDIDES_JQUERY_INTEGRATION
                                                             .from(environmentVariables,"true"));
 
         if (jqueryIntegrationEnabled && javascriptIsSupportedIn(driver)) {
@@ -70,7 +70,7 @@ public class JQueryEnabledPage {
     }
 
     public void injectJQueryPlugins() {
-        if (environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.ACTIVTE_HIGHLIGHTING.getPropertyName(), false)) {
+        if (environmentVariables.getPropertyAsBoolean(ThucydidesSystemProperty.THUCYDIDES_ACTIVTE_HIGHLIGHTING.getPropertyName(), false)) {
             executeScriptFrom("jquery/jquery-thucydides-plugin.js");
         }
     }

@@ -1,6 +1,5 @@
 package net.thucydides.core.reports.html;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Key;
@@ -130,7 +129,7 @@ public class Formatter {
 
 
     public String renderDescription(final String text) {
-        String format = environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_NARRATIVE_FORMAT,"");
+        String format = environmentVariables.getProperty(ThucydidesSystemProperty.NARRATIVE_FORMAT,"");
         if (isRenderedHtml(text)) {
             return text;
         } else if (format.equalsIgnoreCase(ASCIIDOC)) {

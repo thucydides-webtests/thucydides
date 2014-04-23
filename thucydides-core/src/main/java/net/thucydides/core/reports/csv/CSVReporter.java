@@ -40,11 +40,11 @@ public class CSVReporter extends ThucydidesReporter {
     public CSVReporter(File outputDirectory, EnvironmentVariables environmentVariables) {
         this.setOutputDirectory(outputDirectory);
         this.extraColumns = extraColumnsDefinedIn(environmentVariables);
-        this.encoding = ThucydidesSystemProperty.REPORT_ENCODING.from(environmentVariables, java.nio.charset.Charset.defaultCharset().name());
+        this.encoding = ThucydidesSystemProperty.THUCYDIDES_REPORT_ENCODING.from(environmentVariables, java.nio.charset.Charset.defaultCharset().name());
     }
 
     private List<String> extraColumnsDefinedIn(EnvironmentVariables environmentVariables) {
-        String columns = ThucydidesSystemProperty.THUCYDIDES_EXTRA_COLUMNS.from(environmentVariables,"");
+        String columns = ThucydidesSystemProperty.THUCYDIDES_CSV_EXTRA_COLUMNS.from(environmentVariables,"");
         return ImmutableList.copyOf(Splitter.on(",").omitEmptyStrings().trimResults().split(columns));
     }
 

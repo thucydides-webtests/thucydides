@@ -134,7 +134,7 @@ public class FileResources {
     private long getRetryTimeOut() {
 
         ThucydidesSystemProperties systemProperties = ThucydidesSystemProperties.getProperties();
-        int timeout = systemProperties.getIntegerValue(ThucydidesSystemProperty.FILE_IO_RETRY_TIMEOUT, DEFAULT_FILE_IO_RETRY_TIMEOUT);
+        int timeout = systemProperties.getIntegerValue(ThucydidesSystemProperty.THUCYDIDES_FILE_IO_RETRY_TIMEOUT, DEFAULT_FILE_IO_RETRY_TIMEOUT);
         return timeout * 1000; //milliseconds
     }
 

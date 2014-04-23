@@ -954,7 +954,7 @@ public class TestOutcome {
     }
 
     private String getProjectPrefix() {
-        return ThucydidesSystemProperty.PROJECT_KEY.from(getEnvironmentVariables());
+        return ThucydidesSystemProperty.THUCYDIDES_PROJECT_KEY.from(getEnvironmentVariables());
     }
 
     public String getQualifiedMethodName() {

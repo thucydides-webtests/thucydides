@@ -1,8 +1,6 @@
 package net.thucydides.core.webdriver;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.fixtureservices.FixtureException;
@@ -215,8 +213,8 @@ public class WebDriverFactory {
     }
 
     private void setImplicitTimeoutsIfSpecified(WebDriver driver) {
-        if (ThucydidesSystemProperty.TIMEOUTS_IMPLICIT_WAIT.isDefinedIn(environmentVariables)) {
-            int timeout = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.TIMEOUTS_IMPLICIT_WAIT
+        if (ThucydidesSystemProperty.WEBDRIVER_TIMEOUTS_IMPLICITLYWAIT.isDefinedIn(environmentVariables)) {
+            int timeout = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.WEBDRIVER_TIMEOUTS_IMPLICITLYWAIT
                                                                                             .getPropertyName(),0);
 
             driver.manage().timeouts().implicitlyWait(timeout, TimeUnit.MILLISECONDS);
@@ -224,7 +222,7 @@ public class WebDriverFactory {
     }
 
     private boolean shouldUseARemoteDriver() {
-        return ThucydidesSystemProperty.REMOTE_URL.isDefinedIn(environmentVariables);
+        return ThucydidesSystemProperty.WEBDRIVER_REMOTE_URL.isDefinedIn(environmentVariables);
     }
 
     private WebDriver newDriverInstanceFrom(Class<? extends WebDriver> driverClass) throws IllegalAccessException, InstantiationException {
@@ -243,7 +241,7 @@ public class WebDriverFactory {
     }
 
     private WebDriver buildRemoteDriver() throws MalformedURLException {
-        String remoteUrl = ThucydidesSystemProperty.REMOTE_URL.from(environmentVariables);
+        String remoteUrl = ThucydidesSystemProperty.WEBDRIVER_REMOTE_URL.from(environmentVariables);
         return webdriverInstanceFactory.newRemoteDriver(new URL(remoteUrl), buildRemoteCapabilities());
     }
 
@@ -263,9 +261,22 @@ public class WebDriverFactory {
         return driver;
     }
 
+    public static String getDriverFrom(EnvironmentVariables environmentVariables, String defaultDriver) {
+        String driver = getDriverFrom(environmentVariables);
+        return (driver != null) ? driver : defaultDriver;
+    }
+
+    public static String getDriverFrom(EnvironmentVariables environmentVariables) {
+        String driver = ThucydidesSystemProperty.WEBDRIVER_DRIVER.from(environmentVariables);
+        if (driver == null) {
+            driver = ThucydidesSystemProperty.DRIVER.from(environmentVariables);
+        }
+        return driver;
+    }
+
     private Capabilities findSaucelabsCapabilities() {
 
-        String driver = ThucydidesSystemProperty.DRIVER.from(environmentVariables);
+        String driver = getDriverFrom(environmentVariables);
         DesiredCapabilities capabilities = capabilitiesForDriver(driver);
 
         configureBrowserVersion(capabilities);
@@ -360,9 +371,9 @@ public class WebDriverFactory {
     }
 
     private Capabilities buildRemoteCapabilities() {
-        String driver = ThucydidesSystemProperty.REMOTE_DRIVER.from(environmentVariables);
+        String driver = ThucydidesSystemProperty.WEBDRIVER_REMOTE_DRIVER.from(environmentVariables);
         if (driver == null) {
-            driver = ThucydidesSystemProperty.DRIVER.from(environmentVariables);
+            driver = getDriverFrom(environmentVariables);
         }
         return capabilitiesForDriver(driver);
     }
@@ -431,7 +442,7 @@ public class WebDriverFactory {
     }
 
     private DesiredCapabilities remoteCapabilities() {
-        String remoteBrowser = ThucydidesSystemProperty.REMOTE_DRIVER.from(environmentVariables, "firefox");
+        String remoteBrowser = ThucydidesSystemProperty.WEBDRIVER_REMOTE_DRIVER.from(environmentVariables, "firefox");
         DesiredCapabilities capabilities = realBrowserCapabilities(driverTypeFor(remoteBrowser));
         capabilities.setCapability("idle-timeout",EXTRA_TIME_TO_TAKE_SCREENSHOTS);
 
@@ -440,12 +451,12 @@ public class WebDriverFactory {
         capabilities.setCapability("record-screenshots", recordScreenshotsInSaucelabs);
 
 
-        if (environmentVariables.getProperty(ThucydidesSystemProperty.REMOTE_OS) != null) {
-            capabilities.setCapability("platform", Platform.valueOf(environmentVariables.getProperty(ThucydidesSystemProperty.REMOTE_OS)));
+        if (environmentVariables.getProperty(ThucydidesSystemProperty.WEBDRIVER_REMOTE_OS) != null) {
+            capabilities.setCapability("platform", Platform.valueOf(environmentVariables.getProperty(ThucydidesSystemProperty.WEBDRIVER_REMOTE_OS)));
         }
 
-        if (environmentVariables.getProperty(ThucydidesSystemProperty.REMOTE_BROWSER_VERSION) != null) {
-            capabilities.setCapability("version", Platform.valueOf(environmentVariables.getProperty(ThucydidesSystemProperty.REMOTE_BROWSER_VERSION)));
+        if (environmentVariables.getProperty(ThucydidesSystemProperty.WEBDRIVER_REMOTE_BROWSER_VERSION) != null) {
+            capabilities.setCapability("version", Platform.valueOf(environmentVariables.getProperty(ThucydidesSystemProperty.WEBDRIVER_REMOTE_BROWSER_VERSION)));
         }
 
         return capabilities;
@@ -507,9 +518,9 @@ public class WebDriverFactory {
     }
 
     private void updateChromePathIfSpecifiedIn(EnvironmentVariables environmentVariables) {
-        String environmentDefinedChromeDriverPath = environmentVariables.getProperty(ThucydidesSystemProperty.CHROME_DRIVER_PATH);
+        String environmentDefinedChromeDriverPath = environmentVariables.getProperty(ThucydidesSystemProperty.WEBDRIVER_CHROME_DRIVER);
         if (StringUtils.isNotEmpty(environmentDefinedChromeDriverPath)) {
-            System.setProperty(ThucydidesSystemProperty.CHROME_DRIVER_PATH.toString(), environmentDefinedChromeDriverPath);
+            System.setProperty(ThucydidesSystemProperty.WEBDRIVER_CHROME_DRIVER.toString(), environmentDefinedChromeDriverPath);
         }
     }
 
@@ -544,7 +555,7 @@ public class WebDriverFactory {
     }
 
     private Dimension getRequestedBrowserSize() {
-        int height = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.SNAPSHOT_HEIGHT, DEFAULT_HEIGHT);
+        int height = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.THUCYDIDES_BROWSER_HEIGHT, DEFAULT_HEIGHT);
         int width = environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.SNAPSHOT_WIDTH, DEFAULT_WIDTH);
         return new Dimension(width, height);
     }
@@ -559,7 +570,7 @@ public class WebDriverFactory {
 
     private boolean browserDimensionsSpecified() {
         String snapshotWidth = environmentVariables.getProperty(ThucydidesSystemProperty.SNAPSHOT_WIDTH);
-        String snapshotHeight = environmentVariables.getProperty(ThucydidesSystemProperty.SNAPSHOT_HEIGHT);
+        String snapshotHeight = environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_BROWSER_HEIGHT);
         return (snapshotWidth != null) || (snapshotHeight != null);
     }
 
@@ -657,7 +668,7 @@ public class WebDriverFactory {
     }
 
     protected FirefoxProfile buildFirefoxProfile() {
-        String profileName = ThucydidesSystemProperty.FIREFOX_PROFILE.from(environmentVariables);
+        String profileName = ThucydidesSystemProperty.WEBDRIVER_FIREFOX_PROFILE.from(environmentVariables);
         FilePathParser parser = new FilePathParser(environmentVariables);
         DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
         if (StringUtils.isNotEmpty(profileName)) {
@@ -693,7 +704,7 @@ public class WebDriverFactory {
     }
 
     private boolean shouldEnableNativeEvents() {
-        return Boolean.valueOf(ThucydidesSystemProperty.NATIVE_EVENTS.from(environmentVariables,"true"));
+        return Boolean.valueOf(ThucydidesSystemProperty.THUCYDIDES_NATIVE_EVENTS.from(environmentVariables,"true"));
     }
 
     private void activateProxyFor(FirefoxProfile profile, FirefoxProfileEnhancer firefoxProfileEnhancer) {
@@ -703,7 +714,7 @@ public class WebDriverFactory {
     }
 
     private String getProxyPortFromEnvironmentVariables() {
-        return environmentVariables.getProperty(ThucydidesSystemProperty.PROXY_PORT.getPropertyName());
+        return environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_PROXY_HTTP_PORT.getPropertyName());
     }
 
     private boolean shouldActivateProxy() {
@@ -712,7 +723,7 @@ public class WebDriverFactory {
     }
 
     private String getProxyUrlFromEnvironmentVariables() {
-        return environmentVariables.getProperty(ThucydidesSystemProperty.PROXY_URL.getPropertyName());
+        return environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_PROXY_HTTP.getPropertyName());
     }
 
     private FirefoxProfile getProfileFrom(final String profileName) {

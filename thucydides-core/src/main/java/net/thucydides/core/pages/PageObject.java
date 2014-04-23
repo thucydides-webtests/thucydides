@@ -126,7 +126,7 @@ public abstract class PageObject {
     }
 
     protected int waitForTimeout() {
-        return environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.TIMEOUTS_IMPLICIT_WAIT, WAIT_FOR_TIMEOUT);
+        return environmentVariables.getPropertyAsInteger(ThucydidesSystemProperty.WEBDRIVER_TIMEOUTS_IMPLICITLYWAIT, WAIT_FOR_TIMEOUT);
 
     }
 
@@ -147,7 +147,7 @@ public abstract class PageObject {
     }
 
     private boolean isDefinedRemoteUrl() {
-        return ThucydidesSystemProperty.REMOTE_URL.isDefinedIn(pages.getConfiguration().getEnvironmentVariables());
+        return ThucydidesSystemProperty.WEBDRIVER_REMOTE_URL.isDefinedIn(pages.getConfiguration().getEnvironmentVariables());
     }
 
     private void setupPageUrls() {

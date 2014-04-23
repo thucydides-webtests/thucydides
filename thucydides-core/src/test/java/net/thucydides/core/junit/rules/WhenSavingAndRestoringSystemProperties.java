@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 public class WhenSavingAndRestoringSystemProperties {
 
-    private static final String SYSTEM_PROPERTY = ThucydidesSystemProperty.REPORT_RESOURCE_PATH.getPropertyName();
+    private static final String SYSTEM_PROPERTY = ThucydidesSystemProperty.THUCYDIDES_REPORT_RESOURCES.getPropertyName();
     @Mock
     Statement statement;
 
@@ -74,9 +74,9 @@ public class WhenSavingAndRestoringSystemProperties {
 
         String originalIssueTracker = new SystemPropertiesIssueTracking(new SystemEnvironmentVariables()).getIssueTrackerUrl();
 
-        ThucydidesSystemProperties.getProperties().setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, "http://arbitrary.issue.tracker");
+        ThucydidesSystemProperties.getProperties().setValue(ThucydidesSystemProperty.THUCYDIDES_ISSUE_TRACKER_URL, "http://arbitrary.issue.tracker");
 
-        String updatedIssueTracker = ThucydidesSystemProperties.getProperties().getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL);;
+        String updatedIssueTracker = ThucydidesSystemProperties.getProperties().getValue(ThucydidesSystemProperty.THUCYDIDES_ISSUE_TRACKER_URL);;
 
         assertThat(updatedIssueTracker, is(not(originalIssueTracker)));
 
@@ -84,9 +84,9 @@ public class WhenSavingAndRestoringSystemProperties {
 
     @Test
     public void should_be_able_to_read_system_values() {
-        ThucydidesSystemProperties.getProperties().setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, "http://arbitrary.issue.tracker");
+        ThucydidesSystemProperties.getProperties().setValue(ThucydidesSystemProperty.THUCYDIDES_ISSUE_TRACKER_URL, "http://arbitrary.issue.tracker");
 
-        String issueTracker = ThucydidesSystemProperties.getProperties().getValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL);
+        String issueTracker = ThucydidesSystemProperties.getProperties().getValue(ThucydidesSystemProperty.THUCYDIDES_ISSUE_TRACKER_URL);
 
         assertThat(issueTracker, is("http://arbitrary.issue.tracker"));
 
@@ -115,7 +115,7 @@ public class WhenSavingAndRestoringSystemProperties {
 
     @Test
     public void should_be_able_to_read_issue_tracker_url() {
-        ThucydidesSystemProperties.getProperties().setValue(ThucydidesSystemProperty.ISSUE_TRACKER_URL, "http://arbitrary.issue.tracker");
+        ThucydidesSystemProperties.getProperties().setValue(ThucydidesSystemProperty.THUCYDIDES_ISSUE_TRACKER_URL, "http://arbitrary.issue.tracker");
 
         String issueTracker = new SystemPropertiesIssueTracking(new SystemEnvironmentVariables()).getIssueTrackerUrl();
 
@@ -135,9 +135,9 @@ public class WhenSavingAndRestoringSystemProperties {
 
     @Test
     public void should_be_able_to_read_system_values_with_default() {
-        System.clearProperty(ThucydidesSystemProperty.PUBLIC_URL.getPropertyName());
+        System.clearProperty(ThucydidesSystemProperty.THUCYDIDES_PUBLIC_URL.getPropertyName());
 
-        String publicUrl = ThucydidesSystemProperties.getProperties().getValue(ThucydidesSystemProperty.PUBLIC_URL,"default");
+        String publicUrl = ThucydidesSystemProperties.getProperties().getValue(ThucydidesSystemProperty.THUCYDIDES_PUBLIC_URL,"default");
 
         assertThat(publicUrl, is("default"));
 
@@ -145,7 +145,7 @@ public class WhenSavingAndRestoringSystemProperties {
 
     @Test
     public void system_property_tostring_should_return_property_name() {
-        assertThat(ThucydidesSystemProperty.PUBLIC_URL.toString(), is("thucydides.public.url"));
+        assertThat(ThucydidesSystemProperty.THUCYDIDES_PUBLIC_URL.toString(), is("thucydides.public.url"));
     }
 
 

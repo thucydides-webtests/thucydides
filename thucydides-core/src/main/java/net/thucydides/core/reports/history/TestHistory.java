@@ -68,7 +68,7 @@ public class TestHistory {
 
     private String getBaseDirectoryPath() {
         String defaultBaseDirectory = new File(homeDirectory(), ".thucydides").getAbsolutePath();
-        return environmentVariables.getProperty(ThucydidesSystemProperty.HISTORY_BASE_DIRECTORY.getPropertyName(),
+        return environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_HISTORY.getPropertyName(),
                                                 defaultBaseDirectory);
     }
 

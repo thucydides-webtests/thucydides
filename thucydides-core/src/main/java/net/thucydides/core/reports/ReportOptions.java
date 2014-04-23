@@ -4,15 +4,15 @@ import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.util.EnvironmentVariables;
 
-import static net.thucydides.core.ThucydidesSystemProperty.PROJECT_NAME;
-import static net.thucydides.core.ThucydidesSystemProperty.SHOW_HISTORY;
-import static net.thucydides.core.ThucydidesSystemProperty.SHOW_MANUAL_TESTS;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_PROJECT_NAME;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_REPORT_SHOW_HISTORY;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_REPORT_SHOW_MANUAL_TESTS;
 import static net.thucydides.core.ThucydidesSystemProperty.SHOW_PIE_CHARTS;
-import static net.thucydides.core.ThucydidesSystemProperty.SHOW_PROGRESS;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_REPORT_SHOW_PROGRESS;
 import static net.thucydides.core.ThucydidesSystemProperty.SHOW_RELATED_TAGS;
-import static net.thucydides.core.ThucydidesSystemProperty.SHOW_RELEASES;
-import static net.thucydides.core.ThucydidesSystemProperty.SHOW_STEP_DETAILS;
-import static net.thucydides.core.ThucydidesSystemProperty.SHOW_TAG_MENUS;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_REPORT_SHOW_RELEASES;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_REPORT_SHOW_STEP_DETAILS;
+import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_REPORT_SHOW_TAG_MENUS;
 
 /**
  * Encapsulates user-specified formatting options for the generated reports.
@@ -33,15 +33,15 @@ public class ReportOptions {
     final private boolean displayPiechart;
 
     public ReportOptions(EnvironmentVariables environmentVariables) {
-        showStepDetails = Boolean.valueOf(SHOW_STEP_DETAILS.from(environmentVariables, "false"));
-        showManualTests = Boolean.valueOf(SHOW_MANUAL_TESTS.from(environmentVariables, "true"));
-        showReleases = Boolean.valueOf(SHOW_RELEASES.from(environmentVariables, "true"));
-        showProgress = Boolean.valueOf(SHOW_PROGRESS.from(environmentVariables, "false"));
-        showHistory = Boolean.valueOf(SHOW_HISTORY.from(environmentVariables, "false"));
-        showTagMenus = Boolean.valueOf(SHOW_TAG_MENUS.from(environmentVariables, "false"));
+        showStepDetails = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_STEP_DETAILS.from(environmentVariables, "false"));
+        showManualTests = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_MANUAL_TESTS.from(environmentVariables, "true"));
+        showReleases = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_RELEASES.from(environmentVariables, "true"));
+        showProgress = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_PROGRESS.from(environmentVariables, "false"));
+        showHistory = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_HISTORY.from(environmentVariables, "false"));
+        showTagMenus = Boolean.valueOf(THUCYDIDES_REPORT_SHOW_TAG_MENUS.from(environmentVariables, "false"));
         showRelatedTags = Boolean.valueOf(SHOW_RELATED_TAGS.from(environmentVariables, "true"));
         displayPiechart = Boolean.valueOf(SHOW_PIE_CHARTS.from(environmentVariables, "true"));
-        projectName = PROJECT_NAME.from(environmentVariables,"");
+        projectName = THUCYDIDES_PROJECT_NAME.from(environmentVariables,"");
         requirementsService = Injectors.getInjector().getInstance(RequirementsService.class);
     }
 

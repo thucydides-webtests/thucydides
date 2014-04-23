@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 
 import static ch.lambdaj.Lambda.convert;
@@ -814,7 +813,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
     }
 
     private boolean useVerboseLogging() {
-        return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.VERBOSE_STEPS.getPropertyName(),false);
+        return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.THUCYDIDES_VERBOSE_STEPS.getPropertyName(),false);
     }
 
 

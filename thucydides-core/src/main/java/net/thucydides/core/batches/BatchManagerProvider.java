@@ -13,7 +13,7 @@ public class BatchManagerProvider implements Provider<BatchManager>{
 	@Inject
 	public BatchManagerProvider(Configuration configuration){
 		EnvironmentVariables environmentVariables = configuration.getEnvironmentVariables();
-        String batchManagerProperty = ThucydidesSystemProperty.BATCH_STRATEGY.from(environmentVariables,
+        String batchManagerProperty = ThucydidesSystemProperty.THUCYDIDES_BATCH_STRATEGY.from(environmentVariables,
                 BatchStrategy.DIVIDE_EQUALLY.name());
         try {
         	batchManager = BatchStrategy.valueOf(batchManagerProperty).instance(environmentVariables);
