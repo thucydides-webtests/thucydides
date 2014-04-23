@@ -121,7 +121,7 @@ public class WhenTakingLargeScreenshots {
 
     @Test
     public void should_take_screenshots_correctly() throws IOException {
-        driver = testSite.open("http:www.google.com", "screenshots/google.html");
+        driver = testSite.open("http:www.google.com", "screenshots/google.html", "phantomjs");
 
         Photographer photographer = new Photographer(driver, screenshotDirectory);
         File screenshotFile = photographer.takeScreenshot().get();
