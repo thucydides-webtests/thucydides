@@ -58,7 +58,6 @@
         <groovy.version>2.0.5</groovy.version>
         <checkstyle.rules>https://thucydides.sonar.cloudbees.com/profiles/export?format=checkstyle&amp;language=java&amp;name=Wakaleo%2520Way</checkstyle.rules>
         <compiler.options>-nowarn</compiler.options>
-        <argLine></argLine>
     </properties>
     <build>
         <pluginManagement>
@@ -75,12 +74,16 @@
                         </execution>
                         <execution>
                             <id>report</id>
-                            <phase>prepare-package</phase>
+                            <phase>verify</phase>
                             <goals>
                                 <goal>report</goal>
                             </goals>
                         </execution>
                     </executions>
+                    <configuration>
+                        <propertyName>jacoco.agent.arg</propertyName>
+                        <append>true</append>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -164,7 +167,7 @@
                 <version>${surefire.version}</version>
                 <configuration>
                     <skip>true</skip>
-                    <!--<argLine>${argLine}</argLine>-->
+                    <argLine>${jacoco.agent.arg} -Xmx512m  -XX:MaxPermSize=128m</argLine>
                 </configuration>
                 <executions>
                     <execution>
@@ -175,7 +178,6 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
-                            <argLine>-Xmx512m -XX:MaxPermSize=128m</argLine>
                             <includes>
                                 <include>**/When*.*</include>
                                 <include>**/*Test.*</include>
@@ -200,7 +202,6 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <argLine>${argLine} -Xmx512m</argLine>
                             <skip>false</skip>
                             <excludes>
                                 <exclude>**/Abstract*.*</exclude>
