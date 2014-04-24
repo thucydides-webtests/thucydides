@@ -175,7 +175,7 @@
                         </goals>
                         <configuration>
                             <skip>false</skip>
-                            <!--<argLine>${argLine} -Xmx512m -XX:MaxPermSize=128m</argLine>-->
+                            <argLine>-Xmx512m -XX:MaxPermSize=128m</argLine>
                             <includes>
                                 <include>**/When*.*</include>
                                 <include>**/*Test.*</include>
@@ -200,7 +200,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <!--<argLine>${argLine} -Xmx512m</argLine>-->
+                            <argLine>${argLine} -Xmx512m</argLine>
                             <skip>false</skip>
                             <excludes>
                                 <exclude>**/Abstract*.*</exclude>
