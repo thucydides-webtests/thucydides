@@ -139,7 +139,7 @@
                         -collpackages java.util.*
                         -qualify
                     </additionalparam>
-                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <!--<additionalparam>-Xdoclint:none</additionalparam>-->
                     <useStandardDocletOptions>true</useStandardDocletOptions>
                 </configuration>
             </plugin>
