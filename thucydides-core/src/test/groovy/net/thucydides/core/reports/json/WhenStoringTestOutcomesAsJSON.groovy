@@ -20,6 +20,7 @@ import spock.lang.Specification
 class WhenStoringTestOutcomesAsJSON extends Specification {
 
     private static final DateTime FIRST_OF_JANUARY = new LocalDateTime(2013, 1, 1, 0, 0, 0, 0).toDateTime()
+    private static final DateTime SECOND_OF_JANUARY = new LocalDateTime(2013, 1, 2, 0, 0, 0, 0).toDateTime()
 
     def AcceptanceTestReporter reporter
 
@@ -172,6 +173,71 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
             JSONCompare.compareJSON(expectedReport, jsonReport.text, JSONCompareMode.LENIENT).passed();
     }
 
+
+    def "should include the project and batch start time in the JSON report if specified."() {
+        given:
+        def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
+        testOutcome.startTime = FIRST_OF_JANUARY
+        testOutcome.description = "Some description"
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").
+                startingAt(FIRST_OF_JANUARY))
+
+        testOutcome = testOutcome.forProject("Some Project")
+        testOutcome.setBatchStartTime(SECOND_OF_JANUARY)
+
+        and:
+        def expectedReport = """\
+                {
+                  "title": "Should do this",
+                  "name": "should_do_this",
+                  "project" : "Some Project",
+                  "batchStartTime" : "${SECOND_OF_JANUARY}",
+                  "test-case": {
+                    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
+                  },
+                  "description":"Some description",
+                  "result": "SUCCESS",
+                  "steps": "1",
+                  "successful": "1",
+                  "failures": "0",
+                  "skipped": "0",
+                  "ignored": "0",
+                  "pending": "0",
+                  "duration": "0",
+                  "timestamp": "${FIRST_OF_JANUARY}",
+                  "user-story": {
+                    "userStoryClass": {
+                      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
+                    },
+                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "storyName": "A user story",
+                    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
+                  },
+                  "issues": [],
+                  "versions": [],
+                  "tags": [
+                    {
+                      "name": "A user story",
+                      "type": "story"
+                    }
+                  ],
+                  "test-steps": [
+                    {
+                      "description": "step 1",
+                      "duration": 0,
+                      "startTime": ${FIRST_OF_JANUARY.millis},
+                      "screenshots": [],
+                      "result": "SUCCESS",
+                      "children": []
+                    }
+                  ]
+                }
+            """
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        then:
+        JSONCompare.compareJSON(expectedReport, jsonReport.text, JSONCompareMode.LENIENT).passed();
+    }
 
 
     def "should record screenshot details"() {

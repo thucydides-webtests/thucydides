@@ -50,12 +50,14 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
     private static final String QUALIFIER_FIELD = "qualifier";
     private static final String DURATION = "duration";
     private static final String TIMESTAMP = "timestamp";
+    private static final String BATCH_START_TIME = "batchStartTime";
     private static final String SESSION_ID = "session-id";
     private static final String EXAMPLES = "examples";
     private static final String MANUAL = "manual";
     public static final String NEW_LINE_CHAR = "\n";
     public static final String ESCAPE_CHAR_FOR_NEW_LINE = "&#10;";
-	private static final String TEST_CASE_FIELD = "test-case";
+    private static final String TEST_CASE_FIELD = "test-case";
+    private static final String PROJECT_FIELD = "project";
 	
 	
 	@Override
@@ -68,6 +70,9 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
             obj.addProperty(DESCRIPTION_FIELD, escape(descriptionFrom(testOutcome)));
         }
 		obj.add(TEST_CASE_FIELD, context.serialize(testOutcome.getTestCase()));
+        if (testOutcome.getProject() != null) {
+            obj.add(PROJECT_FIELD, context.serialize(testOutcome.getProject()));
+        }
 		obj.addProperty(RESULT_FIELD, testOutcome.getResult().name());
         if (testOutcome.getQualifier() != null && testOutcome.getQualifier().isPresent()) {
             obj.addProperty(QUALIFIER_FIELD, escape(testOutcome.getQualifier().get()));
@@ -83,6 +88,9 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         obj.addProperty(PENDING_FIELD, Integer.toString(testOutcome.getPendingCount()));
         obj.addProperty(DURATION, Long.toString(testOutcome.getDuration()));
         obj.addProperty(TIMESTAMP, formattedTimestamp(testOutcome.getStartTime()));
+        if (testOutcome.getBatchStartTime().isPresent()) {
+            obj.addProperty(BATCH_START_TIME, formattedTimestamp(testOutcome.getBatchStartTime().get()));
+        }
         if (testOutcome.isManual()) {
         	 obj.addProperty(MANUAL, "true");
         }
@@ -103,9 +111,15 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
 			JsonDeserializationContext context) throws JsonParseException {
 		JsonObject outcomeJsonObject = json.getAsJsonObject();
 		Class<?> testCase = context.deserialize(outcomeJsonObject.getAsJsonObject(TEST_CASE_FIELD), Class.class);
+
+
 		String testOutcomeName = outcomeJsonObject.get(NAME_FIELD).getAsString();
 		TestOutcome testOutcome = new TestOutcome(testOutcomeName,testCase);
 		testOutcome.setTitle(unescape(outcomeJsonObject.get(TITLE_FIELD).getAsString()));
+        if (outcomeJsonObject.get(PROJECT_FIELD) != null) {
+            String project = (outcomeJsonObject.get(PROJECT_FIELD).getAsString());
+            testOutcome = testOutcome.forProject(project);
+        }
 
         if (outcomeJsonObject.get(DESCRIPTION_FIELD) != null) {
             testOutcome.setDescription(unescape(outcomeJsonObject.get(DESCRIPTION_FIELD).getAsString()));
@@ -117,6 +131,10 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         Optional<DateTime> timestamp = readTimestamp(outcomeJsonObject);
         if (timestamp.isPresent()) {
             testOutcome.setStartTime(timestamp.get());
+        }
+        Optional<DateTime> batchStartTime = readBatchStartTime(outcomeJsonObject);
+        if (batchStartTime.isPresent()) {
+            testOutcome.setBatchStartTime(batchStartTime.get());
         }
         boolean isManualTest = readManualTest(outcomeJsonObject);
         if (isManualTest) {
@@ -230,6 +248,16 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         JsonElement timestampElement = jsonObject.get(TIMESTAMP);
         if (timestampElement != null) {
             String timestampValue = jsonObject.get(TIMESTAMP).getAsString();
+            timestamp = DateTime.parse(timestampValue);
+        }
+        return Optional.fromNullable(timestamp);
+    }
+
+    private Optional<DateTime> readBatchStartTime(JsonObject jsonObject) {
+        DateTime timestamp = null;
+        JsonElement timestampElement = jsonObject.get(BATCH_START_TIME);
+        if (timestampElement != null) {
+            String timestampValue = jsonObject.get(BATCH_START_TIME).getAsString();
             timestamp = DateTime.parse(timestampValue);
         }
         return Optional.fromNullable(timestamp);

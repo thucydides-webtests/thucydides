@@ -102,6 +102,9 @@ public class TestOutcome {
     private String title;
     private String description;
 
+    /**
+     *
+     */
     private List<String> issues;
     private List<String> additionalIssues;
 
@@ -110,9 +113,25 @@ public class TestOutcome {
 
     private Set<TestTag> tags;
 
+    /**
+     * When did this test start.
+     */
+    private long startTime;
+
+    /**
+     * How long did it last in milliseconds.
+     */
     private long duration;
 
-    private long startTime;
+    /**
+     * When did the current test batch start
+     */
+    private long batchStartTime;
+
+    /**
+     * Identifies the project associated with this test.
+     */
+    private String project;
 
     private Throwable testFailureCause;
 
@@ -155,7 +174,14 @@ public class TestOutcome {
      */
     private Optional<String> qualifier;
 
+    /**
+     * Used to store the table of examples used in an example-driven test outcome.
+     */
     private DataTable dataTable;
+
+    /**
+     * Indicates that this is an imported manual test.
+     */
     private boolean manualTest;
 
 
@@ -838,6 +864,19 @@ public class TestOutcome {
         return this;
     }
 
+    public TestOutcome forProject(String project) {
+        this.project = project;
+        return this;
+    }
+
+    public String getProject() {
+        return project;
+    }
+
+    public void setBatchStartTime(DateTime batchStartTime) {
+        this.batchStartTime = batchStartTime.getMillis();
+    }
+
     public void addIssues(List<String> issues) {
         additionalIssues.addAll(issues);
     }
@@ -1337,6 +1376,12 @@ public class TestOutcome {
 
     public DateTime getStartTime() {
         return new DateTime(startTime);
+    }
+
+    Optional<DateTime> NO_BATCH_START_TIME = Optional.absent();
+
+    public Optional<DateTime> getBatchStartTime() {
+        return (batchStartTime != 0) ? Optional.of(new DateTime(batchStartTime)) : NO_BATCH_START_TIME;
     }
 
     public boolean isDataDriven() {

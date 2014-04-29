@@ -104,6 +104,58 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
             testOutcome.startTime == FIRST_OF_JANUARY
     }
 
+
+    def "should load acceptance test report from json file with a project name"(){
+
+        given:
+        def report = new File(outputDirectory,"saved-report.json");
+        report << """
+			{
+			  "title": "Should do this",
+			  "name": "should_do_this",
+			  "test-case": {
+			    "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenario"
+			  },
+              "project":"Some Project",
+              "description":"Some description",
+			  "result": "SUCCESS",
+			  "steps": "1",
+			  "successful": "1",
+			  "failures": "0",
+			  "skipped": "0",
+			  "ignored": "0",
+			  "pending": "0",
+			  "duration": "0",
+			  "timestamp": "$FIRST_OF_JANUARY",
+              "issues": [],
+              "tags": [],
+			  "user-story": {
+			    "userStoryClass": {
+			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
+			    },
+			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "storyName": "A user story",
+			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
+			  },
+			  "test-steps": [
+			    {
+			      "number": 1,
+			      "description": "step 1",
+			      "duration": 0,
+			      "startTime": 1374810594394,
+			      "screenshots": [],
+			      "result": "SUCCESS",
+			      "children": []
+			    }
+			  ]
+			}
+    		"""
+        when:
+        TestOutcome testOutcome = outcomeReporter.loadReportFrom(report).get();
+        then:
+        testOutcome.project == "Some Project"
+    }
+
     def "should load acceptance test report with no test case class"(){
 
         given:
