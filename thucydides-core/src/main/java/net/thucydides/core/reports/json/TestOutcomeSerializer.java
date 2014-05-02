@@ -88,8 +88,8 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         obj.addProperty(PENDING_FIELD, Integer.toString(testOutcome.getPendingCount()));
         obj.addProperty(DURATION, Long.toString(testOutcome.getDuration()));
         obj.addProperty(TIMESTAMP, formattedTimestamp(testOutcome.getStartTime()));
-        if (testOutcome.getBatchStartTime().isPresent()) {
-            obj.addProperty(BATCH_START_TIME, formattedTimestamp(testOutcome.getBatchStartTime().get()));
+        if (testOutcome.getTestRunTimestamp().isPresent()) {
+            obj.addProperty(BATCH_START_TIME, formattedTimestamp(testOutcome.getTestRunTimestamp().get()));
         }
         if (testOutcome.isManual()) {
         	 obj.addProperty(MANUAL, "true");
@@ -105,6 +105,8 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         obj.add(EXAMPLES, context.serialize(testOutcome.getDataTable()));
 		return obj;
 	}
+
+
 
 	@Override
 	public TestOutcome deserialize(JsonElement json, Type typeOfT,
@@ -134,7 +136,7 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         }
         Optional<DateTime> batchStartTime = readBatchStartTime(outcomeJsonObject);
         if (batchStartTime.isPresent()) {
-            testOutcome.setBatchStartTime(batchStartTime.get());
+            testOutcome.setTestRunTimestamp(batchStartTime.get());
         }
         boolean isManualTest = readManualTest(outcomeJsonObject);
         if (isManualTest) {
@@ -142,8 +144,9 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         }
         String sessionId = readSessionId(outcomeJsonObject);        
         testOutcome.setSessionId(sessionId);
-        
+
         Story story = context.deserialize(outcomeJsonObject.getAsJsonObject(USER_STORY), Story.class);
+
         testOutcome.setUserStory(story);
 
         testOutcome = addQualifierIfPresent(outcomeJsonObject, testOutcome);

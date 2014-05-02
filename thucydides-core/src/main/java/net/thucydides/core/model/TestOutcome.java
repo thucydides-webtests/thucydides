@@ -16,6 +16,7 @@ import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.reports.html.Formatter;
+import net.thucydides.core.reports.json.JSONConverter;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.statistics.model.TestStatistics;
@@ -101,7 +102,6 @@ public class TestOutcome {
 
     private String title;
     private String description;
-
     /**
      *
      */
@@ -126,7 +126,7 @@ public class TestOutcome {
     /**
      * When did the current test batch start
      */
-    private long batchStartTime;
+    private long testRunTimestamp;
 
     /**
      * Identifies the project associated with this test.
@@ -412,6 +412,9 @@ public class TestOutcome {
         return getTitle() + ":" + join(extract(testSteps, on(TestStep.class).toString()));
     }
 
+    public String toJson() {
+        return new JSONConverter().toJson(this);
+    }
     /**
      * Return the human-readable name for this test.
      * This is derived from the test name for tests using a Java implementation, or can also be defined using
@@ -506,7 +509,7 @@ public class TestOutcome {
 
 
     private String getTitleFrom(final Story userStory) {
-        return userStory.getName();
+        return userStory.getName() == null ? "" : userStory.getName();
     }
 
     public String getReportName(final ReportType type) {
@@ -873,8 +876,13 @@ public class TestOutcome {
         return project;
     }
 
-    public void setBatchStartTime(DateTime batchStartTime) {
-        this.batchStartTime = batchStartTime.getMillis();
+    public TestOutcome inTestRunTimestamped(DateTime testRunTimestamp) {
+        setTestRunTimestamp(testRunTimestamp);
+        return this;
+    }
+
+    public void setTestRunTimestamp(DateTime testRunTimestamp) {
+        this.testRunTimestamp = testRunTimestamp.getMillis();
     }
 
     public void addIssues(List<String> issues) {
@@ -1380,8 +1388,8 @@ public class TestOutcome {
 
     Optional<DateTime> NO_BATCH_START_TIME = Optional.absent();
 
-    public Optional<DateTime> getBatchStartTime() {
-        return (batchStartTime != 0) ? Optional.of(new DateTime(batchStartTime)) : NO_BATCH_START_TIME;
+    public Optional<DateTime> getTestRunTimestamp() {
+        return (testRunTimestamp != 0) ? Optional.of(new DateTime(testRunTimestamp)) : NO_BATCH_START_TIME;
     }
 
     public boolean isDataDriven() {

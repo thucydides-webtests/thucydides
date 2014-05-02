@@ -30,6 +30,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.CopyOption;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +65,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private final RequirmentsOutcomeFactory requirementsFactory;
     private final HtmlRequirementsReporter htmlRequirementsReporter;
     private final HtmlProgressReporter htmlProgressReporter;
-    private List<String> requirementTypes;
     private final RequirementsConfiguration requirementsConfiguration;
 
     public HtmlAggregateStoryReporter(final String projectName) {
@@ -118,8 +123,30 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     public TestOutcomes generateReportsForTestResultsFrom(final File sourceDirectory) throws IOException {
         TestOutcomes allTestOutcomes = loadTestOutcomesFrom(sourceDirectory);
+        copyScreenshotsFrom(sourceDirectory);
         generateReportsForTestResultsIn(allTestOutcomes);
         return allTestOutcomes;
+    }
+
+    private void copyScreenshotsFrom(File sourceDirectory) {
+        if ((getOutputDirectory() != null) && (getOutputDirectory() != sourceDirectory)) {
+            CopyOption[] options = new CopyOption[]{ StandardCopyOption.COPY_ATTRIBUTES };
+
+            Path targetPath = Paths.get(getOutputDirectory().toURI());
+            Path sourcePath = Paths.get(sourceDirectory.toURI());
+            try {
+
+                DirectoryStream<Path> directoryContents = Files.newDirectoryStream(sourcePath);
+                for(Path sourceFile : directoryContents) {
+                    Path destinationFile = targetPath.resolve(sourceFile.getFileName());
+                    if (Files.notExists(destinationFile)) {
+                        Files.copy(sourceFile, destinationFile, options);
+                    }
+                }
+            } catch (IOException e) {
+                LOGGER.error("Error during copying files to the target directory", e);
+            }
+        }
     }
 
     public void generateReportsForTestResultsIn(TestOutcomes testOutcomes) throws IOException {

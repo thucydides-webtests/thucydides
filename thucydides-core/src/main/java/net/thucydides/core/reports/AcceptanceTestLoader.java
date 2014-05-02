@@ -8,6 +8,6 @@ import java.io.IOException;
 import java.util.List;
 
 public interface AcceptanceTestLoader {
-    Optional<TestOutcome> loadReportFrom(final File reportFile) throws IOException;
-    List<TestOutcome> loadReportsFrom(File outputDirectory) throws IOException;
+    Optional<TestOutcome> loadReportFrom(final File reportFile);
+    List<TestOutcome> loadReportsFrom(File outputDirectory);
 }

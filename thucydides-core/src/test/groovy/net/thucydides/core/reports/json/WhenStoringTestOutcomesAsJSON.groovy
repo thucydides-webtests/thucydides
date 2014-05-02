@@ -182,8 +182,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").
                 startingAt(FIRST_OF_JANUARY))
 
-        testOutcome = testOutcome.forProject("Some Project")
-        testOutcome.setBatchStartTime(SECOND_OF_JANUARY)
+        testOutcome = testOutcome.forProject("Some Project").inTestRunTimestamped(SECOND_OF_JANUARY)
 
         and:
         def expectedReport = """\

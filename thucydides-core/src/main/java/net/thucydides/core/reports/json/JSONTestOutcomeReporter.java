@@ -4,8 +4,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.thucydides.core.model.ReportType;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestLoader;
@@ -33,20 +31,15 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter, Acceptan
 
     private transient String qualifier;
 
-    private Gson gson;
-
-    public JSONTestOutcomeReporter() {
-        GsonBuilder builder = new GsonBuilder();
-        builder.setPrettyPrinting();
-        builder.registerTypeAdapter(TestOutcome.class, new TestOutcomeSerializer());
-        builder.registerTypeAdapter(Class.class, new ClassTypeAdapter());
-        builder.registerTypeAdapter(Throwable.class, new ThrowableClassAdapter());
-        gson = builder.create();
-    }
-
     @Override
     public String getName() {
         return "json";
+    }
+
+    JSONConverter jsonConverter;
+
+    public JSONTestOutcomeReporter() {
+        jsonConverter = new JSONConverter();
     }
 
     @Override
@@ -54,7 +47,7 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter, Acceptan
                                   TestOutcomes allTestOutcomes) throws IOException {
         TestOutcome storedTestOutcome = testOutcome.withQualifier(qualifier);
         Preconditions.checkNotNull(outputDirectory);
-        String json = gson.toJson(storedTestOutcome);
+        String json = jsonConverter.toJson(storedTestOutcome);
         String reportFilename = reportFor(storedTestOutcome);
         File report = new File(getOutputDirectory(), reportFilename);
         LOGGER.info("Generating JSON report for {} to file {}", testOutcome.getTitle(), report.getAbsolutePath());
@@ -88,11 +81,10 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter, Acceptan
     public void setResourceDirectory(String resourceDirectoryPath) {
     }
 
-    public Optional<TestOutcome> loadReportFrom(final File reportFile)
-            throws IOException {
+    public Optional<TestOutcome> loadReportFrom(final File reportFile) {
         try {
             String jsonString = Files.toString(reportFile, Charset.forName("UTF-8"));
-            TestOutcome fromJson = gson.fromJson(jsonString, TestOutcome.class);
+            TestOutcome fromJson = jsonConverter.fromJson(jsonString);
             return Optional.of(fromJson);
         } catch (Exception e) {
             LOGGER.warn("this file was not a valid JSON Thucydides test report: " + reportFile.getName());
@@ -101,7 +93,7 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter, Acceptan
     }
 
     @Override
-    public List<TestOutcome> loadReportsFrom(File outputDirectory) throws IOException {
+    public List<TestOutcome> loadReportsFrom(File outputDirectory) {
         File[] reportFiles = getAllJsonFilesFrom(outputDirectory);
         List<TestOutcome> testOutcomes = Lists.newArrayList();
         if (reportFiles != null) {

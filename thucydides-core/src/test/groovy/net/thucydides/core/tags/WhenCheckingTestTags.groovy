@@ -6,12 +6,6 @@ import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Specification
 import spock.lang.Unroll
 
-/**
- * A description goes here.
- * User: john
- * Date: 16/04/13
- * Time: 10:19 AM
- */
 class WhenCheckingTestTags extends Specification {
 
     class ClassWithNoTags {}

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -93,7 +94,7 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter, Acceptanc
         return testOutcome.withQualifier(qualifier).getReportName(XML);
     }
 
-    public Optional<TestOutcome> loadReportFrom(final File reportFile) throws IOException {
+    public Optional<TestOutcome> loadReportFrom(final File reportFile) {
         InputStream input = null;
         InputStreamReader reader = null;
         try {
@@ -106,9 +107,14 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter, Acceptanc
         } catch (CannotResolveClassException e) {
             LOGGER.warn("Tried to load a file that is not a thucydides report: " + reportFile);
             return Optional.absent();
+        } catch (FileNotFoundException e) {
+            LOGGER.warn("Tried to load a file that is not a thucydides report: " + reportFile);
+            return Optional.absent();
         } finally {
-            reader.close();
-            input.close();
+            try {
+                reader.close();
+                input.close();
+            } catch (IOException ignored) {}
         }
     }
 
@@ -120,7 +126,7 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter, Acceptanc
         this.outputDirectory = outputDirectory;
     }
 
-    public List<TestOutcome> loadReportsFrom(File outputDirectory) throws IOException {
+    public List<TestOutcome> loadReportsFrom(File outputDirectory) {
         File[] reportFiles = getAllXMLFilesFrom(outputDirectory);
         List<TestOutcome> testOutcomes = Lists.newArrayList();
         if (reportFiles != null) {

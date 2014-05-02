@@ -2,6 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <modules>
+        <module>thucydides-ant-task</module>
+    </modules>
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
@@ -9,7 +12,7 @@
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides</artifactId>
-    <version>0.9.239-SNAPSHOT</version>
+    <version>0.9.240-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>thucydides</name>
     <description>An Acceptance Testing framework for web applications
@@ -370,6 +373,7 @@
                 <module>thucydides-junit</module>
                 <module>maven-thucydides-plugin</module>
                 <module>thucydides-browsermob-plugin</module>
+                <module>thucydides-ant-task</module>
             </modules>
         </profile>
         <profile>

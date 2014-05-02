@@ -70,32 +70,6 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
      */
     public String requirementsBaseDir;
 
-
-    /**
-     * @parameter
-     */
-    public String statisticsDriver;
-
-    /**
-     * @parameter
-     */
-    public String statisticsUsername;
-
-    /**
-     * @parameter
-     */
-    public String statisticsPassword;
-
-    /**
-     * @parameter
-     */
-    public String statisticsDialect;
-
-    /**
-     * @parameter
-     */
-    public String statisticsUrl;
-
     EnvironmentVariables environmentVariables;
 
     /**
@@ -128,18 +102,10 @@ public class ThucydidesAggregatorMojo extends AbstractMojo {
     }
 
     private void configureEnvironmentVariables() {
-
         Locale.setDefault(Locale.ENGLISH);
-
         updateSystemProperty(ThucydidesSystemProperty.THUCYDIDES_PROJECT_KEY.getPropertyName(), projectKey, Thucydides.getDefaultProjectKey());
-
-        updateSystemProperty("thucydides.statistics.driver_class", statisticsDriver);
-        updateSystemProperty("thucydides.statistics.url", statisticsUrl);
-        updateSystemProperty("thucydides.statistics.username", statisticsUsername);
-        updateSystemProperty("thucydides.statistics.password", statisticsPassword);
-        updateSystemProperty("thucydides.statistics.dialect", statisticsDialect);
-
-        updateSystemProperty("thucydides.test.requirements.basedir", requirementsBaseDir);
+        updateSystemProperty(ThucydidesSystemProperty.THUCYDIDES_TEST_REQUIREMENTS_BASEDIR.toString(),
+                             requirementsBaseDir);
     }
 
     private void updateSystemProperty(String key, String value, String defaultValue) {

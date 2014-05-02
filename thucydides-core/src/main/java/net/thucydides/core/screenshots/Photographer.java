@@ -97,7 +97,7 @@ public class Photographer {
      * Take a screenshot of the current browser and store it in the output directory.
      */
     public Optional<File> takeScreenshot() {
-        if (driverCanTakeSnapshots()) {
+        if (driver != null && driverCanTakeSnapshots()) {
             try {
                 File screenshotTempFile = null;
                 Object capturedScreenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);

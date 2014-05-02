@@ -11,6 +11,12 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.CopyOption;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -118,15 +124,23 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
 
         private void moveScreenshot(QueuedScreenshot queuedScreenshot) {
             try {
-//                Path sourcePath = queuedScreenshot.getSourceFile().toPath();
-//                Path destinationPath = queuedScreenshot.getDestinationFile().toPath().getParent();
-//                if (!Files.exists(destinationPath)) {
-//                    Files.createDirectory(destinationPath);
-//                }
-//                Files.copy(sourcePath, destinationPath);
-//                Files.delete(sourcePath);
-                FileUtils.copyFile(queuedScreenshot.getSourceFile(),queuedScreenshot.getDestinationFile());
-                FileUtils.deleteQuietly(queuedScreenshot.getSourceFile());
+//                FileUtils.copyFile(queuedScreenshot.getSourceFile(),queuedScreenshot.getDestinationFile());
+//                FileUtils.deleteQuietly(queuedScreenshot.getSourceFile());
+
+                CopyOption[] options = new CopyOption[]{ StandardCopyOption.COPY_ATTRIBUTES };
+
+                Path sourcePath = queuedScreenshot.getSourceFile().toPath();
+                Path destinationPath = queuedScreenshot.getDestinationFile().toPath();
+                Path destinationDir = queuedScreenshot.getDestinationFile().toPath().getParent();
+                if (Files.notExists(destinationDir)) {
+                    Files.createDirectories(destinationDir);
+                }
+                if (Files.notExists(destinationPath)) {
+                    Files.copy(sourcePath, destinationPath, options);
+                }
+                Files.deleteIfExists(sourcePath);
+
+
             } catch (Throwable e) {
                 logger.warn("Failed to copy the screenshot to the destination directory: " + e.getMessage());
             }
