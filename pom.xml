@@ -170,6 +170,7 @@
                 <version>${surefire.version}</version>
                 <configuration>
                     <skip>true</skip>
+                    <argLine>-Xmx1024m</argLine>
                 </configuration>
                 <executions>
                     <execution>
