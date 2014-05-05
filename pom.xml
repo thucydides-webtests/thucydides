@@ -12,7 +12,7 @@
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides</artifactId>
-    <version>0.9.240-SNAPSHOT</version>
+    <version>0.9.240</version>
     <packaging>pom</packaging>
     <name>thucydides</name>
     <description>An Acceptance Testing framework for web applications
