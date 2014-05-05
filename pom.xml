@@ -170,7 +170,7 @@
                 <version>${surefire.version}</version>
                 <configuration>
                     <skip>true</skip>
-                    <argLine>-Xmx1024m</argLine>
+                    <argLine>-Xmx512m -XX:MaxPermSize=512m -XX:PermSize=128m</argLine>
                 </configuration>
                 <executions>
                     <execution>
