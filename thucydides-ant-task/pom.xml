@@ -6,7 +6,7 @@
         <version>0.9.240-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.thucydides.ant</groupId>
+    <groupId>net.thucydides</groupId>
     <artifactId>thucydides-ant-task</artifactId>
     <packaging>jar</packaging>
     <name>thucydides-ant-task</name>
