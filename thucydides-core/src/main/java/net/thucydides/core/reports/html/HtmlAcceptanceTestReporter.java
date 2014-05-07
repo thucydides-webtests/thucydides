@@ -93,7 +93,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         copyResourcesToOutputDirectory();
 
         String reportFilename = reportFor(storedTestOutcome);
-        LOGGER.info("GENERATING HTML REPORT FOR " + storedTestOutcome.getCompleteName() + "/" + qualifier + " => " + reportFilename);
+        LOGGER.info("GENERATING HTML REPORT FOR " + storedTestOutcome.getCompleteName() + (qualifier != null? "/" + qualifier : "") + " => " + reportFilename);
 
         return writeReportToOutputDirectory(reportFilename, htmlContents);
     }
