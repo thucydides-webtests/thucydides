@@ -3,7 +3,7 @@ project.ext {
     releaseBranch = "release-${versionNumber}"
     workDirectory = createWorkDirectory()
     project = 'thucydides'
-    artifacts = ['thucydides-report-resources','thucydides-core', 'thucydides-junit','maven-thucydides-plugin','thucydides-easyb-plugin','thuydides-browsermob-plugin']
+    artifacts = ['thucydides-report-resources','thucydides-core', 'thucydides-junit','maven-thucydides-plugin','thucydides-easyb-plugin','thuydides-browsermob-plugin', 'thucydides-ant-task']
     mavenRepo = "~/.m2/repository"
 }
 
@@ -109,7 +109,7 @@ def createWorkDirectory() {
     return dir
 }
 
-private def executeOnShell(String command, boolean failOnError) {
+def executeOnShell(String command, boolean failOnError) {
     println "EXECUTING $command"
     def output = new StringBuffer();
     def process = new ProcessBuilder(addShellPrefix(command))
