@@ -102,6 +102,7 @@ public class WhenResizingTheBrowser {
     }
 
     @Test
+    @Category(RealBrowserTest.class)
     public void should_resize_safari_automatically() {
         Platform current = Platform.getCurrent();
             if (Platform.MAC.is(current)) {
