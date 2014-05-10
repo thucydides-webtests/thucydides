@@ -10,7 +10,6 @@ import org.openqa.selenium.WebDriver;
 public class FluentElementAPITestsBaseClass {
 
     private static StaticTestSite staticTestSite;
-    private static StaticSitePage firefoxPage;
     private static StaticSitePage chromePage;
 
     @BeforeClass
@@ -20,25 +19,6 @@ public class FluentElementAPITestsBaseClass {
 
     protected static StaticTestSite getStaticTestSite() {
         return staticTestSite;
-    }
-
-    protected StaticSitePage getFirefoxPage() {
-
-        if (firefoxPage == null) {
-            WebDriver driver = getStaticTestSite().open("phantomjs");
-            firefoxPage = new StaticSitePage(driver, 1000);
-            firefoxPage.open();
-        }
-        return firefoxPage;
-    }
-
-    @After
-    public void closeFirefox() {
-        if (firefoxPage != null) {
-            firefoxPage.getDriver().close();
-            firefoxPage.getDriver().quit();
-            firefoxPage = null;
-        }
     }
 
     @After

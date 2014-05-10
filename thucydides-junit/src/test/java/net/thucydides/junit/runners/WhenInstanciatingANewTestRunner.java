@@ -5,7 +5,7 @@ import net.thucydides.core.batches.TestCountBasedBatchManager;
 import net.thucydides.core.webdriver.UnsupportedDriverException;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.samples.SuccessfulSingleTestScenario;
-import net.thucydides.samples.SuccessfulSingleTestScenarioWithFirefox;
+import net.thucydides.samples.SuccessfulSingleTestScenarioWithABrowser;
 import net.thucydides.samples.SuccessfulSingleTestScenarioWithWrongBrowser;
 import org.junit.Rule;
 import org.junit.Test;
@@ -83,7 +83,7 @@ public class WhenInstanciatingANewTestRunner extends AbstractTestStepRunnerTest 
     public void driver_can_be_overridden_using_the_driver_property_in_the_Managed_annotation() throws InitializationError {
         environmentVariables.setProperty("webdriver.driver", "opera");
 
-        ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenarioWithFirefox.class);
+        ThucydidesRunner runner = getTestRunnerUsing(SuccessfulSingleTestScenarioWithABrowser.class);
 
         runner.run(new RunNotifier());
     }

@@ -13,9 +13,9 @@ import org.openqa.selenium.WebDriver;
 
 @RunWith(ThucydidesRunner.class)
 @UserStoryCode("US01")
-public class SuccessfulSingleTestScenarioWithFirefox {
+public class SuccessfulSingleTestScenarioWithABrowser {
     
-    @Managed(driver = "firefox")
+    @Managed(driver = "phantomjs")
     public WebDriver webdriver;
 
     @ManagedPages(defaultUrl = "classpath:static-site/index.html")

@@ -193,6 +193,7 @@
                                 <exclude>**/*Sample.*</exclude>
                                 <exclude>%regex[.*integration.*]</exclude>
                             </excludes>
+                            <excludedGroups>net.thucydides.core.categories.RealBrowserTest</excludedGroups>
                             <systemPropertyVariables>
                                 <thucydides.logging>QUIET</thucydides.logging>
                             </systemPropertyVariables>
@@ -212,6 +213,7 @@
                                 <exclude>**/Sample*.*</exclude>
                                 <exclude>**/*Sample.*</exclude>
                             </excludes>
+                            <excludedGroups>net.thucydides.core.categories.RealBrowserTest</excludedGroups>
                             <includes>
                                 <include>%regex[.*integration.*Story.*]</include>
                                 <include>%regex[.*integration.*When.*]</include>
@@ -384,10 +386,7 @@
             </modules>
         </profile>
         <profile>
-            <id>skip-browser-tests</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>browser-tests</id>
             <build>
                 <plugins>
                     <plugin>
@@ -395,12 +394,36 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>${surefire.version}</version>
                         <configuration>
-                            <excludedGroups>net.thucydides.core.categories.RealBrowserTest</excludedGroups>
+                            <skip>true</skip>
+                            <argLine>-Xmx512m -XX:MaxPermSize=512m -XX:PermSize=128m</argLine>
                         </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-tests</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>false</skip>
+                                    <excludes>
+                                        <exclude>**/Abstract*.*</exclude>
+                                        <exclude>**/samples/*.*</exclude>
+                                        <exclude>**/Sample*.*</exclude>
+                                        <exclude>**/*Sample.*</exclude>
+                                    </excludes>
+                                    <groups>net.thucydides.core.categories.RealBrowserTest</groups>
+                                    <includes>
+                                        <include>%regex[.*integration.*Story.*]</include>
+                                        <include>%regex[.*integration.*When.*]</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
-            </build>        </profile>
-
+            </build>
+        </profile>
         <profile>
             <id>metrics</id>
             <build>

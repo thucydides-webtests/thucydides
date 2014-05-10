@@ -1,5 +1,6 @@
 package net.thucydides.core.webdriver.integration;
 
+import net.thucydides.core.categories.RealBrowserTest;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.SupportedWebDriver;
@@ -9,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -37,6 +39,7 @@ public class WhenInstanciatingAChromeDriver {
     }
 
     @Test
+    @Category(RealBrowserTest.class)
     public void should_honor_chromdriver_bin_path_in_environment_properties() {
         environmentVariables.setProperty("webdriver.chrome.driver","/path/to/chromedriver/bin");
         try {
