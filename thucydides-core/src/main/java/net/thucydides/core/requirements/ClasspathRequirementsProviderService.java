@@ -1,13 +1,9 @@
 package net.thucydides.core.requirements;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
-import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.statistics.service.ClasspathTagProviderService;
 import net.thucydides.core.statistics.service.TagProvider;
-import net.thucydides.core.util.EnvironmentVariables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

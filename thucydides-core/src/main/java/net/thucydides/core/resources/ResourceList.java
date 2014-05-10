@@ -44,14 +44,21 @@ public class ResourceList {
      */
     public Collection<String> list() {
         final ArrayList<String> resources = new ArrayList<String>();
-        URLClassLoader classLoader = (URLClassLoader)  getClass().getClassLoader();
         resources.addAll(systemPropertiesClasspathElements());
 
+        ClassLoader classLoader = getClass().getClassLoader();
+        if (classLoader instanceof URLClassLoader) {
+            addResourcesFromUrlClassLoader(resources, (URLClassLoader) classLoader);
+        }
+
+        return resources;
+    }
+
+    private void addResourcesFromUrlClassLoader(ArrayList<String> resources, URLClassLoader classLoader) {
         URL[] classPathElements = classLoader.getURLs();
         for(URL classPathElement : classPathElements) {
             resources.addAll(getResources(classPathElement.getFile(), pattern));
         }
-        return resources;
     }
 
 

@@ -52,7 +52,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.6</version>
+            <version>1.9</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -157,7 +157,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>15.0</version>
+            <version>17.0</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>

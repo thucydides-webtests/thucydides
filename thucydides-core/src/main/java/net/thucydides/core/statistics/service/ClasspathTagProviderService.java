@@ -56,7 +56,7 @@ public class ClasspathTagProviderService implements TagProviderService {
     }
 
     private List<TagProvider> removeOverridableProvidersFrom(List<TagProvider> providers) {
-        List<TagProvider> retainedProviders = com.beust.jcommander.internal.Lists.newArrayList();
+        List<TagProvider> retainedProviders = Lists.newArrayList();
         for(TagProvider provider : providers) {
             if (!OverridableTagProvider.class.isAssignableFrom(provider.getClass())) {
                 retainedProviders.add(provider);

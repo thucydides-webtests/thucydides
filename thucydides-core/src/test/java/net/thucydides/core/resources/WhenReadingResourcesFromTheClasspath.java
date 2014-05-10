@@ -37,7 +37,7 @@ public class WhenReadingResourcesFromTheClasspath {
     }
 
     @Test
-    public void should_return_a_list_of_resources_on_the_classpage() {
+    public void should_return_a_list_of_resources_on_the_classpath() {
         Pattern pattern = Pattern.compile(".*");
         Collection<String> resources = ResourceList.forResources(pattern).list();
         assertThat(resources.isEmpty(), is(false));

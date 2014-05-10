@@ -1,12 +1,9 @@
 package net.thucydides.core.reports.html;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
-import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.google.common.collect.Lists;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 

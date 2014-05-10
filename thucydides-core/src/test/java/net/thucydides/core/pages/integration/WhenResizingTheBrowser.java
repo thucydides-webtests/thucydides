@@ -1,6 +1,7 @@
 package net.thucydides.core.pages.integration;
 
 
+import net.thucydides.core.categories.RealBrowserTest;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.SupportedWebDriver;
@@ -8,6 +9,7 @@ import net.thucydides.core.webdriver.WebDriverFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
@@ -39,6 +41,7 @@ public class WhenResizingTheBrowser {
     }
 
     @Test
+    @Category(RealBrowserTest.class)
     public void should_resize_chrome_automatically() {
         environmentVariables.setProperty("thucydides.browser.height", "200");
         environmentVariables.setProperty("thucydides.browser.width", "400");
@@ -52,6 +55,7 @@ public class WhenResizingTheBrowser {
     }
 
     @Test
+    @Category(RealBrowserTest.class)
     public void should_resize_firefox_automatically() {
         environmentVariables.setProperty("thucydides.browser.height", "200");
         environmentVariables.setProperty("thucydides.browser.width", "400");
@@ -80,7 +84,7 @@ public class WhenResizingTheBrowser {
     @Test
     public void should_not_resize_browser_if_dimension_are_not_provided() {
         StubbedWebDriverFactory stubbedFactory = new StubbedWebDriverFactory(environmentVariables);
-        driver = stubbedFactory.newInstanceOf(SupportedWebDriver.FIREFOX);
+        driver = stubbedFactory.newInstanceOf(SupportedWebDriver.PHANTOMJS);
         page = new StaticSitePage(driver, 1000);
         page.open();
         assertThat(stubbedFactory.screenWasResized, is(false));

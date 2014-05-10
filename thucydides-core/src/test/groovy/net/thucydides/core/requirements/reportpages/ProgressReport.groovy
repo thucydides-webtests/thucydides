@@ -12,7 +12,7 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver
 class ProgressReport extends PageObject {
 
     static ProgressReport inDirectory(File directory) {
-        def driver = new FirefoxDriver();
+        def driver = new PhantomJSDriver();
         def report = new ProgressReport(driver)
         report.openAt("file:///" +  directory.getAbsolutePath() + "/progress-report.html");
         return report

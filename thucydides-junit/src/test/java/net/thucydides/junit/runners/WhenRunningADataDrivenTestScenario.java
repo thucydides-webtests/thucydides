@@ -1,6 +1,6 @@
 package net.thucydides.junit.runners;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;

@@ -1,12 +1,14 @@
 package net.thucydides.core.pages.integration;
 
 
+import net.thucydides.core.categories.RealBrowserTest;
 import org.apache.commons.exec.OS;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -30,11 +32,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
     @BeforeClass
     public static void openBrowsers() {
-        driver = new  FirefoxDriver();
-        phantomDriver = new PhantomJSDriver(); 
-        staticPage = new StaticSitePage(driver, 1000);
-        staticPage.open();
-
+        phantomDriver = new PhantomJSDriver();
         phantomPage = new StaticSitePage(phantomDriver, 1000);
     }
 
@@ -53,6 +51,11 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     }
     
     protected StaticSitePage getFirefoxPage() {
+        if (staticPage == null) {
+            driver = new  FirefoxDriver();
+            staticPage = new StaticSitePage(driver, 1000);
+            staticPage.open();
+        }
         return staticPage;
     }
 
@@ -64,6 +67,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     }
 
     @Test
+    @Category(RealBrowserTest.class)
     public void should_optionally_type_enter_after_entering_text() {
 
         StaticSitePage page = getFirefoxPage();
@@ -77,6 +81,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     }
 
     @Test
+    @Category(RealBrowserTest.class)
     public void should_optionally_type_tab_after_entering_text_on_linux() {
 
         if (runningOnLinux()) {
@@ -91,6 +96,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     }
 
     @Test
+    @Category(RealBrowserTest.class)
     public void should_trigger_blur_event_when_focus_leaves_field_in_chrome() {
         // Not supported on Windows
         if (!OS.isFamilyWindows()) {
@@ -118,6 +124,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
 
     @Test
+    @Category(RealBrowserTest.class)
     public void should_be_able_to_build_composite_wait_until_enabled_clauses() throws InterruptedException {
         StaticSitePage page = getFirefoxPage();
 
@@ -175,6 +182,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     }
 
     @Test
+    @Category(RealBrowserTest.class)
     public void should_wait_for_elements_to_appear() {
         StaticSitePage page = getChromePage();
         page.waitForAnyRenderedElementOf(By.id("city"));
