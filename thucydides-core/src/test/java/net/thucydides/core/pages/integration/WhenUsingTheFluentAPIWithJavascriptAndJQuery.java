@@ -1,7 +1,7 @@
 package net.thucydides.core.pages.integration;
 
 
-import net.thucydides.core.categories.RealBrowserTest;
+import net.thucydides.core.categories.RealBrowserTests;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import net.thucydides.core.webdriver.jquery.ByJQuery;
 import net.thucydides.core.webdriver.jquery.ByJQuerySelector;
@@ -39,7 +39,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
     }
 
     @Test
-    @Category(RealBrowserTest.class)
+    @Category(RealBrowserTests.class)
     public void should_check_and_close_javascript_alerts() {
         WebDriver driver = new FirefoxDriver();
         StaticSitePage page = new StaticSitePage(driver, 1000);

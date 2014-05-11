@@ -1,7 +1,7 @@
 package net.thucydides.core.pages.integration;
 
 
-import net.thucydides.core.categories.RealBrowserTest;
+import net.thucydides.core.categories.RealBrowserTests;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.SupportedWebDriver;
@@ -41,7 +41,7 @@ public class WhenResizingTheBrowser {
     }
 
     @Test
-    @Category(RealBrowserTest.class)
+    @Category(RealBrowserTests.class)
     public void should_resize_chrome_automatically() {
         environmentVariables.setProperty("thucydides.browser.height", "200");
         environmentVariables.setProperty("thucydides.browser.width", "400");
@@ -55,7 +55,7 @@ public class WhenResizingTheBrowser {
     }
 
     @Test
-    @Category(RealBrowserTest.class)
+    @Category(RealBrowserTests.class)
     public void should_resize_firefox_automatically() {
         environmentVariables.setProperty("thucydides.browser.height", "200");
         environmentVariables.setProperty("thucydides.browser.width", "400");
@@ -102,7 +102,7 @@ public class WhenResizingTheBrowser {
     }
 
     @Test
-    @Category(RealBrowserTest.class)
+    @Category(RealBrowserTests.class)
     public void should_resize_safari_automatically() {
         Platform current = Platform.getCurrent();
             if (Platform.MAC.is(current)) {

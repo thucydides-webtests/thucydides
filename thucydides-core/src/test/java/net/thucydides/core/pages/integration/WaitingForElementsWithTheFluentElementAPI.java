@@ -1,7 +1,7 @@
 package net.thucydides.core.pages.integration;
 
 
-import net.thucydides.core.categories.RealBrowserTest;
+import net.thucydides.core.categories.RealBrowserTests;
 import org.apache.commons.exec.OS;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -66,7 +66,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     }
 
     @Test
-    @Category(RealBrowserTest.class)
+    @Category(RealBrowserTests.class)
     public void should_optionally_type_enter_after_entering_text() {
 
         StaticSitePage page = getFirefoxPage();
@@ -80,7 +80,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     }
 
     @Test
-    @Category(RealBrowserTest.class)
+    @Category(RealBrowserTests.class)
     public void should_optionally_type_tab_after_entering_text_on_linux() {
 
         if (runningOnLinux()) {
@@ -95,7 +95,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     }
 
     @Test
-    @Category(RealBrowserTest.class)
+    @Category(RealBrowserTests.class)
     public void should_trigger_blur_event_when_focus_leaves_field_in_chrome() {
         // Not supported on Windows
         if (!OS.isFamilyWindows()) {
@@ -123,7 +123,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
 
     @Test
-    @Category(RealBrowserTest.class)
+    @Category(RealBrowserTests.class)
     public void should_be_able_to_build_composite_wait_until_enabled_clauses() throws InterruptedException {
         StaticSitePage page = getFirefoxPage();
 
@@ -181,7 +181,7 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     }
 
     @Test
-    @Category(RealBrowserTest.class)
+    @Category(RealBrowserTests.class)
     public void should_wait_for_elements_to_appear() {
         StaticSitePage page = getChromePage();
         page.waitForAnyRenderedElementOf(By.id("city"));

@@ -1,4 +1,4 @@
 package net.thucydides.core.categories;
 
-public interface RealBrowserTest {
+public interface RealBrowserTests {
 }
