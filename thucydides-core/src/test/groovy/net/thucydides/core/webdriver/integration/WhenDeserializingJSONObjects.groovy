@@ -1,4 +1,4 @@
-package net.thucydides.core.webdriver.javascript
+package net.thucydides.core.webdriver.integration
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.JsonProcessingException
@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.InjectableValues
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
+import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebDriverException
-import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.phantomjs.PhantomJSDriver
 import sample.deserialization.DeserializationClass
 import sample.deserialization.DeserializationWithInjection
