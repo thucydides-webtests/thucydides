@@ -47,5 +47,11 @@
             <artifactId>maven-verifier</artifactId>
             <version>1.4</version>
         </dependency>
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-test-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
