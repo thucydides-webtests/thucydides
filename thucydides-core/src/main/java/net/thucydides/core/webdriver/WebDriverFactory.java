@@ -200,7 +200,8 @@ public class WebDriverFactory {
             String phantomJSPath = environmentVariables.getProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY);
             String phantomJSPathEnvironmentProperty = System.getenv("PHANTOMJS_BINARY_PATH");
             System.out.println("phantomJSPath = " + phantomJSPath);
-            System.out.println("phantomJSPathEnvironmentProperty = " + phantomJSPathEnvironmentProperty);
+            System.out.println("phantomJSPath system property = " + System.getProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY));
+            System.out.println("phantomJSPath system environment variable = " + phantomJSPathEnvironmentProperty);
             if (StringUtils.isNotEmpty(phantomJSPath)) {
                 System.setProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, phantomJSPath);
             } else if (StringUtils.isNotEmpty(phantomJSPathEnvironmentProperty)) {
@@ -219,21 +220,6 @@ public class WebDriverFactory {
 
     private int executeCommand(String command) throws IOException {
         Process cmdProc = Runtime.getRuntime().exec(command);
-//
-//        BufferedReader stdoutReader = new BufferedReader(
-//                new InputStreamReader(cmdProc.getInputStream()));
-//        String line;
-//        while ((line = stdoutReader.readLine()) != null) {
-//            // process procs standard output here
-//        }
-//
-//        BufferedReader stderrReader = new BufferedReader(
-//                new InputStreamReader(cmdProc.getErrorStream()));
-//        String line;
-//        while ((line = stderrReader.readLine()) != null) {
-//            // process procs standard error here
-//        }
-
         return cmdProc.exitValue();
 
     }
