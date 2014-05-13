@@ -189,10 +189,9 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private boolean aPreviousStepHasFailed() {
         boolean aPreviousStepHasFailed = false;
-        if (StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed() && !StepEventBus.getEventBus().isCurrentTestDataDriven()) {
+        if (StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed()) {
             aPreviousStepHasFailed = true;
         }
-
         return aPreviousStepHasFailed;
     }
 
