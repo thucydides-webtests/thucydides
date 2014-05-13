@@ -1,9 +1,9 @@
 package net.thucydides.core.requirements;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.thucydides.core.annotations.Narrative;
 import net.thucydides.core.guice.Injectors;

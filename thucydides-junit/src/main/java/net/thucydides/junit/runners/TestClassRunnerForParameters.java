@@ -1,6 +1,6 @@
 package net.thucydides.junit.runners;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.DataTableRow;

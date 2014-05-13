@@ -39,7 +39,10 @@ import org.openqa.selenium.safari.SafariDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -193,10 +196,31 @@ public class WebDriverFactory {
     // IntelliJ in Mac OS X does not pick up environment variables. So to get PhantomJS working in IDE mode for the
     // Thucydides tests, add the 'phantomjs.binary.path' property into a thucydides.properties file in your home directory.
     private void setPhantomJSPathIfNotSet() {
-        String phantomJSPath = environmentVariables.getProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY);
-        if (StringUtils.isNotEmpty(phantomJSPath)) {
-            System.setProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, phantomJSPath);
+        if (!phantomJSIsAvailable()) {
+            String phantomJSPath = System.getProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY);
+            String phantomJSPathEnvironmentProperty = System.getenv("PHANTOMJS_BINARY_PATH");
+            System.out.println("phantomJSPath = " + phantomJSPath);
+            System.out.println("phantomJSPath system environment variable = " + phantomJSPathEnvironmentProperty);
+            if (StringUtils.isNotEmpty(phantomJSPath)) {
+                System.setProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, phantomJSPath);
+            } else if (StringUtils.isNotEmpty(phantomJSPathEnvironmentProperty)) {
+                System.setProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, phantomJSPathEnvironmentProperty);
+            }
         }
+    }
+
+    private boolean phantomJSIsAvailable() {
+        try {
+            return (executeCommand("phantomjs -v") != 0);
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    private int executeCommand(String command) throws IOException {
+        Process cmdProc = Runtime.getRuntime().exec(command);
+        return cmdProc.exitValue();
+
     }
 
     private boolean isAProvidedDriver(Class<? extends WebDriver> driverClass) {

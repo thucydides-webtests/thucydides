@@ -5,13 +5,14 @@ import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebDriverFactory
 import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import org.openqa.selenium.phantomjs.PhantomJSDriver
 import spock.lang.Shared
 import spock.lang.Specification
 
 class WhenUsingSmartFindBy extends Specification {
 
     @Shared
-    def driver =  new WebDriverFacade(HtmlUnitDriver, new WebDriverFactory());
+    def driver = new PhantomJSDriver();
 
     @Shared
     def page = new StaticSitePageWithFacades(driver, 1000)

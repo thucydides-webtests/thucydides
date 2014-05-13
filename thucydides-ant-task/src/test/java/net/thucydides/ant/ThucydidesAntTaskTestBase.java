@@ -22,6 +22,13 @@ public class ThucydidesAntTaskTestBase extends BuildFileTest {
         assertThat(currentThread().getContextClassLoader().getResource(screenshotFilePath)).isNotNull();
     }
 
+    protected void thucydidesResourcesShouldAppearIn(String reportDirectory) throws URISyntaxException {
+        assertThat(getLog()).contains("Generating Thucydides reports");
+        String cssFilePath = reportDirectory + "/css/core.css";
+        assertThat(currentThread().getContextClassLoader().getResource(cssFilePath)).isNotNull();
+    }
+
+
     protected void cleanReportsIn(String reportDirectory) throws URISyntaxException, IOException {
         String indexFilePath = reportDirectory + "/" + "index.html";
         URL indexUrl = currentThread().getContextClassLoader().getResource(indexFilePath);

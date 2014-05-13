@@ -1,9 +1,9 @@
 package net.thucydides.core.reports.html;
 
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.lang3.StringUtils;

@@ -1,9 +1,9 @@
 package net.thucydides.core.requirements.reports;
 
-import com.beust.jcommander.internal.Lists;
-import com.beust.jcommander.internal.Sets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;

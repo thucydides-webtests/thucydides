@@ -14,5 +14,6 @@ public class WhenRunningTheAntTask extends ThucydidesAntTaskTestBase {
     public void testShouldExecuteTaskWithDefaultValues() throws URISyntaxException {
         executeTarget("thucydides.reports");
         thucydidesReportsShouldAppearIn("test-outcomes");
+        thucydidesResourcesShouldAppearIn("test-outcomes");
     }
 }

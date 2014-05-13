@@ -1,7 +1,7 @@
 package net.thucydides.core.reports.adaptors.specflow;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import net.thucydides.core.model.TestStep;
 
 import java.util.List;

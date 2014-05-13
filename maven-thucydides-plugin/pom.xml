@@ -4,12 +4,12 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.244</version>
+        <version>0.9.245-SNAPSHOT</version>
     </parent>
     <groupId>net.thucydides.maven.plugins</groupId>
     <artifactId>maven-thucydides-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>0.9.244</version>
+    <version>0.9.245-SNAPSHOT</version>
     <name>Thucydides Maven Plugin</name>
     <build>
         <plugins>
@@ -46,6 +46,12 @@
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-verifier</artifactId>
             <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-test-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

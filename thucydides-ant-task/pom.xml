@@ -3,7 +3,7 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.244</version>
+        <version>0.9.245-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thucydides</groupId>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>net.thucydides</groupId>
             <artifactId>thucydides-core</artifactId>
-            <version>0.9.244</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>
@@ -30,6 +30,12 @@
             <groupId>org.apache.ant</groupId>
             <artifactId>ant-testutil</artifactId>
             <version>1.9.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-test-utils</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
