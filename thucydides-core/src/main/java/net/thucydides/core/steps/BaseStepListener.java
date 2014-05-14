@@ -49,7 +49,6 @@ import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.steps.BaseStepListener.ScreenshotType.MANDATORY_SCREENSHOT;
 import static net.thucydides.core.steps.BaseStepListener.ScreenshotType.OPTIONAL_SCREENSHOT;
-import static net.thucydides.core.util.NameConverter.underscore;
 
 /**
  * Observes the test run and stores test run details for later reporting.
@@ -461,7 +460,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     private void markCurrentStepAs(final TestResult result) {
-        getCurrentTestOutcome().getCurrentStep().setResult(result);
+        getCurrentTestOutcome().currentStep().setResult(result);
         updateExampleTableIfNecessary(result);
     }
 

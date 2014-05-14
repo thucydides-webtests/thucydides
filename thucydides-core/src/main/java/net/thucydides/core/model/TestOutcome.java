@@ -116,7 +116,7 @@ public class TestOutcome {
     /**
      * When did this test start.
      */
-    private long startTime;
+    private DateTime startTime;
 
     /**
      * How long did it last in milliseconds.
@@ -126,7 +126,7 @@ public class TestOutcome {
     /**
      * When did the current test batch start
      */
-    private long testRunTimestamp;
+    private DateTime testRunTimestamp;
 
     /**
      * Identifies the project associated with this test.
@@ -258,7 +258,7 @@ public class TestOutcome {
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
     }
 
-    protected TestOutcome(final long startTime,
+    protected TestOutcome(final DateTime startTime,
                           final long duration,
                           final String title,
                           final String description,
@@ -413,7 +413,8 @@ public class TestOutcome {
     }
 
     public String toJson() {
-        return new JSONConverter().toJson(this);
+        JSONConverter jsonConverter = Injectors.getInjector().getInstance(JSONConverter.class);
+        return jsonConverter.toJson(this);
     }
     /**
      * Return the human-readable name for this test.
@@ -734,7 +735,7 @@ public class TestOutcome {
      */
     public void startGroup() {
         if (!testSteps.isEmpty()) {
-            groupStack.push(getCurrentStep());
+            groupStack.push(currentStep());
         }
     }
 
@@ -750,7 +751,7 @@ public class TestOutcome {
     /**
      * @return The current step is the last step in the step list, or the last step in the children of the current step group.
      */
-    public TestStep getCurrentStep() {
+    public TestStep currentStep() {
         checkState(!testSteps.isEmpty());
 
         if (!inGroup()) {
@@ -762,7 +763,7 @@ public class TestOutcome {
 
     }
 
-    public TestStep getLastStep() {
+    public TestStep lastStep() {
         checkState(!testSteps.isEmpty());
 
         if (!inGroup()) {
@@ -778,7 +779,7 @@ public class TestOutcome {
         return testSteps.get(testSteps.size() - 1);
     }
 
-    public TestStep getCurrentGroup() {
+    public TestStep currentGroup() {
         checkState(inGroup());
         return groupStack.peek();
     }
@@ -882,8 +883,9 @@ public class TestOutcome {
     }
 
     public void setTestRunTimestamp(DateTime testRunTimestamp) {
-        this.testRunTimestamp = testRunTimestamp.getMillis();
+        this.testRunTimestamp = testRunTimestamp;
     }
+
 
     public void addIssues(List<String> issues) {
         additionalIssues.addAll(issues);
@@ -1125,11 +1127,11 @@ public class TestOutcome {
     }
 
     public void setStartTime(DateTime startTime) {
-        this.startTime = startTime.getMillis();
+        this.startTime = startTime;
     }
 
     public void clearStartTime() {
-        this.startTime = 0;
+        this.startTime = null;
     }
 
     public boolean isManual() {
@@ -1137,15 +1139,32 @@ public class TestOutcome {
     }
 
     public boolean isStartTimeNotDefined() {
-        return this.startTime == 0;
+        return this.startTime == null;
     }
 
     private SystemClock getSystemClock() {
         return Injectors.getInjector().getInstance(SystemClock.class);
     }
 
-    private long now() {
-        return getSystemClock().getCurrentTime().getMillis();
+    private DateTime now() {
+        return getSystemClock().getCurrentTime();
+    }
+
+    public OptionalElements has() {
+        return new OptionalElements(this);
+    }
+
+    public static class OptionalElements {
+
+        private final TestOutcome testOutcome;
+
+        public OptionalElements(TestOutcome testOutcome) {
+            this.testOutcome = testOutcome;
+        }
+
+        public boolean testRunTimestamp() {
+            return testOutcome.testRunTimestamp != null;
+        }
     }
 
     private static class ExtractTestResultsConverter implements Converter<TestStep, TestResult> {
@@ -1217,7 +1236,7 @@ public class TestOutcome {
     }
 
     public void recordDuration() {
-        setDuration(System.currentTimeMillis() - startTime);
+        setDuration(System.currentTimeMillis() - startTime.getMillis());
     }
 
     public void setDuration(final long duration) {
@@ -1383,13 +1402,11 @@ public class TestOutcome {
     }
 
     public DateTime getStartTime() {
-        return new DateTime(startTime);
+        return startTime;
     }
 
-    Optional<DateTime> NO_BATCH_START_TIME = Optional.absent();
-
-    public Optional<DateTime> getTestRunTimestamp() {
-        return (testRunTimestamp != 0) ? Optional.of(new DateTime(testRunTimestamp)) : NO_BATCH_START_TIME;
+    public DateTime getTestRunTimestamp() {
+        return testRunTimestamp;
     }
 
     public boolean isDataDriven() {

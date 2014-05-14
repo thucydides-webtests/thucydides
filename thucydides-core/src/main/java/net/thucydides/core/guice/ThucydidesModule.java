@@ -13,6 +13,9 @@ import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
+import net.thucydides.core.reports.json.GsonJSONConverter;
+import net.thucydides.core.reports.json.JSONConverter;
+import net.thucydides.core.reports.json.JacksonJSONConverter;
 import net.thucydides.core.reports.renderer.Asciidoc;
 import net.thucydides.core.reports.renderer.AsciidocMarkupRenderer;
 import net.thucydides.core.reports.renderer.MarkupRenderer;
@@ -62,6 +65,7 @@ public class ThucydidesModule extends AbstractModule {
         bind(BatchManager.class).toProvider(BatchManagerProvider.class).in(Singleton.class);
         bind(LinkGenerator.class).to(SaucelabsLinkGenerator.class);
         bind(ScreenshotProcessor.class).to(SingleThreadScreenshotProcessor.class).in(Singleton.class);
+        bind(JSONConverter.class).to(JacksonJSONConverter.class).in(Singleton.class);
 
         bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
         bind(RequirementsProviderService.class).to(ClasspathRequirementsProviderService.class).in(Singleton.class);

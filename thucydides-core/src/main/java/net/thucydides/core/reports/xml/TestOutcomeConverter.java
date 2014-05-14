@@ -24,13 +24,11 @@ import org.joda.time.DateTime;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sort;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -627,7 +625,7 @@ public class TestOutcomeConverter implements Converter {
         TestResult result = TestResult.valueOf(testResultValue);
         testOutcome.recordStep(new TestStep(name));
         testOutcome.startGroup();
-        testOutcome.getCurrentGroup().setResult(result);
+        testOutcome.currentGroup().setResult(result);
         readChildren(reader, testOutcome);
         testOutcome.endGroup();
     }

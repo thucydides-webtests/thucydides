@@ -67,6 +67,7 @@ public class Story {
     public String getId() {
         return qualifiedStoryClassName;
     }
+
     /**
      * Obtain a story instance from a given story class.
      * Story instances are used for recording and reporting test results.
@@ -84,7 +85,7 @@ public class Story {
         return new Story(storyId, storyName, null, null, null);
     }
 
-    public Story withNarrative(String narrative)  {
+    public Story withNarrative(String narrative) {
         return new Story(this.qualifiedStoryClassName, this.storyName, this.qualifiedFeatureClassName, this.featureName, this.path);
     }
 
@@ -102,10 +103,10 @@ public class Story {
     }
 
 
-  public static Story withIdAndPathAndFeature(final String storyId, final String storyName, String storyPath,
-                             final String featureClassName, final String featureName) {
-    return new Story(storyId, storyName, featureClassName, featureName, storyPath);
-  }
+    public static Story withIdAndPathAndFeature(final String storyId, final String storyName, String storyPath,
+                                                final String featureClassName, final String featureName) {
+        return new Story(storyId, storyName, featureClassName, featureName, storyPath);
+    }
 
 
     @Override
@@ -143,6 +144,7 @@ public class Story {
     public Class<?> getUserStoryClass() {
         return userStoryClass;
     }
+
     /**
      * What feature does this story belong to?
      */
@@ -163,6 +165,7 @@ public class Story {
     /**
      * Returns the class representing the story that is tested by a given test class
      * This is indicated by the Story annotation.
+     *
      * @return
      */
     public static Class<?> testedInTestCase(Class<?> testClass) {
@@ -216,8 +219,20 @@ public class Story {
         return path;
     }
 
+    public String getQualifiedStoryClassName() {
+        return qualifiedStoryClassName;
+    }
+
+    public String getQualifiedFeatureClassName() {
+        return qualifiedFeatureClassName;
+    }
+
+    public String getStoryName() {
+        return storyName;
+    }
+
     public Story withPath(String storyPath) {
         return new Story(this.qualifiedStoryClassName, this.storyName,
-                         this.qualifiedFeatureClassName,this.featureName, storyPath);
+                this.qualifiedFeatureClassName, this.featureName, storyPath);
     }
 }

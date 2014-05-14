@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.ReportType;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestLoader;
@@ -39,7 +40,7 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter, Acceptan
     JSONConverter jsonConverter;
 
     public JSONTestOutcomeReporter() {
-        jsonConverter = new JSONConverter();
+        jsonConverter = Injectors.getInjector().getInstance(JSONConverter.class);
     }
 
     @Override

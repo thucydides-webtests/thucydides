@@ -1088,7 +1088,7 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
 
-        assertThat(testOutcome.getLastStep().getDescription(), is("Step 3"));
+        assertThat(testOutcome.lastStep().getDescription(), is("Step 3"));
     }
 
 
@@ -1103,7 +1103,7 @@ public class WhenRecordingNewTestOutcomes {
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 2"));
         testOutcome.recordStep(forASuccessfulTestStepCalled("Step 3"));
 
-        assertThat(testOutcome.getLastStep().getDescription(), is("Step 3"));
+        assertThat(testOutcome.lastStep().getDescription(), is("Step 3"));
     }
 
     @Test

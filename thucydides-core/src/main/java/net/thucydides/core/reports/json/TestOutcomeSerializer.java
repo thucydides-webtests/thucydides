@@ -88,8 +88,8 @@ public class TestOutcomeSerializer implements JsonSerializer<TestOutcome>,
         obj.addProperty(PENDING_FIELD, Integer.toString(testOutcome.getPendingCount()));
         obj.addProperty(DURATION, Long.toString(testOutcome.getDuration()));
         obj.addProperty(TIMESTAMP, formattedTimestamp(testOutcome.getStartTime()));
-        if (testOutcome.getTestRunTimestamp().isPresent()) {
-            obj.addProperty(BATCH_START_TIME, formattedTimestamp(testOutcome.getTestRunTimestamp().get()));
+        if (testOutcome.has().testRunTimestamp()) {
+            obj.addProperty(BATCH_START_TIME, formattedTimestamp(testOutcome.getTestRunTimestamp()));
         }
         if (testOutcome.isManual()) {
         	 obj.addProperty(MANUAL, "true");
