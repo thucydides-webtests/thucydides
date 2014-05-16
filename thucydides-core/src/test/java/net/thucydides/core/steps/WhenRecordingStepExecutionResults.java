@@ -21,6 +21,7 @@ import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -110,8 +111,11 @@ public class WhenRecordingStepExecutionResults {
     public void createStepListenerAndFactory() throws IOException {
         MockitoAnnotations.initMocks(this);
         outputDirectory = temporaryFolder.newFolder("thucydides");
-        screenshot1 = new byte[10000];
-        screenshot2 = new byte[12000];
+        File screenshot1File = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots/google_page_1.png").getFile());
+        File screenshot2File = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots/google_page_2.png").getFile());
+
+        screenshot1 = FileUtils.readFileToByteArray(screenshot1File);
+        screenshot2 = FileUtils.readFileToByteArray(screenshot2File);
         stepFactory = new StepFactory(pages);
 
         environmentVariables = new MockEnvironmentVariables();

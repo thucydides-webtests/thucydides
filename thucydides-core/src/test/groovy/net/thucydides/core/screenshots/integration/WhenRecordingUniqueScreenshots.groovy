@@ -1,3 +1,5 @@
+package net.thucydides.core.screenshots.integration
+
 import net.thucydides.core.screenshots.BlurLevel
 import net.thucydides.core.screenshots.ScreenshotDigest
 import net.thucydides.core.util.EnvironmentVariables
@@ -22,8 +24,8 @@ class WhenRecordingUniqueScreenshots extends Specification {
 
     def "should calculate identical screenshot filename for identical files"() {
         given:
-            def sampleScreenshot1 = new File(screenshotsSourceDirectory, "amazon.png")
-            def sampleScreenshot2 = new File(screenshotsSourceDirectory, "amazon.png")
+            def sampleScreenshot1 = new File(screenshotsSourceDirectory, "screenshot_1.png")
+            def sampleScreenshot2 = new File(screenshotsSourceDirectory, "screenshot_1.png")
 
             def digester = new ScreenshotDigest(environmentVariables, null);
         when:
@@ -35,8 +37,8 @@ class WhenRecordingUniqueScreenshots extends Specification {
 
     def "should calculate different screenshot filename for different files"() {
         given:
-            def sampleScreenshot1 = new File(screenshotsSourceDirectory, "google_page_1.png")
-            def sampleScreenshot2 = new File(screenshotsSourceDirectory, "amazon.png")
+            def sampleScreenshot1 = new File(screenshotsSourceDirectory, "screenshot_1.png")
+            def sampleScreenshot2 = new File(screenshotsSourceDirectory, "screenshot_2.png")
             def digester = new ScreenshotDigest(environmentVariables, null);
         when:
             def digest1 = digester.forScreenshot(sampleScreenshot1)
@@ -47,8 +49,8 @@ class WhenRecordingUniqueScreenshots extends Specification {
 
     def "should calculate different screenshot filename for blurred and unblurred screenshots"() {
         given:
-            def sampleScreenshot1 = new File(screenshotsSourceDirectory, "amazon.png")
-            def sampleScreenshot2 = new File(screenshotsSourceDirectory, "amazon.png")
+            def sampleScreenshot1 = new File(screenshotsSourceDirectory, "screenshot_1.png")
+            def sampleScreenshot2 = new File(screenshotsSourceDirectory, "screenshot_1.png")
         when:
             def digester = new ScreenshotDigest(environmentVariables, null);
             def digest1 = digester.forScreenshot(sampleScreenshot1)
@@ -62,8 +64,8 @@ class WhenRecordingUniqueScreenshots extends Specification {
 
     def "should calculate different screenshot filename for resized screenshots"() {
         given:
-            def sampleScreenshot1 = new File(screenshotsSourceDirectory, "amazon.png")
-            def sampleScreenshot2 = new File(screenshotsSourceDirectory, "amazon.png")
+            def sampleScreenshot1 = new File(screenshotsSourceDirectory, "screenshot_1.png")
+            def sampleScreenshot2 = new File(screenshotsSourceDirectory, "screenshot_1.png")
         when:
             def digester = new ScreenshotDigest(environmentVariables,null);
             def digest1 = digester.forScreenshot(sampleScreenshot1)

@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.util.UUID;
@@ -149,17 +151,9 @@ public class Photographer {
     }
 
     private File saveScreenshotData(byte[] capturedScreenshot) throws IOException {
-        File screenshotFile;
-        String screenshotTempFileName = "screenshot_" + UUID.randomUUID();
-        screenshotFile = new File(FileUtils.getTempDirectory(), screenshotTempFileName);
-        byte[] screenshotData = capturedScreenshot;
-        FileUtils.deleteQuietly(screenshotFile);
-        if (screenshotData.length > 0) {
-            FileUtils.writeByteArrayToFile(screenshotFile, screenshotData);
-        } else {
-            FileUtils.touch(screenshotFile);
-        }
-        return screenshotFile;
+        Path temporaryScreenshotFile = Files.createTempFile("screenshot", "");
+        Files.write(temporaryScreenshotFile, capturedScreenshot);
+        return temporaryScreenshotFile.toFile();
     }
 
     private boolean isAFile(Object screenshot) {

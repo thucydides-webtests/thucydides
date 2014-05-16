@@ -124,9 +124,6 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
 
         private void moveScreenshot(QueuedScreenshot queuedScreenshot) {
             try {
-//                FileUtils.copyFile(queuedScreenshot.getSourceFile(),queuedScreenshot.getDestinationFile());
-//                FileUtils.deleteQuietly(queuedScreenshot.getSourceFile());
-
                 CopyOption[] options = new CopyOption[]{ StandardCopyOption.COPY_ATTRIBUTES };
 
                 Path sourcePath = queuedScreenshot.getSourceFile().toPath();
@@ -138,9 +135,11 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
                 if (Files.notExists(destinationPath)) {
                     Files.copy(sourcePath, destinationPath, options);
                 }
-                Files.deleteIfExists(sourcePath);
-
-
+                try {
+                    Files.deleteIfExists(sourcePath);
+                } catch (IOException e) {
+                    queuedScreenshot.getSourceFile().deleteOnExit();
+                }
             } catch (Throwable e) {
                 logger.warn("Failed to copy the screenshot to the destination directory: " + e.getMessage());
             }
