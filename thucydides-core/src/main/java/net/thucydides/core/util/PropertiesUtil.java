@@ -6,7 +6,9 @@ public class PropertiesUtil {
     public static Properties copyOf(Properties sourceProperties) {
         Properties copiedProperties = new Properties();
         for(String propertyName : sourceProperties.stringPropertyNames()) {
-            copiedProperties.setProperty(propertyName, sourceProperties.getProperty(propertyName));
+            if (sourceProperties.getProperty(propertyName) != null) {
+                copiedProperties.setProperty(propertyName, sourceProperties.getProperty(propertyName));
+            }
         }
         return copiedProperties;
     }
