@@ -14,14 +14,14 @@
         <root.package>net.thucydides.core</root.package>
         <spring.version>3.2.3.RELEASE</spring.version>
     </properties>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+    <!--<build>-->
+        <!--<plugins>-->
+            <!--<plugin>-->
+                <!--<groupId>org.jacoco</groupId>-->
+                <!--<artifactId>jacoco-maven-plugin</artifactId>-->
+            <!--</plugin>-->
+        <!--</plugins>-->
+    <!--</build>-->
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

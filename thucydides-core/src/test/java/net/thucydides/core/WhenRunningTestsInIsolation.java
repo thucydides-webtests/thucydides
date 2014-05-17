@@ -75,7 +75,6 @@ public class WhenRunningTestsInIsolation {
 
     }
 
-
     @Test
     public void any_class_can_host_an_annotated_step_library() {
         SampleTestClass sampleTestClass = new SampleTestClass();
