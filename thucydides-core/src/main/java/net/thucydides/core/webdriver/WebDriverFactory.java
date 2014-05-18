@@ -219,8 +219,11 @@ public class WebDriverFactory {
 
     private int executeCommand(String command) throws IOException {
         Process cmdProc = Runtime.getRuntime().exec(command);
-        return cmdProc.exitValue();
-
+        try {
+            return cmdProc.waitFor();
+        } catch (InterruptedException e) {
+            return -1;
+        }
     }
 
     private boolean isAProvidedDriver(Class<? extends WebDriver> driverClass) {

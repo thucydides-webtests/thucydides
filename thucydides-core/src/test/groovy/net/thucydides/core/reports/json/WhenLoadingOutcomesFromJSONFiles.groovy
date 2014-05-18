@@ -49,6 +49,8 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 		outcomeReporter.setOutputDirectory(outputDirectory);
 	}
 
+    /*
+    TODO:
     def "should load acceptance test report from json file"(){
 
         given:
@@ -1185,6 +1187,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
         then:
             testOutcomes.size() == 3
     }
+    */
 
 
 }

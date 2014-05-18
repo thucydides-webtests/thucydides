@@ -20,7 +20,7 @@ public class InternalSystemClock implements SystemClock {
          try {
              sleepFor(timeInMilliseconds);
          } catch (InterruptedException e) {
-             LOGGER.error("Wait interrupted", e);
+             LOGGER.error("Wait interrupted:" +  e.getMessage());
              throw new RuntimeException("System timer interrupted", e);
          }
     }

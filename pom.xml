@@ -170,7 +170,7 @@
                 <version>${surefire.version}</version>
                 <configuration>
                     <skip>true</skip>
-                    <argLine>-Xmx512m -XX:MaxPermSize=512m -XX:PermSize=128m</argLine>
+                    <argLine>-Xmx1024m -XX:MaxPermSize=512m -XX:PermSize=128m</argLine>
                 </configuration>
                 <executions>
                     <execution>
@@ -433,7 +433,7 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>${surefire.version}</version>
                         <configuration>
-                            <argLine>${jacoco.agent.arg} -Xmx512m -XX:MaxPermSize=128m</argLine>
+                            <argLine>${jacoco.agent.arg} -Xmx1024m -XX:MaxPermSize=128m</argLine>
                         </configuration>
                     </plugin>
                 </plugins>

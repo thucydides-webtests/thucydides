@@ -26,6 +26,7 @@ import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
+import net.thucydides.core.webdriver.WebDriverFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;

@@ -26,6 +26,8 @@ class WhenProcessingTestOutcomes extends Specification {
 
     EnvironmentVariables environmentVariables = new MockEnvironmentVariables()
 
+    // TODO
+    @Ignore
     def "should load tests in JSON if configured"() {
         given:
             environmentVariables.setProperty("thucydides.report.format","json");
@@ -188,6 +190,8 @@ class WhenProcessingTestOutcomes extends Specification {
             tests everyItem(withResult(TestResult.SUCCESS))
     }
 
+    // TODO:
+    @Ignore
     def "should list all passing tests from JSON files"() {
         given:
             environmentVariables.setProperty("thucydides.report.format","json");

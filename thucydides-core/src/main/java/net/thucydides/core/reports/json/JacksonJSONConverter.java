@@ -3,6 +3,7 @@ package net.thucydides.core.reports.json;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.thucydides.core.model.TestOutcome;
@@ -15,6 +16,7 @@ public class JacksonJSONConverter implements JSONConverter {
 
     public JacksonJSONConverter() {
         mapper = new ObjectMapper();
+        mapper.registerModule(new JodaModule());
         mapper.registerModule(new TestOutcomeModule());
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 

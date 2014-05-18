@@ -26,7 +26,7 @@ public class WhenManagingTheInternalClock {
         InternalSystemClock clock = new InternalSystemClock() {
             @Override
             protected void sleepFor(long timeInMilliseconds) throws InterruptedException {
-                throw new InterruptedException();
+                throw new InterruptedException("For testing purposes");
             }
         };
 

@@ -35,6 +35,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import sample.listeners.SampleStepListener;
 import some.other.place.StepsInSomeOtherPlace;
 
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;

@@ -19,6 +19,10 @@ class WhenDisplayingTagNamesInAReadableForm extends Specification {
             'stories'           | 'stories'
             'octopus'           | 'octopi'
             'sheep'             | 'sheep'
+            'fish'              | 'fish'
+            'dynamo'            | 'dynamos'
+            'hippopotamus'      | 'hippopotamus'
+            'parenthesis'       | 'parentheses'
             ''                  | ''
     }
 
