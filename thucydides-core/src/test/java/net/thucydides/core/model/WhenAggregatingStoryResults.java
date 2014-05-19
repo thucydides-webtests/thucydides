@@ -25,7 +25,7 @@ public class WhenAggregatingStoryResults {
     }
 
     @Test
-    public void a_story_can_have_an_associated_feature_by_id() {
+    public void a_story_can_have_an_associated_feature() {
         Story story = Story.withId("storyId","storyName","featureId","featureName");
         assertThat(story.getFeature(), is(notNullValue()));
     }

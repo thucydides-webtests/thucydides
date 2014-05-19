@@ -162,7 +162,7 @@ class WhenGeneratingRequirementsReports extends Specification {
         testOutcome1.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
         testOutcome1.addTags(Lists.asList(TestTag.withName("Grow new potatoes").andType("feature")));
 
-        TestOutcome testOutcome2 = TestOutcome.forTestInStory("planting potatoes in the rain", Story.called("planting potatoes").withNarrative("Planting some potatoes"))
+        TestOutcome testOutcome2 = TestOutcome.forTestInStory("planting potatoes in the rain", Story.called("planting potatoes"))
         testOutcome2.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
         testOutcome2.addTags(Lists.asList(TestTag.withName("Grow new potatoes").andType("feature")));
 
@@ -189,7 +189,7 @@ class WhenGeneratingRequirementsReports extends Specification {
         testOutcome1.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
         testOutcome1.addTags(Lists.asList(TestTag.withName("Grow new potatoes").andType("feature")));
 
-        TestOutcome testOutcome2 = TestOutcome.forTestInStory("planting potatoes in the rain", Story.called("planting potatoes").withNarrative("Planting some potatoes"))
+        TestOutcome testOutcome2 = TestOutcome.forTestInStory("planting potatoes in the rain", Story.called("planting potatoes"))
         testOutcome2.addTags(Lists.asList(TestTag.withName("Grow potatoes").andType("capability")));
         testOutcome2.addTags(Lists.asList(TestTag.withName("Grow new potatoes").andType("feature")));
 

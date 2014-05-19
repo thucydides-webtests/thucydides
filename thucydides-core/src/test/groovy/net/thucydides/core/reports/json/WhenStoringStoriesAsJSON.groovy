@@ -1,0 +1,129 @@
+package net.thucydides.core.reports.json
+
+import com.github.goldin.spock.extensions.tempdir.TempDir
+import net.thucydides.core.annotations.*
+import net.thucydides.core.model.TestOutcome
+import net.thucydides.core.reports.AcceptanceTestReporter
+import net.thucydides.core.reports.TestOutcomes
+import net.thucydides.core.reports.integration.TestStepFactory
+import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
+import org.skyscreamer.jsonassert.JSONCompare
+import org.skyscreamer.jsonassert.JSONCompareMode
+import spock.lang.Ignore
+import spock.lang.Specification
+
+import java.nio.charset.Charset
+
+import static java.nio.file.Files.newBufferedWriter
+
+class WhenStoringStoriesAsJSON extends Specification {
+
+    class AUserStory {
+    }
+
+    @Feature
+    class AFeature {
+        class AUserStoryInAFeature {
+        }
+    }
+
+    def "should generate an JSON report for a story"() {
+        given:
+        def story = new net.thucydides.core.model.Story(AUserStory.class)
+
+        when:
+        StringWriter writer = new StringWriter();
+        def converter = new JacksonJSONConverter()
+        converter.mapper.writerWithDefaultPrettyPrinter().writeValue(writer, story);
+
+        then:
+        def expectedJson = """
+{
+    "id" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON.AUserStory",
+    "storyName" : "A user story",
+    "storyClassName" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON\$AUserStory",
+    "path" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON"
+}
+"""
+        def serializedStory = writer.toString()
+        JSONCompare.compareJSON(expectedJson, serializedStory, JSONCompareMode.LENIENT).passed();
+    }
+
+    def "should read a story from a simple JSON string"() {
+        given:
+        def serializedStory = """
+{
+    "id" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON.AUserStory",
+    "storyName" : "A user story",
+    "storyClassName" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON\$AUserStory",
+    "path" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON"
+}
+"""
+        def reader = new StringReader(serializedStory)
+
+        when:
+        def converter = new JacksonJSONConverter()
+        def story = converter.mapper.readValue(reader, net.thucydides.core.model.Story)
+
+        then:
+        story == new net.thucydides.core.model.Story(AUserStory.class)
+    }
+
+
+    def "should generate an JSON report for a story with a feature"() {
+        given:
+        def story = new net.thucydides.core.model.Story(AFeature.AUserStoryInAFeature.class)
+
+        when:
+        StringWriter writer = new StringWriter();
+        def converter = new JacksonJSONConverter()
+        converter.mapper.writerWithDefaultPrettyPrinter().writeValue(writer, story);
+
+        then:
+        def expectedJson = """
+{
+    "id" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON.AFeature.AUserStoryInAFeature",
+    "storyName" : "A user story in a feature",
+    "storyClassName" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON\$AFeature\$AUserStoryInAFeature",
+    "path" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON.AFeature",
+     "feature" : {
+        "id" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON.AFeature",
+        "name" : "A feature",
+        "featureClass" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON\$AFeature"
+  }
+}
+"""
+        def serializedStory = writer.toString()
+        println serializedStory
+        JSONCompare.compareJSON(expectedJson, serializedStory, JSONCompareMode.LENIENT).passed();
+    }
+
+
+    @Ignore
+    def "should read a story with a feature"() {
+        given:
+        def serializedStory = """
+{
+    "id" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON.AFeature.AUserStoryInAFeature",
+    "storyName" : "A user story in a feature",
+    "storyClassName" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON\$AFeature\$AUserStoryInAFeature",
+    "path" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON.AFeature",
+     "feature" : {
+        "id" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON.AFeature",
+        "name" : "A feature",
+        "featureClass" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON\$AFeature"
+  }
+}
+"""
+        def reader = new StringReader(serializedStory)
+
+        when:
+        def converter = new JacksonJSONConverter()
+        def story = converter.mapper.readValue(reader, net.thucydides.core.model.Story)
+
+        then:
+        story == new net.thucydides.core.model.Story(AFeature.AUserStoryInAFeature.class)
+    }
+
+}

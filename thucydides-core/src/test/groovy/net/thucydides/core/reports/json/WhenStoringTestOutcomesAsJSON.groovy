@@ -1,6 +1,7 @@
 package net.thucydides.core.reports.json
 
 import com.github.goldin.spock.extensions.tempdir.TempDir
+import com.sun.xml.internal.bind.v2.TODO
 import net.thucydides.core.annotations.*
 import net.thucydides.core.digest.Digest
 import net.thucydides.core.model.DataTable
@@ -114,68 +115,81 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         };
     }
 
-    /*
-    TODO:
-
     def "should generate an JSON report for an acceptance test run"() {
         given:
             def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
             testOutcome.startTime = FIRST_OF_JANUARY
+
             testOutcome.description = "Some description"
             testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").
                                                    startingAt(FIRST_OF_JANUARY))
         and:
             def expectedReport = """\
                 {
-                  "title": "Should do this",
-                  "name": "should_do_this",
-                  "test-case": {
-                    "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario"
-                  },
-                  "description":"Some description",
-                  "result": "SUCCESS",
-                  "steps": "1",
-                  "successful": "1",
-                  "failures": "0",
-                  "skipped": "0",
-                  "ignored": "0",
-                  "pending": "0",
-                  "duration": "0",
-                  "timestamp": "${FIRST_OF_JANUARY}",
-                  "user-story": {
-                    "userStoryClass": {
-                      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
-                    },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
-                    "storyName": "A user story",
-                    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
-                  },
-                  "issues": [],
-                  "versions": [],
-                  "tags": [
-                    {
-                      "name": "A user story",
-                      "type": "story"
-                    }
-                  ],
-                  "test-steps": [
-                    {
-                      "description": "step 1",
-                      "duration": 0,
-                      "startTime": ${FIRST_OF_JANUARY.millis},
-                      "screenshots": [],
-                      "result": "SUCCESS",
-                      "children": []
-                    }
-                  ]
-                }
+  "name" : "should_do_this",
+  "testCase" : "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario",
+  "testSteps" : [ {
+    "number" : 1,
+    "description" : "step 1",
+    "duration" : 0,
+    "screenshots" : [ ],
+    "result" : "SUCCESS",
+    "children" : [ ],
+    "exception" : null,
+    "error" : false,
+    "ignored" : false,
+    "durationInSeconds" : 0.0,
+    "skipped" : false,
+    "agroup" : false,
+    "flattenedSteps" : [ ],
+    "leafTestSteps" : [ ],
+    "pending" : false,
+    "failure" : false,
+    "errorMessage" : "",
+    "successful" : true,
+    "firstScreenshot" : null,
+    "shortErrorMessage" : "",
+    "screenshotCount" : 0
+  } ],
+  "userStory" : {
+    "storyName" : "A user story",
+    "storyClassName" : "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory",
+    "path" : "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
+  },
+  "title" : "Should do this",
+  "description" : "Some description",
+  "issues" : [ ],
+  "versions" : [ ],
+  "tags" : [ {
+    "name" : "A user story",
+    "type" : "story"
+  } ],
+  "startTime" : ${FIRST_OF_JANUARY.millis},
+  "duration" : 0,
+  "error" : 0,
+  "path" : "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON",
+  "result" : "SUCCESS",
+  "skipped" : 0,
+  "storyTitle" : "A user story",
+  "pathId" : "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+  "manual" : false,
+  "pending" : 0,
+  "success" : 1,
+  "failure" : 0,
+  "steps" : 1,
+  "ignored" : 0,
+  "skippedOrIgnored" : 0
+  }
             """
         when:
             def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
         then:
+            println jsonReport.getText()
             JSONCompare.compareJSON(expectedReport, jsonReport.text, JSONCompareMode.LENIENT).passed();
     }
 
+    /*
+        TODO:
 
     def "should include the project and batch start time in the JSON report if specified."() {
         given:
@@ -211,7 +225,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "userStoryClass": {
                       "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                     },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                     "storyName": "A user story",
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
@@ -271,7 +285,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "userStoryClass": {
                       "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                     },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                     "storyName": "A user story",
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
@@ -327,7 +341,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                   "duration": "0",
                   "timestamp": "$FIRST_OF_JANUARY",
                   "user-story": {
-                    "qualifiedStoryClassName": "id",
+                    "id": "id",
                     "storyName": "name"
                   },
                   "issues": [],
@@ -388,7 +402,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "userStoryClass": {
                       "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                     },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                     "storyName": "A user story",
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
@@ -451,7 +465,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
@@ -514,7 +528,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "userStoryClass": {
                       "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                     },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                     "storyName": "A user story",
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
@@ -601,7 +615,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
@@ -659,7 +673,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
@@ -720,7 +734,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "userStoryClass": {
                   "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenarioWithTags"
                 },
-                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.SomeTestScenarioWithTags",
+                "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.SomeTestScenarioWithTags",
                 "storyName": "Some test scenario with tags",
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
@@ -788,7 +802,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "userStoryClass": {
                       "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                     },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                     "storyName": "A user story",
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
@@ -845,7 +859,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AFeature\$AUserStoryInAFeature"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature.AUserStoryInAFeature",
+			    "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature.AUserStoryInAFeature",
 			    "storyName": "A user story in a feature",
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature",
 			    "qualifiedFeatureClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature",
@@ -908,7 +922,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "userStoryClass": {
                       "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AFeature\$AUserStoryInAFeature"
                     },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature.AUserStoryInAFeature",
+                    "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature.AUserStoryInAFeature",
                     "storyName": "A user story in a feature",
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature",
                     "qualifiedFeatureClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature",
@@ -1030,7 +1044,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "userStoryClass": {
                       "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                     },
-                    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                    "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                     "storyName": "A user story",
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
                   },
@@ -1088,7 +1102,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "userStoryClass": {
                   "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                 },
-                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                 "storyName": "A user story",
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
@@ -1155,7 +1169,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "userStoryClass": {
                   "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                 },
-                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                 "storyName": "A user story",
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
@@ -1282,7 +1296,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "userStoryClass": {
                   "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                 },
-                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                 "storyName": "A user story",
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
@@ -1374,7 +1388,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "userStoryClass": {
                   "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                 },
-                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                 "storyName": "A user story",
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
@@ -1489,7 +1503,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                 "userStoryClass": {
                   "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                 },
-                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+                "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                 "storyName": "A user story",
                 "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
               },
@@ -1577,7 +1591,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                "userStoryClass": {
                  "classname": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$AUserStory"
                },
-               "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
+               "id": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
                "storyName": "A user story",
                "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
              },

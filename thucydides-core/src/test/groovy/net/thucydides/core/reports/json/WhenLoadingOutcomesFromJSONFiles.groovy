@@ -78,7 +78,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
@@ -135,7 +135,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
@@ -181,7 +181,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
@@ -234,7 +234,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
@@ -273,7 +273,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON"
 			  },
@@ -325,7 +325,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
@@ -382,7 +382,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
@@ -438,7 +438,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
@@ -491,7 +491,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$SomeTestScenarioWithIssues"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.SomeTestScenario",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.SomeTestScenario",
 			    "storyName": "Some test scenario with tags",
 			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
@@ -553,7 +553,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
@@ -646,7 +646,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 		    "userStoryClass": {
 		      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 		    },
-		    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory",
+		    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory",
 		    "storyName": "A user story",
 		    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 		  },
@@ -708,7 +708,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory",
 			    "storyName": "A user story in a feature",
 			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AFeature",
 			    "qualifiedFeatureClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AFeature",
@@ -769,7 +769,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
@@ -827,7 +827,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "userStoryClass": {
 			      "classname": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles\$AUserStory"
 			    },
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
@@ -935,7 +935,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "duration": "0",
 			  "timestamp": "2013-01-01T00:00:00.000+01:00",
 			  "user-story": {
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },
@@ -1014,7 +1014,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
               "duration": "0",
               "timestamp": "2013-01-01T00:00:00.000+01:00",
               "user-story": {
-                "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+                "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
                 "storyName": "A user story",
                 "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
               },
@@ -1076,7 +1076,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			  "duration": "0",
 			  "timestamp": "2013-01-01T00:00:00.000+01:00",
 			  "user-story": {			    
-			    "qualifiedStoryClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
+			    "id": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AUserStory",
 			    "storyName": "A user story",
 			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles"
 			  },

@@ -13,19 +13,17 @@ import static net.thucydides.core.model.ReportType.ROOT;
  */
 public class Story {
 
-    private final Class<?> userStoryClass;
-    private final String qualifiedStoryClassName;
-    private final String storyName;
-    private final String path;
-    private final String qualifiedFeatureClassName;
-    private final String featureName;
+    private  String id;
+    private  String storyName;
+    private  String storyClassName;
+    private  String path;
+    private  ApplicationFeature feature;
 
     protected Story(final Class<?> userStoryClass) {
-        this.userStoryClass = userStoryClass;
-        this.qualifiedStoryClassName = userStoryClass.getCanonicalName();
-        this.storyName = NameConverter.humanize(getUserStoryClass().getSimpleName());
-        this.qualifiedFeatureClassName = findFeatureClassName();
-        this.featureName = findFeatureName();
+        this.id = userStoryClass.getCanonicalName();
+        this.storyClassName = userStoryClass.getName();
+        this.storyName = NameConverter.humanize(userStoryClass.getSimpleName());
+        this.feature = findFeatureFrom(userStoryClass);
         this.path = pathOf(userStoryClass);
     }
 
@@ -39,33 +37,56 @@ public class Story {
         }
     }
 
-    private String findFeatureClassName() {
-        if (getFeatureClass() != null) {
-            return getFeatureClass().getCanonicalName();
+    private ApplicationFeature findFeatureFrom(Class<?> userStoryClass) {
+        if (getFeatureClass(userStoryClass) != null) {
+            return ApplicationFeature.from(getFeatureClass(userStoryClass));
         }
         return null;
     }
 
-    private String findFeatureName() {
-        if (getFeatureClass() != null) {
-            return ApplicationFeature.from(getFeatureClass()).getName();
-        }
-        return null;
-    }
-
-    protected Story(final String qualifiedStoryClassName, final String storyName,
-                    final String qualifiedFeatureClassName, final String featureName,
-                    final String path) {
-        this.userStoryClass = null;
-        this.qualifiedStoryClassName = qualifiedStoryClassName;
+    public Story(String id,
+                 final String storyName,
+                 final String storyClassName,
+                 final String path,
+                 final ApplicationFeature feature) {
+        this.id = id;
         this.storyName = storyName;
-        this.qualifiedFeatureClassName = qualifiedFeatureClassName;
-        this.featureName = featureName;
+        this.storyClassName = storyClassName;
+        this.feature = feature;
         this.path = path;
     }
 
+//    public Story(final String id,
+//                 final String storyName,
+//                 final String featureClassName,
+//                 final String featureName,
+//                 final String path) {
+//        this.id = id;
+//        this.storyName = storyName;
+//        this.storyClassName = null;
+//        if (featureClassName != null) {
+//            this.feature = new ApplicationFeature(featureClassName, featureName);
+//        } else {
+//            this.feature = null;
+//        }
+//        this.path = path;
+//    }
+
+    protected Story(final String id,
+                    final String storyName,
+                    final ApplicationFeature feature,
+                    final String path) {
+        this.id = id;
+        this.storyName = storyName;
+        this.storyClassName = null;
+        this.feature = feature;
+        this.path = path;
+    }
+
+
+
     public String getId() {
-        return qualifiedStoryClassName;
+        return id;
     }
 
     /**
@@ -85,12 +106,8 @@ public class Story {
         return new Story(storyId, storyName, null, null, null);
     }
 
-    public Story withNarrative(String narrative) {
-        return new Story(this.qualifiedStoryClassName, this.storyName, this.qualifiedFeatureClassName, this.featureName, this.path);
-    }
-
     public static Story withIdAndPath(final String storyId, final String storyName, final String storyPath) {
-        return new Story(storyId, storyName, null, null, storyPath);
+        return new Story(storyId, storyName, null, storyPath, null);
     }
 
     public static Story called(final String storyName) {
@@ -99,19 +116,19 @@ public class Story {
 
     public static Story withId(final String storyId, final String storyName,
                                final String featureClassName, final String featureName) {
-        return new Story(storyId, storyName, featureClassName, featureName, null);
+        return new Story(storyId, storyName, new ApplicationFeature(featureClassName, featureName), null);
     }
 
 
     public static Story withIdAndPathAndFeature(final String storyId, final String storyName, String storyPath,
                                                 final String featureClassName, final String featureName) {
-        return new Story(storyId, storyName, featureClassName, featureName, storyPath);
+        return new Story(storyId, storyName, new ApplicationFeature(featureClassName, featureName), storyPath);
     }
 
 
     @Override
     public int hashCode() {
-        return nullSafeHashCodeOf(qualifiedStoryClassName);
+        return nullSafeHashCodeOf(id);
     }
 
     private int nullSafeHashCodeOf(final String value) {
@@ -134,21 +151,13 @@ public class Story {
         }
         Story that = (Story) obj;
 
-        return EqualsUtils.areEqual(this.qualifiedStoryClassName, that.qualifiedStoryClassName);
-    }
-
-    /**
-     * The underlying user story class that represents this story.
-     * This is used to record the original story class in the reports and XML results files.
-     */
-    public Class<?> getUserStoryClass() {
-        return userStoryClass;
+        return EqualsUtils.areEqual(this.id, that.id);
     }
 
     /**
      * What feature does this story belong to?
      */
-    public Class<?> getFeatureClass() {
+    public static Class<?> getFeatureClass(Class<?> userStoryClass) {
         if (userStoryClass != null) {
             Class<?> enclosingClass = userStoryClass.getEnclosingClass();
             if (isAFeature(enclosingClass)) {
@@ -158,15 +167,13 @@ public class Story {
         return null;
     }
 
-    private boolean isAFeature(Class<?> enclosingClass) {
+    private static boolean isAFeature(Class<?> enclosingClass) {
         return (enclosingClass != null) && (enclosingClass.getAnnotation(Feature.class) != null);
     }
 
     /**
      * Returns the class representing the story that is tested by a given test class
      * This is indicated by the Story annotation.
-     *
-     * @return
      */
     public static Class<?> testedInTestCase(Class<?> testClass) {
         net.thucydides.core.annotations.Story story = testClass.getAnnotation(net.thucydides.core.annotations.Story.class);
@@ -185,9 +192,8 @@ public class Story {
         return storyName;
     }
 
-
-    public String getFeatureName() {
-        return featureName;
+    public String getStoryClassName() {
+        return storyClassName;
     }
 
     /**
@@ -201,30 +207,12 @@ public class Story {
         return getReportName(ROOT);
     }
 
-    public String getFeatureId() {
-        return qualifiedFeatureClassName;
-    }
-
     public ApplicationFeature getFeature() {
-        if (getFeatureClass() != null) {
-            return ApplicationFeature.from(getFeatureClass());
-        } else if (getFeatureId() != null) {
-            return new ApplicationFeature(getFeatureId(), getFeatureName());
-        } else {
-            return null;
-        }
+        return feature;
     }
 
     public String getPath() {
         return path;
-    }
-
-    public String getQualifiedStoryClassName() {
-        return qualifiedStoryClassName;
-    }
-
-    public String getQualifiedFeatureClassName() {
-        return qualifiedFeatureClassName;
     }
 
     public String getStoryName() {
@@ -232,7 +220,8 @@ public class Story {
     }
 
     public Story withPath(String storyPath) {
-        return new Story(this.qualifiedStoryClassName, this.storyName,
-                this.qualifiedFeatureClassName, this.featureName, storyPath);
+        return new Story(this.id, this.storyName, this.feature, storyPath);
     }
+
+
 }

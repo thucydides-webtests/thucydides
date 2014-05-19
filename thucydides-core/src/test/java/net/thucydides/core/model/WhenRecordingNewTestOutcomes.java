@@ -1048,7 +1048,7 @@ public class WhenRecordingNewTestOutcomes {
     public void an_acceptance_test_records_the_original_story_class() {
         net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(MyApp.MyUserStory.class);
         TestOutcome testOutcome = TestOutcome.forTestInStory("some_test", story);
-        assertThat(testOutcome.getUserStory().getUserStoryClass().getName(), is(MyApp.MyUserStory.class.getName()));
+        assertThat(testOutcome.getUserStory().getStoryClassName(), is(MyApp.MyUserStory.class.getName()));
     }
 
     @Test

@@ -50,8 +50,8 @@ public class WhenGroupingUserStoriesByFeature {
         Class<?> userStoryClass = WidgetFeature.PurchaseNewWidget.class;
 
         net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(userStoryClass);
-        Class<?> featureClass = story.getFeatureClass();
-        assertThat(featureClass.getName(), is(WidgetFeature.class.getName()));
+        ApplicationFeature feature = story.getFeature();
+        assertThat(feature.getFeatureClass().getName(), is(WidgetFeature.class.getName()));
     }
 
     @Test
@@ -59,8 +59,8 @@ public class WhenGroupingUserStoriesByFeature {
         Class<?> userStoryClass = SimpleTestCase.class;
 
         net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(userStoryClass);
-        Class<?> featureClass = story.getFeatureClass();
-        assertThat(featureClass, is(nullValue()));
+        ApplicationFeature feature = story.getFeature();
+        assertThat(feature, is(nullValue()));
     }
 
     @Test
@@ -96,8 +96,9 @@ public class WhenGroupingUserStoriesByFeature {
         Class<?> userStoryClass = MyApp.PurchaseNewWidget.class;
 
         net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(userStoryClass);
-        Class<?> featureClass = story.getFeatureClass();
-        assertThat(featureClass, is(nullValue()));
+        assertThat(story.getFeature(), is(nullValue()));
+//        Class<?> featureClass = story.getFeatureClass();
+//        assertThat(featureClass, is(nullValue()));
     }
 
     @Test
@@ -106,7 +107,7 @@ public class WhenGroupingUserStoriesByFeature {
 
         net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(userStoryClass);
 
-        assertThat(story.getFeatureName(), is("Widget feature"));
+        assertThat(story.getFeature().getName(), is("Widget feature"));
     }
 
     @Test
@@ -192,7 +193,7 @@ public class WhenGroupingUserStoriesByFeature {
 
     @Test
     public void a_user_story_can_return_the_corresponding_feature_class_using_id_and_name() {
-        net.thucydides.core.model.Story story = new net.thucydides.core.model.Story("story.class","AStory", "feature.class","AFeature", null);
+        net.thucydides.core.model.Story story = Story.withId("story.class","AStory", "feature.class","AFeature");
 
         ApplicationFeature feature = new ApplicationFeature("feature.class","AFeature");
 

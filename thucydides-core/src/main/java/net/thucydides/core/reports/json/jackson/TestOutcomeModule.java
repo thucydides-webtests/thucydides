@@ -1,10 +1,11 @@
-package net.thucydides.core.reports.json;
+package net.thucydides.core.reports.json.jackson;
 
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.reports.json.JSONStoryMixin;
+import net.thucydides.core.reports.json.JSONTestOutcomeMixin;
 
 public class TestOutcomeModule extends SimpleModule {
 

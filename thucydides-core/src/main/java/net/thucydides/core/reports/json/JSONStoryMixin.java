@@ -1,13 +1,21 @@
 package net.thucydides.core.reports.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import net.thucydides.core.model.features.ApplicationFeature;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+
+@JsonIgnoreProperties({"name","reportName","featureClass","featureId"})
+@JsonInclude(NON_NULL)
 public abstract class JSONStoryMixin {
-    @JsonIgnore public abstract String getName();
-    @JsonIgnore public abstract String getId();
-    @JsonIgnore public abstract String getReportName();
-    @JsonIgnore public abstract String getFeature();
-    @JsonIgnore public abstract String getFeatureClass();
-    @JsonIgnore public abstract String getFeatureId();
+    JSONStoryMixin(@JsonProperty("id") String id,
+                   @JsonProperty("storyName") final String storyName,
+                   @JsonProperty("storyClassName") final String storyClassName,
+                   @JsonProperty("path") final String path,
+                   @JsonProperty("feature") final ApplicationFeature feature) {};
+
 }

@@ -25,6 +25,7 @@ public class PhantomJSCapabilityEnhancer {
 
         ArrayList<String> cliArgs = Lists.newArrayList();
         setSecurityOptions(cliArgs);
+        setLoggingOptions(cliArgs);
         if (StringUtils.isNotEmpty(ThucydidesSystemProperty.THUCYDIDES_PROXY_HTTP.from(environmentVariables))) {
             setProxyOptions(cliArgs);
         }
@@ -58,7 +59,6 @@ public class PhantomJSCapabilityEnhancer {
         if (StringUtils.isNotEmpty(proxyType)) {
             cliArgs.add("--proxy-type=" + proxyType);
         }
-
     }
 
     /*
@@ -84,5 +84,8 @@ public class PhantomJSCapabilityEnhancer {
         cliArgs.add("--ignore-ssl-errors=true");
     }
 
-
+    private void setLoggingOptions(ArrayList<String> cliArgs ) {
+        // TODO: Parameterize
+        cliArgs.add("--webdriver-loglevel=OFF");
+    }
 }

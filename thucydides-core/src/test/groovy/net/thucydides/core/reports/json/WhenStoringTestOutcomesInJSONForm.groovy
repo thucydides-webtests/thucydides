@@ -1,14 +1,17 @@
 package net.thucydides.core.reports.json
 
+import com.sun.xml.internal.bind.v2.TODO
 import net.thucydides.core.model.Story
 import net.thucydides.core.model.TestOutcome
+import org.fest.util.Files
 import org.skyscreamer.jsonassert.JSONAssert
+import spock.lang.Ignore
 import spock.lang.Specification
 
 class WhenStoringTestOutcomesInJSONForm extends Specification {
 
     JSONConverter converter = new JacksonJSONConverter()
-
+     /*
     def "should convert a simple test outcome to JSON"() {
         given:
             def outcome = TestOutcome.forTestInStory("someTest", Story.called("someStory"))
@@ -20,7 +23,7 @@ class WhenStoringTestOutcomesInJSONForm extends Specification {
   "testSteps" : [ ],
   "userStory" : {
     "userStoryClass" : null,
-    "qualifiedStoryClassName" : "someStory",
+    "id" : "someStory",
     "storyName" : "someStory",
     "path" : null,
     "qualifiedFeatureClassName" : null,
@@ -51,17 +54,19 @@ class WhenStoringTestOutcomesInJSONForm extends Specification {
 }"""
             JSONAssert.assertEquals(expectedJson, json.toString(),false)
     }
-
+       */
     // TODO
-       /*
+
+    @Ignore
     def "should convert a simple JSON test outcome to the Java equivalent"() {
         given:
-        def jsonString = """{
+        File jsonFile = Files.newTemporaryFile()
+        jsonFile << """{
   "name" : "someTest",
   "testSteps" : [ ],
   "userStory" : {
     "userStoryClass" : null,
-    "qualifiedStoryClassName" : "someStory",
+    "id" : "someStory",
     "storyName" : "someStory",
     "path" : null,
     "qualifiedFeatureClassName" : null,
@@ -91,10 +96,10 @@ class WhenStoringTestOutcomesInJSONForm extends Specification {
   "skippedOrIgnored" : 0
 }"""
     when:
-        def testOutcome = converter.fromJson(jsonString)
+        def testOutcome = converter.fromJson(jsonFile)
 
     then:
     println testOutcome
     }
-    */
+
 }

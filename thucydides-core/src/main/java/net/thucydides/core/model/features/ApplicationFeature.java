@@ -34,6 +34,7 @@ public class ApplicationFeature {
     private final String featureId;
     private final String featureName;
 
+
     public ApplicationFeature(final String featureId, final String featureName) {
         Preconditions.checkNotNull(featureId);
         Preconditions.checkNotNull(featureName);

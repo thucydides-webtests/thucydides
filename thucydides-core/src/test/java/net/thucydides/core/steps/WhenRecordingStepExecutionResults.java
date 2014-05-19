@@ -484,7 +484,7 @@ public class WhenRecordingStepExecutionResults {
 
         TestOutcome outcome = stepListener.getTestOutcomes().get(0);
         net.thucydides.core.model.Story story = outcome.getUserStory();
-        assertThat(story.getUserStoryClass().getName(), is(MyStory.class.getName()));
+        assertThat(story.getStoryClassName(), is(MyStory.class.getName()));
     }
 
 

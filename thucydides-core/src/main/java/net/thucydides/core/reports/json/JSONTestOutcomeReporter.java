@@ -19,7 +19,10 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,16 +51,9 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter, Acceptan
                                   TestOutcomes allTestOutcomes) throws IOException {
         TestOutcome storedTestOutcome = testOutcome.withQualifier(qualifier);
         Preconditions.checkNotNull(outputDirectory);
-        String json = jsonConverter.toJson(storedTestOutcome);
         String reportFilename = reportFor(storedTestOutcome);
         File report = new File(getOutputDirectory(), reportFilename);
-        LOGGER.info("Generating JSON report for {} to file {}", testOutcome.getTitle(), report.getAbsolutePath());
-        OutputStream outputStream = new FileOutputStream(report);
-        OutputStreamWriter writer = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"));
-        writer.write(json);
-        writer.flush();
-        writer.close();
-        outputStream.close();
+        jsonConverter.writeJsonToFile(storedTestOutcome, report.toPath());
         return report;
     }
 
@@ -83,9 +79,8 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter, Acceptan
     }
 
     public Optional<TestOutcome> loadReportFrom(final File reportFile) {
-        try {
-            String jsonString = Files.toString(reportFile, Charset.forName("UTF-8"));
-            TestOutcome fromJson = jsonConverter.fromJson(jsonString);
+        try{
+            TestOutcome fromJson = jsonConverter.fromJson(reportFile);
             return Optional.of(fromJson);
         } catch (Exception e) {
             LOGGER.warn("this file was not a valid JSON Thucydides test report: " + reportFile.getName());

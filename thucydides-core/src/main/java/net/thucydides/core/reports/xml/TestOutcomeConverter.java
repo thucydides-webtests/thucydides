@@ -211,7 +211,7 @@ public class TestOutcomeConverter implements Converter {
             if (userStory.getPath() != null) {
                 writer.addAttribute(PATH_FIELD, userStory.getPath());
             }
-            if (userStory.getFeatureClass() != null) {
+            if (userStory.getFeature() != null) {// userStory.getFeatureClass() != null) {
                 writeFeatureNode(writer, userStory);
             }
             writer.endNode();
@@ -219,7 +219,7 @@ public class TestOutcomeConverter implements Converter {
     }
 
     private void writeFeatureNode(HierarchicalStreamWriter writer, Story userStory) {
-        ApplicationFeature feature = ApplicationFeature.from(userStory.getFeatureClass());
+        ApplicationFeature feature = userStory.getFeature();// ApplicationFeature.from(userStory.getFeatureClass());
         writer.startNode(FEATURE);
         writer.addAttribute(ID_FIELD, feature.getId());
         writer.addAttribute(NAME_FIELD, feature.getName());

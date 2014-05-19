@@ -413,10 +413,6 @@ public class TestOutcome {
         return getTitle() + ":" + join(extract(testSteps, on(TestStep.class).toString()));
     }
 
-    public String toJson() {
-        JSONConverter jsonConverter = Injectors.getInjector().getInstance(JSONConverter.class);
-        return jsonConverter.toJson(this);
-    }
     /**
      * Return the human-readable name for this test.
      * This is derived from the test name for tests using a Java implementation, or can also be defined using

@@ -21,6 +21,7 @@ class WhenConfiguringPhantomJS extends Specification {
                                            ['--web-security=false',
                                             '--ssl-protocol=any',
                                             '--ignore-ssl-errors=true',
+                                            '--webdriver-loglevel=OFF',
                                             '--proxy=http://proxy.mycompany.com'])
 
     }
@@ -37,6 +38,7 @@ class WhenConfiguringPhantomJS extends Specification {
                     ['--web-security=false',
                         '--ssl-protocol=any',
                         '--ignore-ssl-errors=true',
+                        '--webdriver-loglevel=OFF',
                         '--proxy=http://proxy.mycompany.com:8080'])
 
     }
@@ -55,6 +57,7 @@ class WhenConfiguringPhantomJS extends Specification {
                     ['--web-security=false',
                         '--ssl-protocol=any',
                         '--ignore-ssl-errors=true',
+                        '--webdriver-loglevel=OFF',
                         '--proxy=http://proxy.mycompany.com:8080',
                         '--proxy-auth=scott:tiger'])
     }
@@ -72,6 +75,7 @@ class WhenConfiguringPhantomJS extends Specification {
                 ['--web-security=false',
                         '--ssl-protocol=any',
                         '--ignore-ssl-errors=true',
+                        '--webdriver-loglevel=OFF',
                         '--proxy=http://proxy.mycompany.com:8080',
                         '--proxy-type=socks5'])
     }
@@ -89,6 +93,7 @@ class WhenConfiguringPhantomJS extends Specification {
                 ['--web-security=false',
                         '--ssl-protocol=any',
                         '--ignore-ssl-errors=true',
+                        '--webdriver-loglevel=OFF',
                         '--webdriver-selenium-grid-hub=http://127.0.0.1:4444',
                         '--webdriver=5555'])
     }
@@ -105,6 +110,7 @@ class WhenConfiguringPhantomJS extends Specification {
                 ['--web-security=false',
                         '--ssl-protocol=any',
                         '--ignore-ssl-errors=true',
+                        '--webdriver-loglevel=OFF',
                         '--webdriver-selenium-grid-hub=http://127.0.0.1:4444'])
     }
 }
