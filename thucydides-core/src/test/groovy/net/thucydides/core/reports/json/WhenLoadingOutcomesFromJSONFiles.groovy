@@ -712,7 +712,7 @@ class WhenLoadingOutcomesFromJSONFiles extends Specification {
 			    "storyName": "A user story in a feature",
 			    "path": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AFeature",
 			    "qualifiedFeatureClassName": "net.thucydides.core.reports.json.WhenLoadingOutcomesFromJSONFiles.AFeature",
-			    "featureName": "A feature"
+			    "name": "A feature"
 			  },
 			  "issues": [],
 			  "tags": [

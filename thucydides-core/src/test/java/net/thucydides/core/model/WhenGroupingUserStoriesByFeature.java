@@ -51,7 +51,7 @@ public class WhenGroupingUserStoriesByFeature {
 
         net.thucydides.core.model.Story story = net.thucydides.core.model.Story.from(userStoryClass);
         ApplicationFeature feature = story.getFeature();
-        assertThat(feature.getFeatureClass().getName(), is(WidgetFeature.class.getName()));
+        assertThat(feature.getId(), is(WidgetFeature.class.getCanonicalName()));
     }
 
     @Test

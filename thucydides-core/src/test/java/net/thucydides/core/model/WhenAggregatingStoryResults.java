@@ -21,7 +21,7 @@ public class WhenAggregatingStoryResults {
     @Test
     public void a_story_can_have_an_associated_feature_class() {
         Story story = Story.from(WidgetFeature.PurchaseNewWidget.class);
-        assertThat(story.getFeature().getFeatureClass().getName(), is(WidgetFeature.class.getName()));
+        assertThat(story.getFeature().getId(), is(WidgetFeature.class.getCanonicalName()));
     }
 
     @Test

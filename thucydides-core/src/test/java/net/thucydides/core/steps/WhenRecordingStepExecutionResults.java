@@ -511,7 +511,7 @@ public class WhenRecordingStepExecutionResults {
 
         TestOutcome outcome = stepListener.getTestOutcomes().get(0);
         ApplicationFeature feature = outcome.getFeature();
-        assertThat(feature.getFeatureClass().getName(), is(MyFeature.class.getName()));
+        assertThat(feature.getId(), is(MyFeature.class.getCanonicalName()));
     }
 
     @Test

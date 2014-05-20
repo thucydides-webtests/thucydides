@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.is;
 
 public class WhenDescribingTestMethodsUsingAnnotations {
 
-    class MyTest {
+    class MyTestingClass {
         public void should_do_this() {}
 
         @Title("A test with an annotation")
@@ -32,28 +32,28 @@ public class WhenDescribingTestMethodsUsingAnnotations {
     @Test
     public void the_default_test_name_should_be_a_human_readable_version_of_the_method_name() {
 
-        TestDescription testDescription = new TestDescription(MyTest.class, "should_do_this");
+        TestDescription testDescription = new TestDescription(MyTestingClass.class, "should_do_this");
 
         assertThat(testDescription.getName(), is("Should do this"));
     }
     @Test
     public void a_test_can_be_annotated_to_provide_a_more_readable_name() {
 
-        TestDescription testDescription = new TestDescription(MyTest.class, "an_annotated_test_with_a_title");
+        TestDescription testDescription = new TestDescription(MyTestingClass.class, "an_annotated_test_with_a_title");
 
         assertThat(testDescription.getName(), is("A test with an annotation"));
     }
 
     @Test
     public void should_let_the_user_indicate_what_requirement_is_being_tested_by_a_step() {
-        TestDescription description = new TestDescription(MyTest.class, "a_test_testing_a_requirement");
+        TestDescription description = new TestDescription(MyTestingClass.class, "a_test_testing_a_requirement");
 
         assertThat(description.getAnnotatedRequirements(), hasItem("REQ-1"));
     }
 
     @Test
     public void should_let_the_user_indicate_multiple_requirements() {
-        TestDescription description = new TestDescription(MyTest.class, "a_test_testing_several_requirements");
+        TestDescription description = new TestDescription(MyTestingClass.class, "a_test_testing_several_requirements");
 
         assertThat(description.getAnnotatedRequirements(), hasItems("REQ-1", "REQ-2"));
     }
@@ -61,7 +61,7 @@ public class WhenDescribingTestMethodsUsingAnnotations {
 
     @Test(expected = TestMethodNotFoundException.class)
     public void a_test_description_with_an_invalid_test_name_should_throw_an_exception() {
-        TestDescription description = new TestDescription(MyTest.class, "this_test_does_not_exist");
+        TestDescription description = new TestDescription(MyTestingClass.class, "this_test_does_not_exist");
         description.getAnnotatedRequirements();
     }
 

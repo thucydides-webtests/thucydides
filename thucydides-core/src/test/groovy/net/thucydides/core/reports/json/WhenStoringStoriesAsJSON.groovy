@@ -89,8 +89,7 @@ class WhenStoringStoriesAsJSON extends Specification {
     "path" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON.AFeature",
      "feature" : {
         "id" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON.AFeature",
-        "name" : "A feature",
-        "featureClass" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON\$AFeature"
+        "name" : "A feature"
   }
 }
 """
@@ -100,7 +99,6 @@ class WhenStoringStoriesAsJSON extends Specification {
     }
 
 
-    @Ignore
     def "should read a story with a feature"() {
         given:
         def serializedStory = """
@@ -111,8 +109,8 @@ class WhenStoringStoriesAsJSON extends Specification {
     "path" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON.AFeature",
      "feature" : {
         "id" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON.AFeature",
-        "name" : "A feature",
-        "featureClass" : "net.thucydides.core.reports.json.WhenStoringStoriesAsJSON\$AFeature"
+        "name" : "A feature"
+     }
   }
 }
 """

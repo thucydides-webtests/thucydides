@@ -27,7 +27,7 @@ class WhenStoringTestOutcomesInJSONForm extends Specification {
     "storyName" : "someStory",
     "path" : null,
     "qualifiedFeatureClassName" : null,
-    "featureName" : null
+    "name" : null
   },
   "title" : "Some test",
   "issues" : [ ],
@@ -70,7 +70,7 @@ class WhenStoringTestOutcomesInJSONForm extends Specification {
     "storyName" : "someStory",
     "path" : null,
     "qualifiedFeatureClassName" : null,
-    "featureName" : null
+    "name" : null
   },
   "title" : "Some test",
   "issues" : [ ],

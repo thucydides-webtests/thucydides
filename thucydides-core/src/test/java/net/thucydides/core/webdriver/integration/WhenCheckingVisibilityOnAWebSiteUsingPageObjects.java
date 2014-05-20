@@ -40,7 +40,7 @@ public class WhenCheckingVisibilityOnAWebSiteUsingPageObjects {
     @BeforeClass
     public static void openStaticTestSite() {
         String url = "file://" + fileInClasspathCalled("static-site/index.html").getAbsolutePath();
-        driver = new FirefoxDriver();
+        driver = new PhantomJSDriver();
         driver.get(url);
     }
 

@@ -863,7 +863,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
 			    "storyName": "A user story in a feature",
 			    "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature",
 			    "qualifiedFeatureClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature",
-			    "featureName": "A feature"
+			    "name": "A feature"
 			  },
 			  "issues": [],
 			  "versions": [],
@@ -926,7 +926,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                     "storyName": "A user story in a feature",
                     "path": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature",
                     "qualifiedFeatureClassName": "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AFeature",
-                    "featureName": "A feature"
+                    "name": "A feature"
                   },
                   "issues": [],
                   "versions": [],

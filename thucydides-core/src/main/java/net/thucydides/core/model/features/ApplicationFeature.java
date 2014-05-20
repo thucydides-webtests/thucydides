@@ -30,42 +30,25 @@ import net.thucydides.core.util.NameConverter;
 public class ApplicationFeature {
 
 
-    private final Class<?> featureClass;
-    private final String featureId;
-    private final String featureName;
+    private final String id;
+    private final String name;
 
 
-    public ApplicationFeature(final String featureId, final String featureName) {
-        Preconditions.checkNotNull(featureId);
-        Preconditions.checkNotNull(featureName);
-        this.featureClass = null;
-        this.featureId = featureId;
-        this.featureName = featureName;
-
-
+    public ApplicationFeature(final String id, final String name) {
+        Preconditions.checkNotNull(id);
+        Preconditions.checkNotNull(name);
+        this.id = id;
+        this.name = name;
     }
 
     protected ApplicationFeature(final Class<?> featureClass) {
         Preconditions.checkNotNull(featureClass);
-        this.featureClass = featureClass;
-        this.featureId = null;
-        this.featureName = null;
+        this.id = featureClass.getCanonicalName();
+        this.name = NameConverter.humanize(featureClass.getSimpleName());
     }
 
     public String getName() {
-        if (featureName == null) {
-            return getFeatureName();
-        } else {
-            return featureName;
-        }
-    }
-
-    /**
-     * The underlying feature class that represents this feature.
-     * This is used to record the original feature class in the reports and XML results files.
-     */
-    public Class<?> getFeatureClass() {
-        return featureClass;
+        return name;
     }
 
     /**
@@ -76,32 +59,8 @@ public class ApplicationFeature {
         return new ApplicationFeature(featureClass);
     }
 
-    /**
-     * Each feature has a descriptive name.
-     * This name is usually a human-readable version of the class name, or the name provided in the ApplicationFeature annotation.
-     */
-    protected String getFeatureName() {
-        return NameConverter.humanize(simpleClassName());
-    }
-
     public String getId() {
-        if (featureId == null) {
-            return canonicalClassName();
-        } else {
-            return featureId;
-        }
-    }
-
-    private String simpleClassName() {
-        return getFeatureClass().getSimpleName();
-    }
-
-    private String canonicalClassName() {
-        return getFeatureClass().getCanonicalName();
-    }
-
-    private boolean classesAreEqual(final ApplicationFeature that) {
-        return (featureClass == that.featureClass);
+        return id;
     }
 
     private boolean idAndNameAreEqual(final ApplicationFeature that) {
@@ -115,36 +74,30 @@ public class ApplicationFeature {
     }
 
     private boolean featureIdIsDifferent(final ApplicationFeature that) {
-        return !getId().equals(that.featureId);
+        return !getId().equals(that.id);
     }
 
     private boolean featureNameIsDifferent(final ApplicationFeature that) {
-        return !getName().equals(that.featureName);
+        return !getName().equals(that.name);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ApplicationFeature)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof ApplicationFeature)) return false;
 
         ApplicationFeature that = (ApplicationFeature) o;
 
-        if (this.featureClass != null) {
-            return classesAreEqual(that);
-        } else {
-            return idAndNameAreEqual(that);
-        }
+        if (!id.equals(that.id)) return false;
+        if (!name.equals(that.name)) return false;
+
+        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = featureClass != null ? featureClass.hashCode() : 0;
-        result = 31 * result + (featureId != null ? featureId.hashCode() : 0);
-        result = 31 * result + (featureName != null ? featureName.hashCode() : 0);
+        int result = id.hashCode();
+        result = 31 * result + name.hashCode();
         return result;
     }
 }
