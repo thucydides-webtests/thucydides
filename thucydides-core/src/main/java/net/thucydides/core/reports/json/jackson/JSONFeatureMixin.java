@@ -1,4 +1,4 @@
-package net.thucydides.core.reports.json;
+package net.thucydides.core.reports.json.jackson;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

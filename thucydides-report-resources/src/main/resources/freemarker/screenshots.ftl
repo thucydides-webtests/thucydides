@@ -147,7 +147,7 @@
     <#if (testOutcome.isDataDriven())>
         <div class="story-title">
             <h3>Scenario:</h3>
-            <div class="scenario">${formatter.addLineBreaks(testOutcome.dataDrivenSampleScenario)}</div>
+            <div class="scenario">${formatter.formatWithFields(testOutcome.dataDrivenSampleScenario, testOutcome.exampleFields)}</div>
 
         </div>
     </#if>

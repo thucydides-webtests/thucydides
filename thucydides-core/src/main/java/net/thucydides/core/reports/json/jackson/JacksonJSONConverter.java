@@ -1,10 +1,13 @@
-package net.thucydides.core.reports.json;
+package net.thucydides.core.reports.json.jackson;
 
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.reports.json.JSONConverter;
 import net.thucydides.core.reports.json.jackson.TestOutcomeModule;
 
 import java.io.File;
@@ -27,6 +30,8 @@ public class JacksonJSONConverter implements JSONConverter {
         mapper.registerModule(new GuavaModule());
         mapper.registerModule(new TestOutcomeModule());
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
     }
 
     /**

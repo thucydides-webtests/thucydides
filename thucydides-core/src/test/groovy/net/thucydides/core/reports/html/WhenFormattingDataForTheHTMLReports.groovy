@@ -64,6 +64,30 @@ class WhenFormattingDataForTheHTMLReports extends Specification {
         formattedDescription.contains("<tbody><tr><td>Jill</td><td>100000</td><td>800</td></tr><tr><td>Joe</td><td>50000</td><td>50</td></tr></tbody></table>")
     }
 
+    def "should format multiple embedded tables"() {
+        given:
+        def stepDescription = """Given the following accounts:
+   [| owner | points | statusPoints |
+    | Jill  | 100000 | 800           |
+    | Joe   | 50000  | 50            |]
+    And the following accounts:
+   [| owner | points | statusPoints |
+    | Jake  | 100000 | 800           |
+    | Jane   | 50000  | 50            |]
+    """
+        and:
+        def formatter = new Formatter(issueTracking);
+        when:
+        def formattedDescription = formatter.formatWithFields(stepDescription, [])
+        then:
+        formattedDescription.contains("Given the following accounts:")
+        formattedDescription.contains("<table class='embedded'><thead><th>owner</th><th>points</th><th>statusPoints</th></thead>")
+        formattedDescription.contains("<tbody><tr><td>Jill</td><td>100000</td><td>800</td></tr><tr><td>Joe</td><td>50000</td><td>50</td></tr></tbody></table>")
+        formattedDescription.contains("And the following accounts:")
+        formattedDescription.contains("<table class='embedded'><thead><th>owner</th><th>points</th><th>statusPoints</th></thead>")
+        formattedDescription.contains("<tbody><tr><td>Jake</td><td>100000</td><td>800</td></tr><tr><td>Jane</td><td>50000</td><td>50</td></tr></tbody></table>")
+    }
+
     def "should format raw embedded tables"() {
         given:
         def stepDescription = """Given the following accounts:

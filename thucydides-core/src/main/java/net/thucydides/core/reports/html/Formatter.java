@@ -151,13 +151,21 @@ public class Formatter {
     public String convertAnyTables(String text) {
         text = convertNonStandardNLChars(text);
         if (shouldFormatEmbeddedTables() && containsEmbeddedTable(text)) {
-            String unformattedTable = getFirstEmbeddedTable(text);
-            ExampleTable table = new ExampleTable(unformattedTable);
-
-            text = text.replace(unformattedTable, table.inHtmlFormat())
-                    .replaceAll(newLineUsedIn(text),"<br>");
+            text = withTablesReplaced(text);
 
         }
+        return text;
+    }
+
+    private String withTablesReplaced(String text) {
+        List<String> unformattedTables = getEmbeddedTablesIn(text);
+        for(String unformattedTable : unformattedTables) {
+//            String unformattedTable = getFirstEmbeddedTable(text);
+            ExampleTable table = new ExampleTable(unformattedTable);
+
+            text = text.replace(unformattedTable, table.inHtmlFormat());
+        }
+        text = text.replaceAll(newLineUsedIn(text), "<br>");
         return text;
     }
 
@@ -179,6 +187,35 @@ public class Formatter {
 
     private int positionOfFirstPipeIn(String text) {
         return text.indexOf("|");
+    }
+
+    private List<String> getEmbeddedTablesIn(String text) {
+        List<String> embeddedTables = Lists.newArrayList();
+        BufferedReader reader = new BufferedReader(new StringReader(text));
+        StringBuffer tableText = new StringBuffer();
+        boolean inTable = false;
+        String newLine = newLineUsedIn(text);
+        try {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!inTable && line.contains("|")){ // start of a table
+                    inTable = true;
+                } else if (inTable && !line.contains("|") && !(isBlank(line))){ // end of a table
+                    embeddedTables.add(tableText.toString().trim());
+                    tableText = new StringBuffer();
+                    inTable = false;
+                }
+                if (inTable) {
+                    tableText.append(line).append(newLine);
+                }
+            }
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not process embedded table", e);
+        }
+
+        embeddedTables.add(tableText.toString().trim());
+        return embeddedTables;
+
     }
 
     private String getFirstEmbeddedTable(String text) {
