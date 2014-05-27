@@ -29,34 +29,4 @@ public abstract class JSONTestOutcomeMixin {
 
     @JsonProperty("name")
     public abstract String getMethodName();
-
-    @JsonProperty("stepCount")
-    public abstract Integer getStepCount();
-
-    @JsonProperty("successCount")
-    public abstract Integer getSuccessCount();
-
-    @JsonProperty("failureCount")
-    public abstract Integer getFailureCount();
-
-    @JsonProperty("errorCount")
-    public abstract Integer getErrorCount();
-
-    @JsonProperty("ignoredCount")
-    public abstract Integer getIgnoredCount();
-
-    @JsonProperty("skippedOrIgnoredCount")
-    public abstract Integer getSkippedOrIgnoredCount();
-
-    @JsonProperty("skippedCount")
-    public abstract Integer getSkippedCount();
-
-    @JsonProperty("pendingCount")
-    public abstract Integer getPendingCount();
-
-    @JsonProperty("result")
-    public abstract TestResult getResult();
-
-    @JsonProperty("testSteps")
-    public abstract List<TestStep> getTestSteps();
 }

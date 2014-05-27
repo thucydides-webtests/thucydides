@@ -16,7 +16,6 @@ import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.reports.html.Formatter;
-import net.thucydides.core.reports.json.JSONConverter;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.statistics.model.TestStatistics;
@@ -26,7 +25,6 @@ import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
-import net.thucydides.core.webdriver.WebDriverFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
@@ -183,8 +181,7 @@ public class TestOutcome {
     /**
      * Indicates that this is an imported manual test.
      */
-    private boolean manualTest;
-
+    private boolean manual;
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(TestOutcome.class);
 
@@ -225,7 +222,7 @@ public class TestOutcome {
     }
 
     public TestOutcome asManualTest() {
-        this.manualTest = true;
+        this.manual = true;
         return this;
     }
 
@@ -293,7 +290,7 @@ public class TestOutcome {
         this.dataTable = dataTable;
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
-        this.manualTest = manualTest;
+        this.manual = manualTest;
     }
 
     private List<String> removeDuplicates(List<String> issues) {
@@ -335,7 +332,7 @@ public class TestOutcome {
                     this.annotatedResult,
                     this.dataTable,
                     Optional.fromNullable(qualifier),
-                    this.manualTest);
+                    this.manual);
         } else {
             return this;
         }
@@ -357,7 +354,7 @@ public class TestOutcome {
                 this.annotatedResult,
                 this.dataTable,
                 this.qualifier,
-                this.manualTest);
+                this.manual);
     }
 
     public TestOutcome withMethodName(String methodName) {
@@ -377,7 +374,7 @@ public class TestOutcome {
                     this.annotatedResult,
                     this.dataTable,
                     this.qualifier,
-                    this.manualTest);
+                    this.manual);
         } else {
             return this;
         }
@@ -1132,7 +1129,7 @@ public class TestOutcome {
     }
 
     public boolean isManual() {
-        return manualTest;
+        return manual;
     }
 
     public boolean isStartTimeNotDefined() {
@@ -1446,7 +1443,7 @@ public class TestOutcome {
 
         TestOutcome that = (TestOutcome) o;
 
-        if (manualTest != that.manualTest) return false;
+        if (manual != that.manual) return false;
         if (methodName != null ? !methodName.equals(that.methodName) : that.methodName != null) return false;
         if (qualifier != null ? !qualifier.equals(that.qualifier) : that.qualifier != null) return false;
         if (testCase != null ? !testCase.equals(that.testCase) : that.testCase != null) return false;
@@ -1463,7 +1460,7 @@ public class TestOutcome {
         result = 31 * result + (userStory != null ? userStory.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (qualifier != null ? qualifier.hashCode() : 0);
-        result = 31 * result + (manualTest ? 1 : 0);
+        result = 31 * result + (manual ? 1 : 0);
         return result;
     }
 }

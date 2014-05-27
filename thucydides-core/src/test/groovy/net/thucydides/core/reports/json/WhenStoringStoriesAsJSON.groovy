@@ -1,21 +1,10 @@
 package net.thucydides.core.reports.json
 
-import com.github.goldin.spock.extensions.tempdir.TempDir
-import net.thucydides.core.annotations.*
-import net.thucydides.core.model.TestOutcome
-import net.thucydides.core.reports.AcceptanceTestReporter
-import net.thucydides.core.reports.TestOutcomes
-import net.thucydides.core.reports.integration.TestStepFactory
-import org.joda.time.DateTime
-import org.joda.time.LocalDateTime
+import net.thucydides.core.annotations.Feature
+import net.thucydides.core.reports.json.jackson.JacksonJSONConverter
 import org.skyscreamer.jsonassert.JSONCompare
 import org.skyscreamer.jsonassert.JSONCompareMode
-import spock.lang.Ignore
 import spock.lang.Specification
-
-import java.nio.charset.Charset
-
-import static java.nio.file.Files.newBufferedWriter
 
 class WhenStoringStoriesAsJSON extends Specification {
 

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestStep;
+import net.thucydides.core.model.TestTag;
 import net.thucydides.core.model.features.ApplicationFeature;
-import net.thucydides.core.reports.json.JSONFeatureMixin;
-import net.thucydides.core.reports.json.JSONStoryMixin;
-import net.thucydides.core.reports.json.JSONTestOutcomeMixin;
+import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 
 public class TestOutcomeModule extends SimpleModule {
 
@@ -19,7 +19,10 @@ public class TestOutcomeModule extends SimpleModule {
     public void setupModule(SetupContext context) {
         context.setMixInAnnotations(TestOutcome.class, JSONTestOutcomeMixin.class);
         context.setMixInAnnotations(Story.class, JSONStoryMixin.class);
+        context.setMixInAnnotations(TestStep.class, JSONTestStepMixin.class);
         context.setMixInAnnotations(ApplicationFeature.class, JSONFeatureMixin.class);
+        context.setMixInAnnotations(TestTag.class, JSONTestTagMixin.class);
+        context.setMixInAnnotations(ScreenshotAndHtmlSource.class, JSONScreenshotAndHtmlMixin.class);
 
     }
 }

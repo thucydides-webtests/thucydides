@@ -15,23 +15,20 @@ import static org.apache.commons.io.FileUtils.checksumCRC32;
  */
 public class ScreenshotAndHtmlSource {
 
-    private final File screenshot;
+    private final File screenshotFile;
     private final File sourcecode;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScreenshotAndHtmlSource.class);
-
-    public ScreenshotAndHtmlSource(File screenshot, File sourcecode) {
-        this.screenshot = screenshot;
+    public ScreenshotAndHtmlSource(File screenshotFile, File sourcecode) {
+        this.screenshotFile = screenshotFile;
         this.sourcecode = sourcecode;
     }
 
-    public ScreenshotAndHtmlSource(File screenshot) {
-        this.screenshot = screenshot;
-        this.sourcecode = null;
+    public ScreenshotAndHtmlSource(File screenshotFile) {
+        this(screenshotFile, null);
     }
 
     public File getScreenshotFile() {
-        return screenshot;
+        return screenshotFile;
     }
 
     public Optional<File> getSourcecode() {
@@ -39,7 +36,7 @@ public class ScreenshotAndHtmlSource {
     }
 
     public boolean wasTaken() {
-        return (screenshot != null);
+        return (screenshotFile != null);
     }
 
     @Override
@@ -49,13 +46,13 @@ public class ScreenshotAndHtmlSource {
 
         ScreenshotAndHtmlSource that = (ScreenshotAndHtmlSource) o;
 
-        if (screenshot == null) {
-            return (that.screenshot == null);
-        } else if (that.screenshot == null) {
-            return (this.screenshot == null);
+        if (screenshotFile == null) {
+            return (that.screenshotFile == null);
+        } else if (that.screenshotFile == null) {
+            return (this.screenshotFile == null);
         } else {
             try {
-                return FileUtils.contentEquals(screenshot, that.screenshot);
+                return FileUtils.contentEquals(screenshotFile, that.screenshotFile);
             } catch (IOException e) {
                 return false;
             }
@@ -65,7 +62,7 @@ public class ScreenshotAndHtmlSource {
 
     @Override
     public int hashCode() {
-        return screenshot != null ? screenshot.hashCode() : 0;
+        return screenshotFile != null ? screenshotFile.hashCode() : 0;
     }
 
     public boolean hasIdenticalScreenshotsAs(ScreenshotAndHtmlSource anotherScreenshotAndHtmlSource) {

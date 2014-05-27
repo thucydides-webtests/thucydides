@@ -10,10 +10,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 
 public class WhenWeCreateATestStep {
 
@@ -206,7 +203,16 @@ public class WhenWeCreateATestStep {
         step.recordDuration();
         assertThat(step.getDuration(), is(greaterThanOrEqualTo(100L)));
     }
-    
+
+    @Test
+    public void we_can_display_the_lifetime_of_a_test_step_in_seconds() throws InterruptedException {
+        TestStep step = new TestStep("a narrative description");
+        Thread.sleep(150);
+        step.recordDuration();
+        double expectedDuration = step.getDuration() / 1000.0;
+        assertThat(step.getDurationInSeconds(), closeTo(expectedDuration,0.01));
+    }
+
     @Test
     public void a_test_result_can_be_defined_for_a_step() throws InterruptedException {
         TestStep step = new TestStep("a narrative description");

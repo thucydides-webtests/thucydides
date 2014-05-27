@@ -458,9 +458,7 @@ public enum ThucydidesSystemProperty {
      */
     THUCYDIDES_LOCATOR_FACTORY,
     /**
-     * The hierarchy of capability types.
-     * This is the list of capability types to be used when reading capabilities from the file system
-     * and when organizing the reports. It is a comma-separated list of tags.The default value is: capability, feature
+     * Where Thucydides stores local data.
      */
     THUCYDIDES_DATA_DIR,
 

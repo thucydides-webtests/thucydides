@@ -1,24 +1,19 @@
 package net.thucydides.core.model;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.ImmutableList;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static ch.lambdaj.Lambda.extract;
-import static ch.lambdaj.Lambda.join;
-import static ch.lambdaj.Lambda.on;
-import static net.thucydides.core.model.TestResult.ERROR;
-import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.IGNORED;
-import static net.thucydides.core.model.TestResult.PENDING;
-import static net.thucydides.core.model.TestResult.SKIPPED;
-import static net.thucydides.core.model.TestResult.SUCCESS;
+import static ch.lambdaj.Lambda.*;
+import static net.thucydides.core.model.TestResult.*;
 
 /**
  * An acceptance test run is made up of test steps.
@@ -37,11 +32,11 @@ public class TestStep {
     private String description;    
     private long duration;
     private long startTime;
-    private List<ScreenshotAndHtmlSource> screenshots = new ArrayList<ScreenshotAndHtmlSource>();
-    private Throwable cause;
+    private List<ScreenshotAndHtmlSource> screenshots = new ArrayList<>();
+    private Throwable exception;
     private TestResult result;
 
-    private List<TestStep> children = new ArrayList<TestStep>();
+    private List<TestStep> children = new ArrayList<>();
 
     public TestStep() {
         startTime = now().getMillis();
@@ -131,11 +126,11 @@ public class TestStep {
         newTestStep.description = description;
         newTestStep.startTime = startTime;
         newTestStep.duration = duration;
-        newTestStep.screenshots = new ArrayList(screenshots);
-        newTestStep.cause = cause;
+        newTestStep.screenshots = Lists.newArrayList(screenshots);
+        newTestStep.exception = exception;
         newTestStep.result = result;
         newTestStep.number = number;
-        newTestStep.children = new ArrayList(children);
+        newTestStep.children = Lists.newArrayList(children);
         return newTestStep;
     }
 
@@ -211,7 +206,7 @@ public class TestStep {
     }
 
     private List<TestResult> getChildResults() {
-        List<TestResult> results = new ArrayList<TestResult>();
+        List<TestResult> results = new ArrayList<>();
         for (TestStep step : getChildren()) {
             results.add(step.getResult());
         }
@@ -260,19 +255,18 @@ public class TestStep {
      */
     public void failedWith(final Throwable exception) {
         setResult(new FailureAnalysis().resultFor(exception));
-        this.cause = exception;
+        this.exception = exception;
     }
 
     public String getErrorMessage() {
-        return (cause != null) ? errorMessageFrom(cause) : "";
+        return (exception != null) ? errorMessageFrom(exception) : "";
     }
 
     /**
      * The test has been aborted (marked as pending or ignored) for a reason described in the exception.
-     * @param exception
      */
     public void testAborted(final Throwable exception) {
-        this.cause = exception;
+        this.exception = exception;
     }
 
     private String errorMessageFrom(final Throwable error) {
@@ -284,11 +278,11 @@ public class TestStep {
     }
 
     public Throwable getException() {
-        return cause;
+        return exception;
     }
 
     public List<? extends TestStep> getFlattenedSteps() {
-        List<TestStep> flattenedSteps = new ArrayList<TestStep>();
+        List<TestStep> flattenedSteps = new ArrayList<>();
         for(TestStep child : getChildren()) {
             flattenedSteps.add(child);
             if (child.isAGroup()) {
@@ -312,7 +306,7 @@ public class TestStep {
     }
 
     public Collection<? extends TestStep> getLeafTestSteps() {
-        List<TestStep> leafSteps = new ArrayList<TestStep>();
+        List<TestStep> leafSteps = new ArrayList<>();
         for(TestStep child : getChildren()) {
             if (child.isAGroup()) {
                 leafSteps.addAll(child.getLeafTestSteps());
@@ -339,11 +333,54 @@ public class TestStep {
         }
     }
 
+    public long getStartTime() {
+        return startTime;
+    }
+
     public int getScreenshotCount() {
         return screenshots.size();
     }
 
     public void removeScreenshot(int index) {
         screenshots.remove(index);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TestStep)) return false;
+
+        TestStep testStep = (TestStep) o;
+
+        if (duration != testStep.duration) return false;
+        if (number != testStep.number) return false;
+        if (startTime != testStep.startTime) return false;
+        if (exception != null ? !exceptionsAreEqual(exception, testStep.exception) : testStep.exception != null) return false;
+        if (!children.equals(testStep.children)) return false;
+        if (!description.equals(testStep.description)) return false;
+        if (result != testStep.result) return false;
+        return !(screenshots != null ? !screenshots.equals(testStep.screenshots) : testStep.screenshots != null);
+
+    }
+
+    private boolean exceptionsAreEqual(Throwable exception, Throwable otherException) {
+        if ((exception == null) && (otherException == null)) {
+            return true;
+        }
+        return (StringUtils.equals(exception.getMessage(), otherException.getMessage())
+                && (exceptionsAreEqual(exception.getCause(), otherException.getCause())));
+    }
+
+    @Override
+    public int hashCode() {
+        int result1 = number;
+        result1 = 31 * result1 + description.hashCode();
+        result1 = 31 * result1 + (int) (duration ^ (duration >>> 32));
+        result1 = 31 * result1 + (int) (startTime ^ (startTime >>> 32));
+        result1 = 31 * result1 + (screenshots != null ? screenshots.hashCode() : 0);
+        result1 = 31 * result1 + (exception != null ? exception.hashCode() : 0);
+        result1 = 31 * result1 + result.hashCode();
+        result1 = 31 * result1 + children.hashCode();
+        return result1;
     }
 }

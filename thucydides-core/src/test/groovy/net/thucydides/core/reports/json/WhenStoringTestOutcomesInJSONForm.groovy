@@ -1,10 +1,7 @@
 package net.thucydides.core.reports.json
 
-import com.sun.xml.internal.bind.v2.TODO
-import net.thucydides.core.model.Story
-import net.thucydides.core.model.TestOutcome
+import net.thucydides.core.reports.json.jackson.JacksonJSONConverter
 import org.fest.util.Files
-import org.skyscreamer.jsonassert.JSONAssert
 import spock.lang.Ignore
 import spock.lang.Specification
 

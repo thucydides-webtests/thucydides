@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.json;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -82,6 +83,8 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter, Acceptan
         try{
             TestOutcome fromJson = jsonConverter.fromJson(reportFile);
             return Optional.of(fromJson);
+        } catch (JsonMappingException mappingException) {
+            throw new RuntimeException("Error loading JSON test outcomes", mappingException);
         } catch (Exception e) {
             LOGGER.warn("this file was not a valid JSON Thucydides test report: " + reportFile.getName());
             return Optional.absent();
