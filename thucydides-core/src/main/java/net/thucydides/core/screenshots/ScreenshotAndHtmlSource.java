@@ -16,11 +16,27 @@ import static org.apache.commons.io.FileUtils.checksumCRC32;
 public class ScreenshotAndHtmlSource {
 
     private final File screenshotFile;
-    private final File sourcecode;
+    private final File htmlSource;
+
+    public ScreenshotAndHtmlSource(String screenshotName, String sourcecodeName) {
+        this.screenshotFile = new File(screenshotName);
+        this.htmlSource = (sourcecodeName != null) ? new File(sourcecodeName) : null;
+    }
 
     public ScreenshotAndHtmlSource(File screenshotFile, File sourcecode) {
         this.screenshotFile = screenshotFile;
-        this.sourcecode = sourcecode;
+        this.htmlSource = sourcecode;
+    }
+
+    public String getScreenshotName() {
+        return screenshotFile.getName();
+    }
+
+    public String getHtmlSourceName() {
+        if (htmlSource == null) {
+            return null;
+        }
+        return htmlSource.getName();
     }
 
     public ScreenshotAndHtmlSource(File screenshotFile) {
@@ -31,8 +47,8 @@ public class ScreenshotAndHtmlSource {
         return screenshotFile;
     }
 
-    public Optional<File> getSourcecode() {
-        return Optional.fromNullable(sourcecode);
+    public Optional<File> getHtmlSource() {
+        return Optional.fromNullable(htmlSource);
     }
 
     public boolean wasTaken() {

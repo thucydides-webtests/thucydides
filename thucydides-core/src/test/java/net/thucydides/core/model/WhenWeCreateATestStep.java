@@ -36,7 +36,7 @@ public class WhenWeCreateATestStep {
 
         assertThat(step.hasScreenshots(), is(true));
         assertThat(step.getScreenshots().get(0).getScreenshotFile(), is(screenshot));
-        assertThat(step.getScreenshots().get(0).getSourcecode().get(), is(source));
+        assertThat(step.getScreenshots().get(0).getHtmlSource().get(), is(source));
     }
 
     @Test
@@ -50,10 +50,10 @@ public class WhenWeCreateATestStep {
         ScreenshotAndHtmlSource screenshot2 = step.getScreenshots().get(1);
 
         assertThat(screenshot1.getScreenshotFile().getName(), is("google_page_1.png"));
-        assertThat(screenshot1.getSourcecode().get().getName(), is("screenshot.html"));
+        assertThat(screenshot1.getHtmlSource().get().getName(), is("screenshot.html"));
 
         assertThat(screenshot2.getScreenshotFile().getName(), is("google_page_2.png"));
-        assertThat(screenshot2.getSourcecode().get().getName(), is("screenshot2.html"));
+        assertThat(screenshot2.getHtmlSource().get().getName(), is("screenshot2.html"));
         
         assertThat(screenshot1.hashCode(), is(not(screenshot2.hashCode())));
     }
@@ -106,7 +106,7 @@ public class WhenWeCreateATestStep {
         step.addScreenshot(new ScreenshotAndHtmlSource(screenshot2, source2));
 
         assertThat(step.getFirstScreenshot().getScreenshotFile(), is(screenshot));
-        assertThat(step.getFirstScreenshot().getSourcecode().get(), is(source));
+        assertThat(step.getFirstScreenshot().getHtmlSource().get(), is(source));
     }
 
     @Test

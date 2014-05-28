@@ -35,7 +35,6 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import sample.listeners.SampleStepListener;
 import some.other.place.StepsInSomeOtherPlace;
 
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -1504,7 +1503,7 @@ public class WhenRecordingStepExecutionResults {
         TestOutcome testOutcome = results.get(0);
         TestStep firstStep = testOutcome.getTestSteps().get(0).getChildren().get(0);
         ScreenshotAndHtmlSource screenshot = firstStep.getScreenshots().get(0);
-        assertThat(screenshot.getSourcecode().isPresent(), is(false));
+        assertThat(screenshot.getHtmlSource().isPresent(), is(false));
     }
 
     @Test

@@ -1,15 +1,12 @@
 package net.thucydides.core.reports.json
 
 import com.github.goldin.spock.extensions.tempdir.TempDir
-import com.sun.xml.internal.bind.v2.TODO
 import net.thucydides.core.annotations.*
 import net.thucydides.core.digest.Digest
 import net.thucydides.core.model.DataTable
 import net.thucydides.core.model.TestOutcome
-import net.thucydides.core.model.TestResult
 import net.thucydides.core.model.TestStep
 import net.thucydides.core.model.TestTag
-import net.thucydides.core.model.features.ApplicationFeature
 import net.thucydides.core.reports.AcceptanceTestLoader
 import net.thucydides.core.reports.AcceptanceTestReporter
 import net.thucydides.core.reports.TestOutcomes
@@ -511,7 +508,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
         reloadedOutcome.testSteps[0].screenshotCount == 1
         reloadedOutcome.testSteps[0].screenshots[0].screenshotFile.name.endsWith("step_1.png")
-        reloadedOutcome.testSteps[0].screenshots[0].sourcecode.isPresent()
+        reloadedOutcome.testSteps[0].screenshots[0].htmlSource.isPresent()
     }
 
 
@@ -532,7 +529,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
         reloadedOutcome.testSteps[0].screenshotCount == 1
         reloadedOutcome.testSteps[0].screenshots[0].screenshotFile.name.endsWith("step_1.png")
-        !reloadedOutcome.testSteps[0].screenshots[0].sourcecode.isPresent()
+        !reloadedOutcome.testSteps[0].screenshots[0].htmlSource.isPresent()
     }
 
 }

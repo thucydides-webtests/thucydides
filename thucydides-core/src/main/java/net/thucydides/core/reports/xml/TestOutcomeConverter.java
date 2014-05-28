@@ -351,8 +351,8 @@ public class TestOutcomeConverter implements Converter {
             for(ScreenshotAndHtmlSource screenshotAndHtmlSource : step.getScreenshots()) {
                 writer.startNode(SCREENSHOT_FIELD);
                 writer.addAttribute(SCREENSHOT_IMAGE, screenshotAndHtmlSource.getScreenshotFile().getName());
-                if (screenshotAndHtmlSource.getSourcecode().isPresent()) {
-                    writer.addAttribute(SCREENSHOT_SOURCE, screenshotAndHtmlSource.getSourcecode().get().getName());
+                if (screenshotAndHtmlSource.getHtmlSource().isPresent()) {
+                    writer.addAttribute(SCREENSHOT_SOURCE, screenshotAndHtmlSource.getHtmlSource().get().getName());
                 }
                 writer.endNode();
             }

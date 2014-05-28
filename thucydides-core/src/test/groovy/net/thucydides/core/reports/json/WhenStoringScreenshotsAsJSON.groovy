@@ -14,8 +14,8 @@ class WhenStoringScreenshotsAsJSON extends Specification {
     def "should generate JSON for a screenshot"() {
         given:
         def screenshotFile = new File("screenshot.png")
-        def htmlFile = new File("screenshot.html")
-        def screenshot = new ScreenshotAndHtmlSource(screenshotFile, htmlFile)
+        def htmlSource = new File("screenshot.html")
+        def screenshot = new ScreenshotAndHtmlSource(screenshotFile, htmlSource)
 
         when:
         StringWriter writer = new StringWriter();
@@ -25,8 +25,8 @@ class WhenStoringScreenshotsAsJSON extends Specification {
         then:
         def expectedJson = """
 {
-  "sourcecode" : "$htmlFile.absolutePath",
-  "screenshotFile" : "$screenshotFile.absolutePath"
+  "screenshot" : "screenshot.png",
+  "htmlSource" : "screenshot.html"
 }
 """
         def serializedStory = writer.toString()
@@ -48,7 +48,7 @@ class WhenStoringScreenshotsAsJSON extends Specification {
         then:
         def expectedJson = """
 {
-  "screenshotFile" : "$screenshotFile.absolutePath"
+  "screenshot" : "screenshot.png"
 }
 """
         def serializedStory = writer.toString()
@@ -57,13 +57,10 @@ class WhenStoringScreenshotsAsJSON extends Specification {
 
     def "should read a screenshot from JSON"() {
         given:
-        def screenshotFile = new File("screenshot.png")
-        def htmlFile = new File("screenshot.html")
-
         def serializedScreenshot = """
 {
-  "sourcecode" : "$htmlFile.absolutePath",
-  "screenshotFile" : "$screenshotFile.absolutePath"
+  "screenshot" : "screenshot.png",
+  "htmlSource" : "screenshot.html"
 }
 """
         def reader = new StringReader(serializedScreenshot)
@@ -73,9 +70,9 @@ class WhenStoringScreenshotsAsJSON extends Specification {
         def screenshot = converter.mapper.readValue(reader,ScreenshotAndHtmlSource)
 
         then:
-        screenshot.screenshotFile.absolutePath == screenshotFile.absolutePath
-        screenshot.sourcecode.isPresent()
-        screenshot.sourcecode.get().absolutePath == htmlFile.absolutePath
+        screenshot.screenshotFile.name == "screenshot.png"
+        screenshot.htmlSource.isPresent()
+        screenshot.htmlSource.get().name == "screenshot.html"
     }
 
 
@@ -85,7 +82,7 @@ class WhenStoringScreenshotsAsJSON extends Specification {
 
         def serializedScreenshot = """
 {
-  "screenshotFile" : "$screenshotFile.absolutePath"
+  "screenshot" : "screenshot.png"
 }
 """
         def reader = new StringReader(serializedScreenshot)
@@ -96,6 +93,6 @@ class WhenStoringScreenshotsAsJSON extends Specification {
 
         then:
         screenshot.screenshotFile.absolutePath == screenshotFile.absolutePath
-        !screenshot.sourcecode.isPresent()
+        !screenshot.htmlSource.isPresent()
     }
 }

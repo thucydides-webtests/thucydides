@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.json.jackson;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -8,9 +9,16 @@ import java.io.File;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @JsonInclude(NON_NULL)
-public abstract class JSONScreenshotAndHtmlMixin {
-    JSONScreenshotAndHtmlMixin(@JsonProperty("screenshot") File screenshot,
-                               @JsonProperty("sourcecode") File sourcecode) {};
 
+@JsonIgnoreProperties({"screenshotFile","sourcecode"})
+public abstract class JSONScreenshotAndHtmlMixin {
+    JSONScreenshotAndHtmlMixin(@JsonProperty("screenshot") String screenshot,
+                               @JsonProperty("sourcecode") String sourcecode) {};
+
+    @JsonProperty("screenshot")
+    public abstract String getScreenshotName();
+
+    @JsonProperty("htmlSource")
+    public abstract String getHtmlSourceName();
 
 }
