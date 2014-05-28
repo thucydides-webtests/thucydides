@@ -76,6 +76,26 @@ class WhenStoringTestStepsAsJSON extends Specification {
             step.equals(failingStep)
     }
 
+    def "should read and write a test step containing a multi-line step"() {
+        given:
+        def description = """line 1
+line 2
+line 3
+"""
+        TestStep aStep = TestStep.forStepCalled(description).withResult(TestResult.FAILURE)
+                .startingAt(FIRST_OF_JANUARY);
+
+        when:
+        StringWriter writer = new StringWriter();
+        converter.mapper.writerWithDefaultPrettyPrinter().writeValue(writer, aStep);
+        def renderedJson = writer.toString()
+        and:
+        def reader = new StringReader(renderedJson)
+        def step = converter.mapper.readValue(reader, net.thucydides.core.model.TestStep)
+        then:
+        step.description == description
+    }
+
     def "should read and write a test step with children"() {
         given:
         TestStep parentStep = TestStep.forStepCalled("some step").withResult(TestResult.SUCCESS)

@@ -19,7 +19,7 @@ public class WhenUsingRecordedScreenshots {
 
     @Test
     public void a_screenshot_was_not_taken_if_the_screenshot_file_is_null() {
-        ScreenshotAndHtmlSource screenshotAndHtmlSource = new ScreenshotAndHtmlSource(null, null);
+        ScreenshotAndHtmlSource screenshotAndHtmlSource = new ScreenshotAndHtmlSource(null);
         assertThat(screenshotAndHtmlSource.wasTaken(), is(false));
     }
 
@@ -56,7 +56,7 @@ public class WhenUsingRecordedScreenshots {
     @Test
     public void a_screenshot_with_an_image_is_not_equal_to_a_null_screenshot() {
         ScreenshotAndHtmlSource screenshotAndHtmlSource = new ScreenshotAndHtmlSource(screenshotFileFrom("/screenshots/google_page_1.png"), new File("screen.html"));
-        ScreenshotAndHtmlSource nullScreenshotAndHtmlSource = new ScreenshotAndHtmlSource(null, null);
+        ScreenshotAndHtmlSource nullScreenshotAndHtmlSource = new ScreenshotAndHtmlSource(null);
 
         assertThat(screenshotAndHtmlSource, is(not(nullScreenshotAndHtmlSource)));
         assertThat(nullScreenshotAndHtmlSource, is(not(screenshotAndHtmlSource)));
