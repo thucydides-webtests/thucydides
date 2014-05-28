@@ -1,6 +1,7 @@
 package net.thucydides.core.reports.html;
 
 import ch.lambdaj.function.convert.Converter;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import net.thucydides.core.guice.Injectors;
@@ -12,6 +13,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.OutcomeFormat;
 import net.thucydides.core.reports.ReportOptions;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.html.screenshots.ScreenshotFormatter;
@@ -204,4 +206,8 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         return testOutcome.withQualifier(qualifier).getReportName(HTML);
     }
 
+    @Override
+    public Optional<OutcomeFormat> getFormat() {
+        return Optional.of(OutcomeFormat.HTML);
+    }
 }

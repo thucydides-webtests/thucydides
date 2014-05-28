@@ -13,6 +13,7 @@ import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
+import net.thucydides.core.reports.FormatConfiguration;
 import net.thucydides.core.reports.json.JSONConverter;
 import net.thucydides.core.reports.json.jackson.JacksonJSONConverter;
 import net.thucydides.core.reports.renderer.Asciidoc;

@@ -17,6 +17,7 @@ public class Story {
     private  String storyName;
     private  String storyClassName;
     private  String path;
+    private  String narrative;
     private  ApplicationFeature feature;
 
     protected Story(final Class<?> userStoryClass) {
@@ -54,6 +55,22 @@ public class Story {
         this.storyClassName = storyClassName;
         this.feature = feature;
         this.path = path;
+        this.narrative = null;
+    }
+
+
+    public Story(String id,
+                 final String storyName,
+                 final String storyClassName,
+                 final String path,
+                 final ApplicationFeature feature,
+                 final String narrative) {
+        this.id = id;
+        this.storyName = storyName;
+        this.storyClassName = storyClassName;
+        this.feature = feature;
+        this.path = path;
+        this.narrative = narrative;
     }
 
 //    public Story(final String id,
@@ -104,6 +121,10 @@ public class Story {
      */
     public static Story withId(final String storyId, final String storyName) {
         return new Story(storyId, storyName, null, null, null);
+    }
+
+    public Story withNarrative(String narrative)  {
+        return new Story(id, storyName, storyClassName, path, feature, narrative);
     }
 
     public static Story withIdAndPath(final String storyId, final String storyName, final String storyPath) {
@@ -217,6 +238,10 @@ public class Story {
 
     public String getStoryName() {
         return storyName;
+    }
+
+    public String getNarrative() {
+        return narrative;
     }
 
     public Story withPath(String storyPath) {

@@ -515,9 +515,10 @@ public enum ThucydidesSystemProperty {
     NARRATIVE_FORMAT,
 
     /**
-     * Internal report format used when loading test outcome reports during aggregation - json or xml (xml by default)
+     * What format should test results be generated in.
+     * By default, this is "json,xml".
      */
-    THUCYDIDES_REPORT_FORMAT,
+    OUTPUT_FORMATS,
 
     /**
      * Path to PhantomJS executable
@@ -557,6 +558,18 @@ public enum ThucydidesSystemProperty {
      * If set, this will define the list of tag types to be excluded from the dashboard screens
      */
     DASHBOARD_EXCLUDED_TAG_LIST,
+
+    /**
+     * Format the JSON test outcomes nicely.
+     * "true" or "false", turned off by default.
+     */
+    JSON_PRETTY_PRINTING,
+
+    /**
+     * What charset to use for JSON processing.
+     * Defaults to UTF-8
+     */
+    JSON_CHARSET,
 
     /**
      * Keep the Thucydides session data between tests.

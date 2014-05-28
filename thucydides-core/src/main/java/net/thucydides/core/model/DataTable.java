@@ -135,8 +135,8 @@ public class DataTable {
         private Converter<List<Object>, DataTableRow> toDataTableRows() {
             return new Converter<List<Object>, DataTableRow>() {
 
-                public DataTableRow convert(List<Object> cellValues) {
-                    return new DataTableRow(cellValues);
+                public DataTableRow convert(List<Object> values) {
+                    return new DataTableRow(values);
                 }
             };
         }

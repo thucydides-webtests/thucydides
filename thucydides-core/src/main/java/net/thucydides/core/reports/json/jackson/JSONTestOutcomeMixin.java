@@ -8,7 +8,7 @@ import net.thucydides.core.model.TestStep;
 
 import java.util.List;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 
 @JsonIgnoreProperties({"testResult", "htmlReport", "reportName", "screenshotReportName", "descriptionText",
@@ -22,7 +22,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
         "success","error","failure","pending","skipped",
         "path","pathId","storyTitle",
         "durationInSeconds", "videoLinks", "implementedTestCount", "exampleFields", "dataDrivenSampleScenario"})
-@JsonInclude(NON_NULL)
+@JsonInclude(NON_EMPTY)
 public abstract class JSONTestOutcomeMixin {
     public JSONTestOutcomeMixin(@JsonProperty("name") String methodName) {
     }

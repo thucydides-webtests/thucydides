@@ -10,6 +10,7 @@ import net.thucydides.core.model.ReportType;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestLoader;
 import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.OutcomeFormat;
 import net.thucydides.core.reports.TestOutcomes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,5 +112,10 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter, Acceptan
         public boolean accept(final File file, final String filename) {
             return filename.toLowerCase(Locale.getDefault()).endsWith(".json");
         }
+    }
+
+    @Override
+    public Optional<OutcomeFormat> getFormat() {
+        return Optional.of(OutcomeFormat.JSON);
     }
 }

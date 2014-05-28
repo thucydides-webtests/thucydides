@@ -9,10 +9,7 @@ import net.thucydides.core.model.Release;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.releases.ReleaseManager;
-import net.thucydides.core.reports.ReportOptions;
-import net.thucydides.core.reports.TestOutcomeLoader;
-import net.thucydides.core.reports.TestOutcomes;
-import net.thucydides.core.reports.UserStoryTestReporter;
+import net.thucydides.core.reports.*;
 import net.thucydides.core.reports.csv.CSVReporter;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.history.TestResultSnapshot;
@@ -23,6 +20,7 @@ import net.thucydides.core.requirements.model.RequirementsConfiguration;
 import net.thucydides.core.requirements.reports.RequirementOutcome;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -66,27 +64,33 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private final HtmlRequirementsReporter htmlRequirementsReporter;
     private final HtmlProgressReporter htmlProgressReporter;
     private final RequirementsConfiguration requirementsConfiguration;
+    private final EnvironmentVariables environmentVariables;
+    private FormatConfiguration formatConfiguration;
 
     public HtmlAggregateStoryReporter(final String projectName) {
         this(projectName, "");
     }
 
     public HtmlAggregateStoryReporter(final String projectName, final String relativeLink) {
-        this(projectName, relativeLink, Injectors.getInjector().getInstance(IssueTracking.class), new TestHistory(projectName),
-             Injectors.getInjector().getInstance(RequirementsService.class));
+        this(projectName, relativeLink,
+             Injectors.getInjector().getInstance(IssueTracking.class), new TestHistory(projectName),
+             Injectors.getInjector().getInstance(RequirementsService.class),
+             Injectors.getInjector().getInstance(EnvironmentVariables.class));
     }
 
     public HtmlAggregateStoryReporter(final String projectName,
                                       final IssueTracking issueTracking,
                                       final TestHistory testHistory) {
-        this(projectName, "", issueTracking, testHistory, Injectors.getInjector().getInstance(RequirementsService.class));
+        this(projectName, "", issueTracking, testHistory, Injectors.getInjector().getInstance(RequirementsService.class),
+             Injectors.getInjector().getInstance(EnvironmentVariables.class));
     }
 
     public HtmlAggregateStoryReporter(final String projectName,
                                       final String relativeLink,
                                       final IssueTracking issueTracking,
                                       final TestHistory testHistory,
-                                      final RequirementsService requirementsService) {
+                                      final RequirementsService requirementsService,
+                                      final EnvironmentVariables environmentVariables) {
         this.projectName = projectName;
         this.relativeLink = relativeLink;
         this.issueTracking = issueTracking;
@@ -99,6 +103,12 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         this.requirementsFactory = new RequirmentsOutcomeFactory(requirementsProviderService.getRequirementsProviders(), issueTracking);
         this.requirementsService = requirementsService;
         this.requirementsConfiguration = new RequirementsConfiguration(getEnvironmentVariables());
+        this.environmentVariables = environmentVariables;
+        this.formatConfiguration = new FormatConfiguration(environmentVariables);
+    }
+
+    public OutcomeFormat getFormat() {
+       return formatConfiguration.getPreferredFormat();
     }
 
     public String getProjectName() {
@@ -232,7 +242,13 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     private TestOutcomes loadTestOutcomesFrom(File sourceDirectory) throws IOException {
-        return TestOutcomeLoader.testOutcomesIn(sourceDirectory).withHistory();
+        return TestOutcomeLoader.loadTestOutcomes().inFormat(getFormat()).from(sourceDirectory).withHistory();
+    }
+
+    private OutcomeFormat configuredFormat() {
+        String formatValue = ThucydidesSystemProperty.OUTPUT_FORMATS
+                .from(environmentVariables, OutcomeFormat.JSON.toString());
+        return OutcomeFormat.valueOf(formatValue.toUpperCase());
     }
 
     private void generateAggregateReportFor(TestOutcomes testOutcomes) throws IOException {

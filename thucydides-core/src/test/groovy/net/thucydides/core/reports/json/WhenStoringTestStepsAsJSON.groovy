@@ -3,6 +3,7 @@ package net.thucydides.core.reports.json
 import net.thucydides.core.model.TestResult
 import net.thucydides.core.model.TestStep
 import net.thucydides.core.reports.json.jackson.JacksonJSONConverter
+import net.thucydides.core.util.MockEnvironmentVariables
 import org.joda.time.DateTime
 import org.joda.time.LocalDateTime
 import org.skyscreamer.jsonassert.JSONCompare
@@ -12,6 +13,8 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class WhenStoringTestStepsAsJSON extends Specification {
+
+    def environmentVars = new MockEnvironmentVariables();
 
     private static final DateTime FIRST_OF_JANUARY = new LocalDateTime(2013, 1, 1, 0, 0, 0, 0).toDateTime()
 
@@ -23,15 +26,13 @@ class WhenStoringTestStepsAsJSON extends Specification {
   "number" : 0,
   "description" : "some step",
   "duration" : 0,
-  "screenshots" : [ ],
   "result" : "SUCCESS",
-  "children" : [ ],
   "startTime" : ${FIRST_OF_JANUARY.millis}
 }
 """
 
     @Shared
-    def converter = new JacksonJSONConverter()
+    def converter = new JacksonJSONConverter(environmentVars)
 
     @Unroll
     def "should generate an JSON report for a test step"() {
@@ -39,7 +40,6 @@ class WhenStoringTestStepsAsJSON extends Specification {
         StringWriter writer = new StringWriter();
         converter.mapper.writerWithDefaultPrettyPrinter().writeValue(writer, testStep);
         def renderedJson = writer.toString()
-        println renderedJson
         JSONCompare.compareJSON(expectedJson, renderedJson, JSONCompareMode.LENIENT).passed();
 
         where:

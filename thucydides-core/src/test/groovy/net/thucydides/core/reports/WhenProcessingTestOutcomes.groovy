@@ -19,23 +19,21 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should load test outcomes from a given directory"() {
         when:
-            List<TestOutcome> testOutcomes = loader.loadFrom(directoryInClasspathCalled("/tagged-test-outcomes"));
+            List<TestOutcome> testOutcomes = loader.forFormat(OutcomeFormat.XML).loadFrom(directoryInClasspathCalled("/tagged-test-outcomes"));
         then:
             testOutcomes.size() == 3
     }
 
     EnvironmentVariables environmentVariables = new MockEnvironmentVariables()
 
-    // TODO
-    @Ignore
     def "should load tests in JSON if configured"() {
         given:
             environmentVariables.setProperty("thucydides.report.format","json");
             def loader = new TestOutcomeLoader(environmentVariables)
         when:
-            List<TestOutcome> testOutcomes = loader.loadFrom(directoryInClasspathCalled("/json-reports"));
+            List<TestOutcome> testOutcomes = loader.forFormat(OutcomeFormat.JSON).loadFrom(directoryInClasspathCalled("/json-test-outcomes"));
         then:
-            testOutcomes.size() == 3
+            testOutcomes.size() == 11
     }
 
     def "should not load test outcome from an invalid directory"() {
@@ -47,7 +45,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list all the tag types for the test outcomes"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
             def tagTypes = testOutcomes.getTagTypes()
         then:
@@ -56,7 +54,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list all the tags for the test outcomes"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
             def tags = testOutcomes.getTagNames()
         then:
@@ -65,7 +63,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list all the tags of a given type for the test outcomes"() {
         given:
-        TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+        TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
         def tags = testOutcomes.getTagsOfType 'story'
         then:
@@ -74,7 +72,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list all the tags of a given type for the test outcomes except for specified tags"() {
         given:
-        TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+        TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
         def tags = testOutcomes.getTagsOfTypeExcluding 'story', 'a story'
         then:
@@ -83,7 +81,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list all the tags of a given type for the test outcomes except for specified tags for different cases"() {
         given:
-        TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+        TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
         def tags = testOutcomes.getTagsOfTypeExcluding 'story', 'A Story'
         then:
@@ -92,7 +90,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list all the tags of a single type for the test outcomes"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
             def tags = testOutcomes.getTagsOfType 'feature'
         then:
@@ -101,7 +99,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list all the tags for a given type"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
             Set<String> tagTypes = testOutcomes.withTagType("feature").getTagTypes()
         then:
@@ -110,7 +108,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list all the tag types for a given name"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
             Set<String> tagTypes = testOutcomes.withTag("an epic").getTagTypes()
         then:
@@ -119,7 +117,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list tests in alphabetical order"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
             def tests = testOutcomes.getTests()
         then:
@@ -130,7 +128,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list tests for a given tag type"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
             def tests = testOutcomes.withTagType("feature").getTests()
         then:
@@ -139,7 +137,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list tests for a given issue using a tag notation"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
             def tests = testOutcomes.withTag(TestTag.withValue("issue:ISSUE-1")).getTests()
         then:
@@ -148,7 +146,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list tests for a given set of tags"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
             def tags = [TestTag.withValue("story:a story"), TestTag.withValue("story:another story")]
             def tests = testOutcomes.withTags(tags).getTests()
@@ -160,7 +158,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list tests for a given set of issue numbers"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
             def tags = [TestTag.withValue("issue:ISSUE-1"), TestTag.withValue("issue:ISSUE-2")]
             def tests = testOutcomes.withTags(tags).getTests()
@@ -172,7 +170,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list tests for a given tag"() {
         given:
-        TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+        TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
         def tests = testOutcomes.withTag("a story").getTests()
         then:
@@ -182,7 +180,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list all passing tests"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/test-outcomes/containing-failure"));
         when:
             def tests = testOutcomes.passingTests.getTests()
         then:
@@ -190,22 +188,20 @@ class WhenProcessingTestOutcomes extends Specification {
             tests everyItem(withResult(TestResult.SUCCESS))
     }
 
-    // TODO:
-    @Ignore
     def "should list all passing tests from JSON files"() {
         given:
             environmentVariables.setProperty("thucydides.report.format","json");
             def loader = new TestOutcomeLoader(environmentVariables)
-            TestOutcomes testOutcomes = TestOutcomes.of(loader.loadFrom(directoryInClasspathCalled("/test-outcomes/full-json")));
+            TestOutcomes testOutcomes = TestOutcomes.of(loader.loadFrom(directoryInClasspathCalled("/json-test-outcomes")));
         when:
             def tests = testOutcomes.passingTests.getTests()
         then:
-            tests.size() == 5
+            tests.size() == 11
     }
 
     def "should list all failing tests"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/test-outcomes/containing-failure"));
         when:
             def tests = testOutcomes.failingTests.getTests()
         then:
@@ -215,7 +211,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list all pending tests"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/containing-failure"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/test-outcomes/containing-failure"));
         when:
             def tests = testOutcomes.pendingTests.getTests()
         then:
@@ -225,7 +221,7 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should list tests for a given tag and tag type"() {
         given:
-            TestOutcomes testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
             def tests = testOutcomes.withTagType("feature").withTag("a feature").getTests()
         then:
@@ -234,28 +230,28 @@ class WhenProcessingTestOutcomes extends Specification {
 
     def "should provide total test duration for a set of tests"() {
         when:
-            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            def testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         then:
             testOutcomes.duration == 1775
     }
 
     def "should provide total test duration in seconds for a set of tests"() {
         when:
-            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            def testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         then:
             testOutcomes.durationInSeconds == 1.78
     }
 
     def "should provide total test duration in seconds for a set of tests when the time is zero"() {
         when:
-            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/test-outcomes/with-no-steps"));
+            def testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/test-outcomes/with-no-steps"));
         then:
             testOutcomes.durationInSeconds == 0.0
     }
 
     def "should count tests in set"() {
         when:
-            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes"));
+            def testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         then:
             testOutcomes.total == 3
     }
@@ -263,7 +259,7 @@ class WhenProcessingTestOutcomes extends Specification {
     @Ignore
     def "should complete test outcome with history if requested"() {
         when:
-            def testOutcomes = TestOutcomeLoader.testOutcomesIn(directoryInClasspathCalled("/tagged-test-outcomes")).withHistory()
+            def testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes")).withHistory()
             TestStatistics statistics = testOutcomes.tests[0].statistics
         then:
             statistics != null;

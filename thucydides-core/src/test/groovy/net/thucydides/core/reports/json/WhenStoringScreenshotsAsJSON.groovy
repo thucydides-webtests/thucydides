@@ -2,11 +2,14 @@ package net.thucydides.core.reports.json
 
 import net.thucydides.core.reports.json.jackson.JacksonJSONConverter
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource
+import net.thucydides.core.util.MockEnvironmentVariables
 import org.skyscreamer.jsonassert.JSONCompare
 import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Specification
 
 class WhenStoringScreenshotsAsJSON extends Specification {
+
+    def environmentVars = new MockEnvironmentVariables();
 
     def "should generate JSON for a screenshot"() {
         given:
@@ -16,7 +19,7 @@ class WhenStoringScreenshotsAsJSON extends Specification {
 
         when:
         StringWriter writer = new StringWriter();
-        def converter = new JacksonJSONConverter()
+        def converter = new JacksonJSONConverter(environmentVars)
         converter.mapper.writerWithDefaultPrettyPrinter().writeValue(writer, screenshot);
 
         then:
@@ -39,7 +42,7 @@ class WhenStoringScreenshotsAsJSON extends Specification {
 
         when:
         StringWriter writer = new StringWriter();
-        def converter = new JacksonJSONConverter()
+        def converter = new JacksonJSONConverter(environmentVars)
         converter.mapper.writerWithDefaultPrettyPrinter().writeValue(writer, screenshot);
 
         then:
@@ -49,7 +52,6 @@ class WhenStoringScreenshotsAsJSON extends Specification {
 }
 """
         def serializedStory = writer.toString()
-        println serializedStory
         JSONCompare.compareJSON(expectedJson, serializedStory, JSONCompareMode.LENIENT).passed();
     }
 
@@ -67,7 +69,7 @@ class WhenStoringScreenshotsAsJSON extends Specification {
         def reader = new StringReader(serializedScreenshot)
 
         when:
-        def converter = new JacksonJSONConverter()
+        def converter = new JacksonJSONConverter(environmentVars)
         def screenshot = converter.mapper.readValue(reader,ScreenshotAndHtmlSource)
 
         then:
@@ -89,7 +91,7 @@ class WhenStoringScreenshotsAsJSON extends Specification {
         def reader = new StringReader(serializedScreenshot)
 
         when:
-        def converter = new JacksonJSONConverter()
+        def converter = new JacksonJSONConverter(environmentVars)
         def screenshot = converter.mapper.readValue(reader,ScreenshotAndHtmlSource)
 
         then:

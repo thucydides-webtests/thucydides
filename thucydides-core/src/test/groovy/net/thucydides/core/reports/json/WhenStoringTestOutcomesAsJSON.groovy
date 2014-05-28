@@ -14,7 +14,9 @@ import net.thucydides.core.reports.AcceptanceTestLoader
 import net.thucydides.core.reports.AcceptanceTestReporter
 import net.thucydides.core.reports.TestOutcomes
 import net.thucydides.core.reports.integration.TestStepFactory
+import net.thucydides.core.reports.json.jackson.JacksonJSONConverter
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource
+import net.thucydides.core.util.MockEnvironmentVariables
 import org.joda.time.DateTime
 import org.joda.time.LocalDateTime
 import org.skyscreamer.jsonassert.JSONCompare
@@ -139,10 +141,8 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
     "number" : 1,
     "description" : "step 1",
     "duration" : 0,
-    "startTime" : ${FIRST_OF_JANUARY.millis},
-    "screenshots" : [ ],
     "result" : "SUCCESS",
-    "children" : [ ],
+    "startTime" : ${FIRST_OF_JANUARY.millis}
   } ],
   "userStory" : {
     "id" : "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.AUserStory",
@@ -152,8 +152,6 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
   },
   "title" : "Should do this",
   "description" : "Some description",
-  "issues" : [ ],
-  "versions" : [ ],
   "tags" : [ {
     "name" : "A user story",
     "type" : "story"
@@ -168,6 +166,40 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
         then:
         JSONCompare.compareJSON(expectedReport, jsonReport.text, JSONCompareMode.LENIENT).passed();
+    }
+
+
+    def "should generate a minimized JSON report by default"() {
+        given:
+        def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
+        testOutcome.startTime = FIRST_OF_JANUARY
+
+        testOutcome.description = "Some description"
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").
+                startingAt(FIRST_OF_JANUARY))
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        then:
+        !jsonReport.text.contains("  ")
+    }
+
+
+    def "should generate pretty JSON report if configured"() {
+        given:
+        def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
+        testOutcome.startTime = FIRST_OF_JANUARY
+
+        testOutcome.description = "Some description"
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").
+                startingAt(FIRST_OF_JANUARY))
+
+        def environmentVariables = new MockEnvironmentVariables()
+        environmentVariables.setProperty("json.pretty.printing","true")
+        when:
+        reporter.jsonConverter = new JacksonJSONConverter(environmentVariables)
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        then:
+        jsonReport.text.contains("  ")
     }
 
     def "should include the project and batch start time in the JSON report if specified."() {
@@ -279,6 +311,24 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
         then:
         reloadedOutcome.sessionId == "1234"
+    }
+
+
+    def "should include a data table if provided"() {
+        given:
+        def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioWithTags.class);
+        testOutcome.startTime = FIRST_OF_JANUARY
+        testOutcome.useExamplesFrom(DataTable.withHeaders(["a","b","c"]).build())
+        testOutcome.addRow(["a":"1", "b":"2", "c":"3"]);
+        testOutcome.addRow(["a":"2", "b":"3", "c":"4"]);
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").startingAt(FIRST_OF_JANUARY))
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
+        then:
+        reloadedOutcome.dataTable.headers == ["a","b","c"]
+        reloadedOutcome.dataTable.rows[0].stringValues == ["1","2","3"]
+        reloadedOutcome.dataTable.rows[1].stringValues == ["2","3","4"]
     }
 
 

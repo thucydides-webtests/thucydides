@@ -2,10 +2,15 @@ package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.digest.Digest;
 import net.thucydides.core.issues.IssueTracking;
+import net.thucydides.core.reports.FormatConfiguration;
+import net.thucydides.core.reports.OutcomeFormat;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import net.thucydides.core.reports.html.ReportNameProvider;
 import net.thucydides.core.reports.html.ReportProperties;
+import net.thucydides.core.requirements.RequirementsService;
+import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.MockEnvironmentVariables;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
@@ -40,11 +45,16 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
 
     WebDriver driver;
 
+    private static EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+
     @BeforeClass
     public static void generateReports() throws IOException {
         IssueTracking issueTracking = mock(IssueTracking.class);
         TestHistory testHistory = mock(TestHistory.class);
-        HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter("project", issueTracking, testHistory);
+        RequirementsService requirementsService = mock(RequirementsService.class);
+        environmentVariables.setProperty("output.formats","xml");
+        HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter("project", "", issueTracking, testHistory,
+                                                                              requirementsService, environmentVariables);
         outputDirectory = newTemporaryDirectory();
         reporter.setOutputDirectory(outputDirectory);
 

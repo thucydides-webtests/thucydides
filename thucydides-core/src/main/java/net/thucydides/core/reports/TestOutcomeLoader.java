@@ -4,7 +4,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.json.JSONTestOutcomeReporter;
@@ -24,7 +23,7 @@ import java.util.Locale;
 public class TestOutcomeLoader {
 
     private final EnvironmentVariables environmentVariables;
-    private final OutcomeFormat format;
+    private final FormatConfiguration formatConfiguration;
 
     public TestOutcomeLoader() {
         this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
@@ -33,9 +32,17 @@ public class TestOutcomeLoader {
     @Inject
     public TestOutcomeLoader(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
-        format = getFormat();
+        this.formatConfiguration = new FormatConfiguration(environmentVariables);
     }
 
+    public TestOutcomeLoader(EnvironmentVariables environmentVariables, FormatConfiguration formatConfiguration) {
+        this.environmentVariables = environmentVariables;
+        this.formatConfiguration = formatConfiguration;
+    }
+
+    public TestOutcomeLoader forFormat(OutcomeFormat format) {
+        return new TestOutcomeLoader(environmentVariables, new FormatConfiguration(format));
+    }
     /**
      * Load the test outcomes from a given directory.
      *
@@ -67,27 +74,40 @@ public class TestOutcomeLoader {
         return ImmutableList.copyOf(matchingFiles);
     }
 
+    public static TestOutcomeLoaderBuilder loadTestOutcomes() {
+        return new TestOutcomeLoaderBuilder();
+    }
+
+    public static final class TestOutcomeLoaderBuilder {
+        OutcomeFormat format;
+
+        public TestOutcomeLoaderBuilder inFormat(OutcomeFormat format) {
+            this.format = format;
+            return this;
+        }
+
+        public TestOutcomes from(final File reportsDirectory) throws IOException {
+            TestOutcomeLoader loader = new TestOutcomeLoader().forFormat(format);
+            return TestOutcomes.of(loader.loadFrom(reportsDirectory));
+        }
+
+    }
+
     public static TestOutcomes testOutcomesIn(final File reportsDirectory) throws IOException {
         TestOutcomeLoader loader = new TestOutcomeLoader();
         return TestOutcomes.of(loader.loadFrom(reportsDirectory));
     }
 
     public AcceptanceTestLoader getOutcomeReporter() {
-        switch (format) {
+        switch (formatConfiguration.getPreferredFormat()) {
             case XML: return new XMLTestOutcomeReporter();
             case JSON: return new JSONTestOutcomeReporter();
-            default: throw new IllegalArgumentException("Unsupported report format: " + format);
+            default: throw new IllegalArgumentException("Unsupported report format: " + formatConfiguration.getPreferredFormat());
         }
     }
-    private OutcomeFormat getFormat() {
-        String formatValue = ThucydidesSystemProperty.THUCYDIDES_REPORT_FORMAT
-                .from(environmentVariables, OutcomeFormat.XML.toString());
-        return OutcomeFormat.valueOf(formatValue.toUpperCase());
-    }
-
     private class SerializedOutcomeFilenameFilter implements FilenameFilter {
         public boolean accept(final File file, final String filename) {
-            return filename.toLowerCase(Locale.getDefault()).endsWith(getFormat().getExtension());
+            return filename.toLowerCase(Locale.getDefault()).endsWith(formatConfiguration.getPreferredFormat().getExtension());
         }
     }
 }

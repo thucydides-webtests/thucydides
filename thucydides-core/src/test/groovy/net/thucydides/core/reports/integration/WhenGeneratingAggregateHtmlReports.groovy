@@ -4,10 +4,13 @@ import com.github.goldin.spock.extensions.tempdir.TempDir
 import net.thucydides.core.ThucydidesSystemProperties
 import net.thucydides.core.ThucydidesSystemProperty
 import net.thucydides.core.issues.IssueTracking
+import net.thucydides.core.reports.FormatConfiguration
+import net.thucydides.core.reports.OutcomeFormat
 import net.thucydides.core.reports.history.ProgressSnapshot
 import net.thucydides.core.reports.history.TestHistory
 import net.thucydides.core.reports.history.TestResultSnapshot
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter
+import net.thucydides.core.util.MockEnvironmentVariables
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.firefox.FirefoxDriver
@@ -24,7 +27,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
     def issueTracking = Mock(IssueTracking)
     def mockTestHistory = Mock(TestHistory)
     def mockSystemProperties = Mock(ThucydidesSystemProperties)
-
+    def environmentVariables = new MockEnvironmentVariables()
     def reporter = new HtmlAggregateStoryReporter("project", issueTracking, mockTestHistory);
 
     File outputDirectory
@@ -37,6 +40,8 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         outputDirectory = new File(temporaryDirectory,"target/site/thucydides")
         outputDirectory.mkdirs()
         reporter.outputDirectory = outputDirectory;
+        environmentVariables.setProperty("output.formats","xml")
+        reporter.formatConfiguration = new FormatConfiguration(environmentVariables)
 
         driver = new HtmlUnitDriver();
         mockTestHistory.progress >> NO_PROGRESS_HISTORY

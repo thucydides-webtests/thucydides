@@ -203,7 +203,7 @@ class WhenLoadingSpecflowLogOutputAsTestOutcomes extends Specification {
         and: "we have no way of knowing the header values from this file"
             testOutcomes.get(0).dataTable.headers == ["A","B","C","D","E"]
         and:
-            testOutcomes.get(0).dataTable.rows.collect{ it.cellValues } ==
+            testOutcomes.get(0).dataTable.rows.collect{ it.values } ==
                 [["Inputter-DirectBanking", "Funds Transfer between Own Accounts", "N/A", "Funds Transfer", ""],
                         ["Inputter-DirectBanking", "Credit Card Repayment", "N/A", "Funds Transfer", ""],
                         ["Inputter", "Credit Card Repayment", "N/A", "Funds Transfer", ""]]

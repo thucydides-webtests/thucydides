@@ -1,7 +1,11 @@
 package net.thucydides.core.reports;
 
+import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.misc.Service;
 
 import javax.inject.Inject;
@@ -27,6 +31,8 @@ public class ReportService {
      * These classes generate the reports from the test results.
      */
     private List<AcceptanceTestReporter> subscribedReporters;
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(ReportService.class);
 
     @Inject
     public ReportService(final Configuration configuration) {
@@ -93,10 +99,19 @@ public class ReportService {
     public static List<AcceptanceTestReporter> getDefaultReporters() {
         List<AcceptanceTestReporter> reporters = new ArrayList<AcceptanceTestReporter>();
 
+        FormatConfiguration formatConfiguration
+                = new FormatConfiguration(Injectors.getInjector().getInstance(EnvironmentVariables.class));
         Iterator<?> reporterImplementations = Service.providers(AcceptanceTestReporter.class);
 
+        LOGGER.info("Reporting formats: " + formatConfiguration.getFormats());
+
         while (reporterImplementations.hasNext()) {
-            reporters.add((AcceptanceTestReporter)reporterImplementations.next());
+            AcceptanceTestReporter reporter = (AcceptanceTestReporter)reporterImplementations.next();
+            LOGGER.info("Found reporter: " + reporter + "(format = " + reporter.getFormat() + ")");
+            if (!reporter.getFormat().isPresent() || formatConfiguration.getFormats().contains(reporter.getFormat().get())) {
+                LOGGER.info("Registering reporter: " + reporter);
+                reporters.add((AcceptanceTestReporter) reporter);
+            }
         }
         return reporters;
     }

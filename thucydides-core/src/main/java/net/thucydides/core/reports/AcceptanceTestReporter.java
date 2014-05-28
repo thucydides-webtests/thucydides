@@ -1,5 +1,6 @@
 package net.thucydides.core.reports;
 
+import com.google.common.base.Optional;
 import net.thucydides.core.model.TestOutcome;
 
 import java.io.File;
@@ -17,6 +18,12 @@ public interface AcceptanceTestReporter {
      * A name used to identify a given reporter.
      */
     String getName();
+
+    /**
+     * Return the format that this reporter generates, if it is a format that can be activated or deactivated
+     * via the output.formats configuration property.
+     */
+    Optional<OutcomeFormat> getFormat();
     /**
      * Generate reports for a given acceptance test run.
      */

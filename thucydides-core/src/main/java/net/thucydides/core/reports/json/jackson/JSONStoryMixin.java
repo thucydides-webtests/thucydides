@@ -6,11 +6,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.thucydides.core.model.features.ApplicationFeature;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 
 @JsonIgnoreProperties({"name","reportName","featureClass","featureId"})
-@JsonInclude(NON_NULL)
+@JsonInclude(NON_EMPTY)
 public abstract class JSONStoryMixin {
     JSONStoryMixin(@JsonProperty("id") String id,
                    @JsonProperty("storyName") final String storyName,

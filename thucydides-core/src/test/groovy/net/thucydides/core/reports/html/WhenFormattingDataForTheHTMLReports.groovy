@@ -266,6 +266,18 @@ class WhenFormattingDataForTheHTMLReports extends Specification {
         embeddedTable == "A table like this:<br><table class='embedded'><thead><th>owner</th><th>points</th></thead><tbody><tr><td>Jane</td><td>80000</td></tr><tr><td>Joe</td><td>50000</td></tr></tbody></table>"
     }
 
+    def "should work with JBehave commands"() {
+        given:
+        def tableText = "Given a Transmission with the following details: ␤{trim=false} ␤|record| ␤|ABC-123 SOMEBANK, SYDNEY 2000 ADDATE PAGE 1 | ␤|0 GST 8.56- | ␤|lots of filler text | ␤|0 SUB-TOTAL BILLER VALUE 1,962 486,941.32 934.32- 486,007.00| ␤|0 GST 93.56-| ␤|more filler text |"
+
+        def formatter = new Formatter(issueTracking);
+        when:
+        def embeddedTable = formatter.convertAnyTables(tableText)
+        then:
+        println embeddedTable
+//        embeddedTable == "Given a Transmission with the following details: ␤{trim=false} ␤|record| ␤|ABC-123 SOMEBANK, SYDNEY 2000 ADDATE PAGE 1 | ␤|0 GST 8.56- | ␤|lots of filler text | ␤|0 SUB-TOTAL BILLER VALUE 1,962 486,941.32 934.32- 486,007.00| ␤|0 GST 93.56-| ␤|more filler text |"
+
+    }
 
 
 

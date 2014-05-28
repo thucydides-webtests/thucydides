@@ -2,11 +2,15 @@ package net.thucydides.core.reports.json
 
 import net.thucydides.core.annotations.Feature
 import net.thucydides.core.reports.json.jackson.JacksonJSONConverter
+import net.thucydides.core.util.MockEnvironmentVariables
 import org.skyscreamer.jsonassert.JSONCompare
 import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Specification
 
 class WhenStoringStoriesAsJSON extends Specification {
+
+
+    def environmentVars = new MockEnvironmentVariables();
 
     class AUserStory {
     }
@@ -23,7 +27,7 @@ class WhenStoringStoriesAsJSON extends Specification {
 
         when:
         StringWriter writer = new StringWriter();
-        def converter = new JacksonJSONConverter()
+        def converter = new JacksonJSONConverter(environmentVars)
         converter.mapper.writerWithDefaultPrettyPrinter().writeValue(writer, story);
 
         then:
@@ -52,7 +56,7 @@ class WhenStoringStoriesAsJSON extends Specification {
         def reader = new StringReader(serializedStory)
 
         when:
-        def converter = new JacksonJSONConverter()
+        def converter = new JacksonJSONConverter(environmentVars)
         def story = converter.mapper.readValue(reader, net.thucydides.core.model.Story)
 
         then:
@@ -66,7 +70,7 @@ class WhenStoringStoriesAsJSON extends Specification {
 
         when:
         StringWriter writer = new StringWriter();
-        def converter = new JacksonJSONConverter()
+        def converter = new JacksonJSONConverter(environmentVars)
         converter.mapper.writerWithDefaultPrettyPrinter().writeValue(writer, story);
 
         then:
@@ -83,7 +87,6 @@ class WhenStoringStoriesAsJSON extends Specification {
 }
 """
         def serializedStory = writer.toString()
-        println serializedStory
         JSONCompare.compareJSON(expectedJson, serializedStory, JSONCompareMode.LENIENT).passed();
     }
 
@@ -106,7 +109,7 @@ class WhenStoringStoriesAsJSON extends Specification {
         def reader = new StringReader(serializedStory)
 
         when:
-        def converter = new JacksonJSONConverter()
+        def converter = new JacksonJSONConverter(environmentVars)
         def story = converter.mapper.readValue(reader, net.thucydides.core.model.Story)
 
         then:

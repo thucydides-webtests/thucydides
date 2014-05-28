@@ -2,6 +2,7 @@ package net.thucydides.core.reports.csv
 
 import au.com.bytecode.opencsv.CSVReader
 import com.github.goldin.spock.extensions.tempdir.TempDir
+import net.thucydides.core.reports.OutcomeFormat
 import net.thucydides.core.reports.TestOutcomeLoader
 import net.thucydides.core.reports.TestOutcomes
 import net.thucydides.core.util.MockEnvironmentVariables
@@ -15,7 +16,7 @@ import static net.thucydides.core.util.TestResources.directoryInClasspathCalled
 class WhenSavingTestOutcomesInCSVForm extends Specification {
 
     @TempDir File temporaryDirectory
-    def loader = new TestOutcomeLoader()
+    def loader = new TestOutcomeLoader().forFormat(OutcomeFormat.XML)
 
     def environmentVariables = new MockEnvironmentVariables()
 

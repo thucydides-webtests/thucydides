@@ -7,21 +7,25 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 public class DataTableRow {
-    private final List cellValues;
+    private List<? extends Object> values;  // A list of strings or integers
     private TestResult result;
 
-    public DataTableRow(List cellValues) {
-        this.cellValues = ImmutableList.copyOf(cellValues);
-        this.result = TestResult.UNDEFINED;
+    public DataTableRow(List<? extends Object> values) {
+        this(values, TestResult.UNDEFINED);
     }
 
-    public List getValues() {
-        return ImmutableList.copyOf(cellValues);
+    public DataTableRow(List<? extends Object> values, TestResult result) {
+        this.values = ImmutableList.copyOf(values);
+        this.result = result;
+    }
+
+    public List<? extends Object> getValues() {
+        return ImmutableList.copyOf(values);
     }
 
     public List<String> getStringValues() {
 
-        return Lists.transform(cellValues, new Function<Object, String>() {
+        return Lists.transform(values, new Function<Object, String>() {
             @Override
             public String apply(Object o) {
                 return o== null ? "" : o.toString();

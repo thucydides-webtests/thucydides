@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestLoader;
 import net.thucydides.core.reports.AcceptanceTestReporter;
+import net.thucydides.core.reports.OutcomeFormat;
 import net.thucydides.core.reports.TestOutcomes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,11 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter, Acceptanc
 
     public String getName() {
         return "xml";
+    }
+
+    @Override
+    public Optional<OutcomeFormat> getFormat() {
+        return Optional.of(OutcomeFormat.XML);
     }
 
     /**
