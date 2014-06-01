@@ -54,6 +54,7 @@ public class Parallel {
                         } catch (Exception e) {
                             Logger.getLogger(Parallel.class.getName())
                                     .log(Level.SEVERE, "Exception during execution of parallel task", e);
+                            throw e;
                         }
                     }
                     return null;

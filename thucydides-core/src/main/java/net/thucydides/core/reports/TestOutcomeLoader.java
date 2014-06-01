@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import net.thucydides.core.concurrency.Parallel;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.json.JSONTestOutcomeReporter;
@@ -13,6 +14,8 @@ import net.thucydides.core.util.EnvironmentVariables;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -52,16 +55,24 @@ public class TestOutcomeLoader {
      */
     public List<TestOutcome> loadFrom(final File reportDirectory) throws IOException {
 
-        AcceptanceTestLoader testOutcomeReporter = getOutcomeReporter();
+        final AcceptanceTestLoader testOutcomeReporter = getOutcomeReporter();
 
         List<File> reportFiles = getAllOutcomeFilesFrom(reportDirectory);
 
-        List<TestOutcome> testOutcomes = Lists.newArrayList();
-        for (File reportFile : reportFiles) {
-            Optional<TestOutcome> testOutcome = testOutcomeReporter.loadReportFrom(reportFile);
-            testOutcomes.addAll(testOutcome.asSet());
-        }
+        //List<TestOutcome> testOutcomes = Lists.newArrayList();
+//        for (File reportFile : reportFiles) {
+//            Optional<TestOutcome> testOutcome = testOutcomeReporter.loadReportFrom(reportFile);
+//            testOutcomes.addAll(testOutcome.asSet());
+//        }
 
+        final List<TestOutcome> testOutcomes = Collections.synchronizedList(new ArrayList<TestOutcome>());
+        Parallel.blockingFor(8, reportFiles, new Parallel.Operation<File>() {
+            @Override
+            public void perform(File reportFile) {
+                Optional<TestOutcome> testOutcome = testOutcomeReporter.loadReportFrom(reportFile);
+                testOutcomes.addAll(testOutcome.asSet());
+            }
+        });
         return ImmutableList.copyOf(testOutcomes);
     }
 

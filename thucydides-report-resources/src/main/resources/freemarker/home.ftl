@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8" />
@@ -346,8 +347,10 @@
                                     <tbody>
                                     <#assign testResultSet = testOutcomes.tests >
                                     <#foreach testOutcome in testResultSet>
-                                        <#if testOutcome.result == "PENDING" || testOutcome.result == "IGNORED">
+                                        <#if testOutcome.result == "PENDING">
                                             <#assign testrun_outcome_icon = "pending.png">
+                                        <#elseif testOutcome.result == "IGNORED">
+                                            <#assign testrun_outcome_icon = "ignor.png">
                                         <#elseif testOutcome.result == "FAILURE">
                                             <#assign testrun_outcome_icon = "fail.png">
                                         <#elseif testOutcome.result == "ERROR">

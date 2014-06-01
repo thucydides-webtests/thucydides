@@ -7,6 +7,7 @@ import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.junit.runners.ThucydidesRunner;
+import org.junit.Assume;
 import org.junit.Ignore;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
@@ -32,6 +33,11 @@ public class SampleScenarioSteps extends ScenarioSteps {
     @Step
     public void stepThatSucceeds() {
 
+    }
+
+    @Step
+    public void stepWithFailedAssumption() {
+        Assume.assumeTrue(false);
     }
 
     @Step

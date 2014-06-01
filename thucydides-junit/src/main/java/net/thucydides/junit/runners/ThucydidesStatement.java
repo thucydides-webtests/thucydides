@@ -1,6 +1,8 @@
 package net.thucydides.junit.runners;
 
+import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepPublisher;
+import org.junit.internal.AssumptionViolatedException;
 import org.junit.runners.model.Statement;
 
 /**
@@ -18,9 +20,24 @@ public class ThucydidesStatement extends Statement {
 
     @Override
     public void evaluate() throws Throwable {
-        statement.evaluate();
+        try {
+            statement.evaluate();
+        } catch (AssumptionViolatedException e) {
+            StepEventBus.getEventBus().assumptionViolated(e.getMessage());
+        }
+        checkForStepFailures();
+        checkForAssumptionViolations();
+    }
+
+    private void checkForStepFailures() throws Throwable {
         if (publisher.aStepHasFailed()) {
             throw publisher.getTestFailureCause();
+        }
+    }
+
+    private void checkForAssumptionViolations() {
+        if (StepEventBus.getEventBus().assumptionViolated()) {
+            throw new AssumptionViolatedException(StepEventBus.getEventBus().getAssumptionViolatedMessage());
         }
     }
 }

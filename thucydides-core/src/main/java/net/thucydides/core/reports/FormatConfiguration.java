@@ -1,9 +1,9 @@
 package net.thucydides.core.reports;
 
 import ch.lambdaj.Lambda;
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.util.EnvironmentVariables;

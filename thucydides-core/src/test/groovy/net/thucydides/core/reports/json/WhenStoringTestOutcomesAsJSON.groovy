@@ -133,7 +133,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         def expectedReport = """\
                 {
   "name" : "should_do_this",
-  "testCase" : "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON\$SomeTestScenario",
+  "testCaseName" : "net.thucydides.core.reports.json.WhenStoringTestOutcomesAsJSON.SomeTestScenario",
   "testSteps" : [ {
     "number" : 1,
     "description" : "step 1",
@@ -179,7 +179,6 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         then:
         !jsonReport.text.contains("  ")
     }
-
 
     def "should generate pretty JSON report if configured"() {
         given:
@@ -249,7 +248,6 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         reloadedOutcome.userStory.name == "name"
 
     }
-
 
     def "should include issues in the JSON report"() {
         given:

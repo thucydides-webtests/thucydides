@@ -20,36 +20,24 @@ import net.thucydides.core.steps.StepData;
 import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.tags.TagScanner;
-import net.thucydides.core.webdriver.Configuration;
-import net.thucydides.core.webdriver.SupportedWebDriver;
-import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
-import net.thucydides.core.webdriver.WebDriverFactory;
-import net.thucydides.core.webdriver.WebdriverManager;
-import net.thucydides.core.webdriver.WebdriverProxyFactory;
+import net.thucydides.core.webdriver.*;
 import net.thucydides.junit.listeners.JUnitStepListener;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static com.thoughtworks.selenium.SeleneseTestBase.assertTrue;
 import static net.thucydides.core.Thucydides.initializeTestSession;
 
 /**
@@ -100,35 +88,35 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
         this(klass, Injectors.getInjector());
     }
-    
+
     public ThucydidesRunner(Class<?> klass, Module module) throws InitializationError {
-    	this(klass, Injectors.getInjector(module));
-	}
+        this(klass, Injectors.getInjector(module));
+    }
 
     public ThucydidesRunner(final Class<?> klass,
                             final Injector injector) throws InitializationError {
         this(klass,
-            injector.getInstance(WebdriverManager.class),
-            injector.getInstance(Configuration.class),
-            injector.getInstance(BatchManager.class)
-            );
+                injector.getInstance(WebdriverManager.class),
+                injector.getInstance(Configuration.class),
+                injector.getInstance(BatchManager.class)
+        );
     }
 
     public ThucydidesRunner(final Class<?> klass,
                             final WebDriverFactory webDriverFactory) throws InitializationError {
         this(klass, webDriverFactory, Injectors.getInjector().getInstance(Configuration.class));
     }
-    
+
     public ThucydidesRunner(final Class<?> klass,
-            final WebDriverFactory webDriverFactory,
-            final Configuration configuration) throws InitializationError {
-			this(klass, 
-					webDriverFactory,
-					configuration,
-					new BatchManagerProvider(configuration).get()
-			);
+                            final WebDriverFactory webDriverFactory,
+                            final Configuration configuration) throws InitializationError {
+        this(klass,
+                webDriverFactory,
+                configuration,
+                new BatchManagerProvider(configuration).get()
+        );
     }
-    
+
     public ThucydidesRunner(final Class<?> klass,
                             final WebDriverFactory webDriverFactory,
                             final Configuration configuration,
@@ -137,7 +125,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
                 new ThucydidesWebdriverManager(webDriverFactory, configuration),
                 configuration,
                 batchManager
-                );
+        );
     }
 
     public ThucydidesRunner(final Class<?> klass, final BatchManager batchManager) throws InitializationError {
@@ -169,9 +157,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     }
 
-    
 
-	private String getSpecifiedDriver(Class<?> klass) {
+    private String getSpecifiedDriver(Class<?> klass) {
         if (ManagedWebDriverAnnotatedField.hasManagedWebdriverField(klass)) {
             return ManagedWebDriverAnnotatedField.findFirstAnnotatedField(klass).getDriver();
         } else {
@@ -270,7 +257,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     protected void generateReports() {
-            generateReportsFor(getTestOutcomes());
+        generateReportsFor(getTestOutcomes());
     }
 
     private boolean skipThisTest() {
@@ -327,15 +314,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     protected JUnitStepListener initListenersUsing(final Pages pageFactory) {
 
         return JUnitStepListener.withOutputDirectory(getConfiguration().getOutputDirectory())
-                                 .and().withPageFactory(pageFactory)
-                                 .and().withTestClass(getTestClass().getJavaClass())
-                                 .and().build();
+                .and().withPageFactory(pageFactory)
+                .and().withTestClass(getTestClass().getJavaClass())
+                .and().build();
     }
 
     protected JUnitStepListener initListeners() {
         return JUnitStepListener.withOutputDirectory(getConfiguration().getOutputDirectory())
-                                                                       .and().withTestClass(getTestClass().getJavaClass())
-                                                                       .and().build();
+                .and().withTestClass(getTestClass().getJavaClass())
+                .and().build();
     }
 
     private boolean webtestsAreSupported() {
@@ -371,6 +358,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * place the reports in. Then, at the end of the test, the test runner
      * notifies these reporters of the test outcomes. The reporter's job is to
      * process each test run outcome and do whatever is appropriate.
+     *
      * @param testOutcomeResults the test results from the previous test run.
      */
     private void generateReportsFor(final List<TestOutcome> testOutcomeResults) {

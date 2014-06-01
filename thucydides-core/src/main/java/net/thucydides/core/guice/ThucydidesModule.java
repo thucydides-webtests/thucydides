@@ -65,7 +65,7 @@ public class ThucydidesModule extends AbstractModule {
         bind(BatchManager.class).toProvider(BatchManagerProvider.class).in(Singleton.class);
         bind(LinkGenerator.class).to(SaucelabsLinkGenerator.class);
         bind(ScreenshotProcessor.class).to(SingleThreadScreenshotProcessor.class).in(Singleton.class);
-        bind(JSONConverter.class).to(JacksonJSONConverter.class);
+        bind(JSONConverter.class).to(JacksonJSONConverter.class).in(Singleton.class);
 
         bind(TagProviderService.class).to(ClasspathTagProviderService.class).in(Singleton.class);
         bind(RequirementsProviderService.class).to(ClasspathRequirementsProviderService.class).in(Singleton.class);

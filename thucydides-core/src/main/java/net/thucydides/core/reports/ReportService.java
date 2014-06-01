@@ -1,7 +1,9 @@
 package net.thucydides.core.reports;
 
+import net.thucydides.core.concurrency.Parallel;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import org.slf4j.Logger;
@@ -84,11 +86,21 @@ public class ReportService {
      */
     public void generateReportsFor(final List<TestOutcome> testOutcomeResults) {
 
-        TestOutcomes allTestOutcomes = TestOutcomes.of(testOutcomeResults);
-        for (AcceptanceTestReporter reporter : getSubscribedReporters()) {
-            for(TestOutcome testOutcomeResult : testOutcomeResults) {
-                generateReportFor(testOutcomeResult, allTestOutcomes, reporter);
-            }
+        LOGGER.info("Generating reports for test outcomes: " + testOutcomeResults.size());
+        final TestOutcomes allTestOutcomes = TestOutcomes.of(testOutcomeResults);
+        for (final AcceptanceTestReporter reporter : getSubscribedReporters()) {
+            LOGGER.info("Generating reports using: " + reporter);
+//            for(TestOutcome testOutcomeResult : testOutcomeResults) {
+//                generateReportFor(testOutcomeResult, allTestOutcomes, reporter);
+//            }
+
+            Parallel.blockingFor(8, testOutcomeResults, new Parallel.Operation<TestOutcome>() {
+                @Override
+                public void perform(TestOutcome testOutcome) {
+                    generateReportFor(testOutcome, allTestOutcomes, reporter);
+                }
+            });
+
         }
     }
 
@@ -110,7 +122,7 @@ public class ReportService {
             LOGGER.info("Found reporter: " + reporter + "(format = " + reporter.getFormat() + ")");
             if (!reporter.getFormat().isPresent() || formatConfiguration.getFormats().contains(reporter.getFormat().get())) {
                 LOGGER.info("Registering reporter: " + reporter);
-                reporters.add((AcceptanceTestReporter) reporter);
+                reporters.add(reporter);
             }
         }
         return reporters;
@@ -120,6 +132,7 @@ public class ReportService {
                                    final TestOutcomes allTestOutcomes,
                                    final AcceptanceTestReporter reporter) {
         try {
+            LOGGER.info(reporter + ": Generating report for test outcome: " + testOutcome.getCompleteName());
             reporter.setOutputDirectory(outputDirectory);
             reporter.generateReportFor(testOutcome, allTestOutcomes);
         } catch (IOException e) {

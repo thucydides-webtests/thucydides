@@ -88,6 +88,8 @@ public class TestOutcome {
      */
     private final Class<?> testCase;
 
+    private String testCaseName;
+
     /**
      * The list of steps recorded in this test execution.
      * Each step can contain other nested steps.
@@ -198,6 +200,7 @@ public class TestOutcome {
         startTime = now();
         this.methodName = methodName;
         this.testCase = testCase;
+        this.testCaseName = nameOf(testCase);
         this.additionalIssues = Lists.newArrayList();
         this.additionalVersions = Lists.newArrayList();
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
@@ -205,6 +208,14 @@ public class TestOutcome {
         this.qualifier = Optional.absent();
         if (testCase != null) {
             initializeStoryFrom(testCase);
+        }
+    }
+
+    private String nameOf(Class<?> testCase) {
+        if (testCase != null) {
+            return testCase.getCanonicalName();
+        } else {
+            return null;
         }
     }
 
@@ -249,6 +260,7 @@ public class TestOutcome {
         startTime = now();
         this.methodName = methodName;
         this.testCase = testCase;
+        this.testCaseName = nameOf(testCase);
         this.additionalIssues = Lists.newArrayList();
         this.additionalVersions = Lists.newArrayList();
         this.userStory = userStory;
@@ -278,6 +290,7 @@ public class TestOutcome {
         this.description = description;
         this.methodName = methodName;
         this.testCase = testCase;
+        this.testCaseName = nameOf(testCase);
         addSteps(testSteps);
         this.issues = removeDuplicates(issues);
         this.additionalVersions = removeDuplicates(additionalVersions);
@@ -842,6 +855,10 @@ public class TestOutcome {
 
     public Class<?> getTestCase() {
         return testCase;
+    }
+
+    public String getTestCaseName() {
+        return testCaseName;
     }
 
     private boolean thereAre(Collection<String> anyIssues) {

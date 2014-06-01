@@ -12,7 +12,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
 
 @JsonIgnoreProperties({"testResult", "htmlReport", "reportName", "screenshotReportName", "descriptionText",
-        "screenshots", "screenshotAndHtmlSources","qualifiedMethodName",
+        "screenshots", "screenshotAndHtmlSources","qualifiedMethodName","testCase",
         "environmentVariables", "overallStability", "statistics",
         "recentStability", "recentTestRunCount", "recentPassCount", "recentFailCount", "recentPendingCount",
         "dataDriven", "stepCount", "nestedStepCount", "successCount", "failureCount", "errorCount",

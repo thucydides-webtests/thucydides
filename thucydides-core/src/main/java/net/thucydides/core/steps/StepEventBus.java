@@ -68,6 +68,8 @@ public class StepEventBus {
 
     private boolean stepFailed;
     private boolean pendingTest;
+    private boolean assumptionViolated;
+    private String assumptionViolatedMessage;
     private boolean uniqueSession;
 
     private Class<?> classUnderTest;
@@ -196,9 +198,15 @@ public class StepEventBus {
         stepStack.clear();
         clearStepFailures();
         currentTestIsNotPending();
+        noAssumptionsViolated();
         resultTally = null;
         classUnderTest = null;
         webdriverSuspensions.clear();
+    }
+
+    private void noAssumptionsViolated() {
+        assumptionViolated = false;
+        assumptionViolatedMessage = "";
     }
 
     private void currentTestIsNotPending() {
@@ -343,7 +351,6 @@ public class StepEventBus {
         }
     }
 
-
     public void assumptionViolated(String message) {
         testPending();
         stepDone();
@@ -352,6 +359,8 @@ public class StepEventBus {
         for (StepListener stepListener : getAllListeners()) {
             stepListener.assumptionViolated(message);
         }
+        assumptionViolated = true;
+        assumptionViolatedMessage = message;
     }
 
     public void dropListener(final StepListener stepListener) {
@@ -400,6 +409,10 @@ public class StepEventBus {
 
     public boolean currentTestIsPending() {
         return pendingTest;
+    }
+
+    public boolean assumptionViolated() {
+        return assumptionViolated;
     }
 
     public void testIgnored() {
@@ -475,5 +488,9 @@ public class StepEventBus {
 
     public boolean testSuiteHasStarted() {
         return getBaseStepListener().testSuiteRunning();
+    }
+
+    public String getAssumptionViolatedMessage() {
+        return assumptionViolatedMessage;
     }
 }

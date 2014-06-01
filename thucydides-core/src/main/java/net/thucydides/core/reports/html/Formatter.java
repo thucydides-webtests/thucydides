@@ -213,7 +213,9 @@ public class Formatter {
             throw new IllegalArgumentException("Could not process embedded table", e);
         }
 
-        embeddedTables.add(tableText.toString().trim());
+        if (!tableText.toString().isEmpty()) {
+            embeddedTables.add(tableText.toString().trim());
+        }
         return embeddedTables;
 
     }

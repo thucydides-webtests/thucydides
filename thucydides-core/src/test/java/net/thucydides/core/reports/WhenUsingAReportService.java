@@ -79,8 +79,6 @@ public class WhenUsingAReportService {
         reportService.subscribe(reporter);
 
         reportService.generateReportsFor(testOutcomeResults);
-
-        verify(reporter).setOutputDirectory(outputDirectory);
     }
 
     @Test

@@ -82,6 +82,7 @@ public class XMLTestOutcomeReporter implements AcceptanceTestReporter, Acceptanc
             outputStream = new FileOutputStream(report);
             writer = new OutputStreamWriter(outputStream, Charset.forName("UTF-8"));
             xstream.toXML(storedTestOutcome, writer);
+            LOGGER.info("XML report generated ({} bytes) {}",report.getAbsolutePath(),report.length());
         } catch(IOException failedToWriteReport) {
             throw failedToWriteReport;
         } finally {

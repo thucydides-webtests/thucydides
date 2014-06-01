@@ -264,6 +264,8 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
             error = failedAssertion;
             logStepFailure(method, args, failedAssertion);
             return appropriateReturnObject(obj, method);
+        } catch (AssumptionViolatedException assumptionFailed) {
+            return appropriateReturnObject(obj, method);
         } catch (Throwable testErrorException) {
             error = testErrorException;
             logStepFailure(method, args, forError(error).convertToAssertion());
