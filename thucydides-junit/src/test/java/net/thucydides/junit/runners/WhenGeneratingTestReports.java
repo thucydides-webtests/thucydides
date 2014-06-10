@@ -85,16 +85,5 @@ public class WhenGeneratingTestReports extends AbstractTestStepRunnerTest {
         verify(reporter1).generateReportFor(any(TestOutcome.class), any(TestOutcomes.class));
         verify(reporter2).generateReportFor(any(TestOutcome.class), any(TestOutcomes.class));
     } 
-    
-    @Test(expected=ReportGenerationFailedError.class)
-    public void the_test_should_fail_with_an_error_if_the_reporter_breaks()
-            throws InitializationError, IOException {
 
-        ThucydidesRunner runner = new ThucydidesRunner(AnnotatedSingleTestScenario.class);
-
-        when(mockReporter.generateReportFor(any(TestOutcome.class), any(TestOutcomes.class))).thenThrow(new IOException());
-        
-        runner.subscribeReporter(mockReporter);
-        runner.run(new RunNotifier());
-    }
 }

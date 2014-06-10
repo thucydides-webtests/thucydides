@@ -6,6 +6,7 @@ import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import org.openqa.selenium.phantomjs.PhantomJSDriver
 
 /**
  * Models the capabilities report page for testing purposes
@@ -13,7 +14,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 class RequirementsReport extends PageObject {
 
     static RequirementsReport inDirectory(File directory) {
-        def driver = new HtmlUnitDriver();
+        def driver = new PhantomJSDriver();
         def report = new RequirementsReport(driver)
         report.openAt("file:///" +  directory.getAbsolutePath() + "/capabilities.html");
         return report

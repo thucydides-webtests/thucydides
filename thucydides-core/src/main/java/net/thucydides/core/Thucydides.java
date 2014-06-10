@@ -141,7 +141,7 @@ public class Thucydides {
         getCurrentSession().clear();
     }
 
-    public static SessionMap getCurrentSession() {
+    public static SessionMap<String, Object> getCurrentSession() {
 
         if (testSessionThreadLocal.get() == null) {
             testSessionThreadLocal.set(new TestSessionVariables());

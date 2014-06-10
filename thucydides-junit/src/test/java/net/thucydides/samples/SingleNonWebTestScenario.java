@@ -1,5 +1,6 @@
 package net.thucydides.samples;
 
+import junit.framework.Assert;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
@@ -19,5 +20,12 @@ public class SingleNonWebTestScenario {
         steps.anotherStepThatSucceeds();
         steps.stepThatFails();
         steps.stepThatSucceeds();
+    }
+
+    @Test
+    public void failing_scenario() {
+        steps.stepThatFails();
+        steps.stepThatSucceeds();
+        steps.anotherStepThatSucceeds();
     }
 }

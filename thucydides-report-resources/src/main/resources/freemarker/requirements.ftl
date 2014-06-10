@@ -10,7 +10,7 @@
 <#assign requirementTypeTitle = inflection.of(requirements.type).asATitle() >
 <#assign requirementsSectionTitle = inflection.of(requirements.type).inPluralForm().asATitle() >
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>${pageTitle}</title>
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
@@ -19,7 +19,7 @@
     <![endif]-->
     <link rel="stylesheet" href="css/core.css"/>
     <link rel="stylesheet" href="css/link.css"/>
-    <link type="text/css" media="screen" href="css/screen.css" rel="Stylesheet" />
+    <link type="text/css" media="screen" href="css/screen.css" rel="Stylesheet"/>
 
     <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
 
@@ -31,93 +31,105 @@
     <script type="text/javascript" src="jqplot/jquery.jqplot.min.js"></script>
     <script type="text/javascript" src="jqplot/plugins/jqplot.pieRenderer.min.js"></script>
 
-    <link type="text/css" href="jqueryui/css/start/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
+    <link type="text/css" href="jqueryui/css/start/jquery-ui-1.8.18.custom.css" rel="Stylesheet"/>
     <script type="text/javascript" src="jqueryui/js/jquery-ui-1.8.18.custom.min.js"></script>
 
-    <#assign successfulManualTests = (requirements.count("manual").withResult("SUCCESS") > 0)>
-    <#assign pendingManualTests = (requirements.count("manual").withIndeterminateResult() > 0)>
-    <#assign failingManualTests = (requirements.count("manual").withResult("FAILURE") > 0)>
+<#assign successfulManualTests = (requirements.count("manual").withResult("SUCCESS") > 0)>
+<#assign pendingManualTests = (requirements.count("manual").withResult("PENDING") > 0)>
+<#assign ignoredManualTests = (requirements.count("manual").withResult("IGNORED") > 0)>
+<#assign failingManualTests = (requirements.count("manual").withResult("FAILURE") > 0)>
 
     <script class="code" type="text/javascript">$(document).ready(function () {
         var plot1 = $.jqplot('coverage_pie_chart', [
             [
                 ['Passing', ${requirements.proportion.withResult("SUCCESS")}],
-                <#if (successfulManualTests == true)>
+            <#if (successfulManualTests == true)>
                 ['Passing (manual)', ${requirements.proportionOf("manual").withResult("SUCCESS")}],
-                </#if>
-                ['Pending', ${requirements.proportion.withIndeterminateResult()}],
-                <#if (pendingManualTests)>
-                ['Pending (manual)', ${requirements.proportionOf("manual").withIndeterminateResult()}],
-                </#if>
-                ['Failing', ${requirements.proportion.withResult("FAILURE")}],
-                <#if (failingManualTests)>
+            </#if>
+                ['Pending', ${requirements.proportion.withResult("PENDING")}],
+            <#if (pendingManualTests)>
+                ['Pending (manual)', ${requirements.proportionOf("manual").withResult("PENDING")}],
+            </#if>
+                ['Ignored', ${requirements.proportion.withResult("IGNORED")}],
+            <#if (pendingManualTests)>
+                ['Ignored (manual)', ${requirements.proportionOf("manual").withResult("IGNORED")}],
+            </#if>                ['Failing', ${requirements.proportion.withResult("FAILURE")}],
+            <#if (failingManualTests)>
                 ['Failing (manual)', ${requirements.proportionOf("manual").withResult("FAILURE")}],
-                </#if>
+            </#if>
                 ['Errors',  ${requirements.proportion.withResult("ERROR")}]
             ]
         ], {
-            gridPadding:{top:0, bottom:38, left:0, right:0},
-            seriesColors:['#30cb23',
+            gridPadding: {top: 0, bottom: 38, left: 0, right: 0},
+            seriesColors: ['#30cb23',
                 <#if (successfulManualTests)>'#009818',</#if>
                 '#a2f2f2',
                 <#if (pendingManualTests)>'#8bb1df',</#if>
+                '#eeeadd',
+                <#if (ignoredManualTests)>'#d3d3d3',</#if>
                 '#f8001f',
                 <#if (failingManualTests)>'#a20019',</#if>
                 '#fc6e1f'],
-            seriesDefaults:{
-                renderer:$.jqplot.PieRenderer,
-                trendline:{ show:false },
-                rendererOptions:{ padding:8, showDataLabels:true }
+            seriesDefaults: {
+                renderer: $.jqplot.PieRenderer,
+                trendline: { show: false },
+                rendererOptions: { padding: 8, showDataLabels: true }
             },
-            legend:{
-                show:true,
-                placement:'outside',
-                rendererOptions:{
-                    numberRows:3
+            legend: {
+                show: true,
+                placement: 'outside',
+                rendererOptions: {
+                    numberRows: 3
                 },
-                location:'s',
-                marginTop:'15px'
+                location: 's',
+                marginTop: '15px'
             },
-            series:[
-                {label:'${requirements.formattedPercentage.withResult("SUCCESS")} requirements tested successfully' },
-                {label:'${requirements.formattedPercentage.withIndeterminateResult()} requirements untested'},
-                {label:'${requirements.formattedPercentage.withResult("FAILURE")}} requirements failing'},
-                {label:'${requirements.formattedPercentage.withIndeterminateResult()}} requirements with errors'}
+            series: [
+                {label: '${requirements.formattedPercentage.withResult("SUCCESS")} requirements tested successfully' },
+                {label: '${requirements.formattedPercentage.withIndeterminateResult()} requirements untested'},
+                {label: '${requirements.formattedPercentage.withResult("FAILURE")}} requirements failing'},
+                {label: '${requirements.formattedPercentage.withResult("ERROR")}} requirements with errors'}
             ]
         });
         // Results table
-        $('#req-results-table').dataTable( {
-            "aaSorting": [[ 2, "asc" ]],
+        $('#req-results-table').dataTable({
+            "aaSorting": [
+                [ 2, "asc" ]
+            ],
             "bJQueryUI": true,
             "iDisplayLength": 25
-        } );
-        $('#test-results-table').dataTable( {
-            "aaSorting": [[ 2, "asc" ]],
+        });
+        $('#test-results-table').dataTable({
+            "aaSorting": [
+                [ 2, "asc" ]
+            ],
             "bJQueryUI": true,
             "iDisplayLength": 25
-        } );
-        $('#examples-table').dataTable( {
-            "aaSorting": [[ 2, "asc" ]],
+        });
+        $('#examples-table').dataTable({
+            "aaSorting": [
+                [ 2, "asc" ]
+            ],
             "bJQueryUI": true,
             "iDisplayLength": 25
-        } );
-        $( "#tabs" ).tabs();
-        $( "#test-tabs" ).tabs();
+        });
+        $("#tabs").tabs();
+        $("#test-tabs").tabs();
     })
     ;
     </script>
 
     <script type="text/javascript">
-        $(document).ready(function(){
-            $(".read-more-link").click(function() {
+        $(document).ready(function () {
+            $(".read-more-link").click(function () {
                 $(this).nextAll("div.read-more-text").toggle();
-                var isrc=$(this).find("img").attr('src');
-                if(isrc=='images/plus.png') {
-                    $(this).find("img").attr("src", function() {
+                var isrc = $(this).find("img").attr('src');
+                if (isrc == 'images/plus.png') {
+                    $(this).find("img").attr("src", function () {
                         return "images/minus.png";
                     });
                 } else {
-                    $(this).find("img").attr("src", function() {
+                    $(this).find("img").attr("src", function () {
                         return "images/plus.png";
                     });
                 }
@@ -140,11 +152,11 @@
 <div class="middlecontent">
 <div id="contenttop">
     <div class="middlebg">
-        <#if requirements.parentRequirement.isPresent()>
-            <#assign breadcrumbs = "Requirements > " + pageTitle >
-        <#else>
-            <#assign breadcrumbs = "Requirements" >
-        </#if>
+    <#if requirements.parentRequirement.isPresent()>
+        <#assign breadcrumbs = "Requirements > " + pageTitle >
+    <#else>
+        <#assign breadcrumbs = "Requirements" >
+    </#if>
         <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > ${breadcrumbs} </span>
     </div>
     <div class="rightbg"></div>
@@ -181,16 +193,17 @@
 
     <#if parentRequirement.narrative.renderedText?has_content>
         <div class="requirementNarrativeTitle">
-            ${formatter.renderDescription(parentRequirement.narrative.renderedText)}
+        ${formatter.renderDescription(parentRequirement.narrative.renderedText)}
         </div>
     </#if>
 
     <#foreach customField in parentRequirement.customFields >
         <#if parentRequirement.getCustomField(customField).present>
             <div>
-                <a href="javaScript:void(0)" class="read-more-link"><img src="images/plus.png" height="15" />
+                <a href="javaScript:void(0)" class="read-more-link"><img src="images/plus.png" height="15"/>
                     <span class="custom-field-title">${customField}</span>
                 </a>
+
                 <div class="requirementNarrativeField read-more-text">${parentRequirement.getCustomField(customField).get().renderedText}</div>
             </div>
         </#if>
@@ -200,7 +213,7 @@
 
 <#if (requirements.totalTestCount > 0 || requirements.flattenedRequirementCount > 0)>
 <div id="requirements-summary">
-    <div id="coverage_pie_chart"  style="margin-top:10px; margin-left:10px; width:250px; height:250px;"></div>
+    <div id="coverage_pie_chart" style="margin-top:10px; margin-left:10px; width:250px; height:250px;"></div>
     <div id="coverage_summary">
         <div>
             <h4>Requirements Overview</h4>
@@ -209,24 +222,26 @@
                     <tr>
                         <th>Requirement Type</th>
                         <th>Total</th>
-                        <th>Pass&nbsp;<i class="icon-check"/> </th>
+                        <th>Pass&nbsp;<i class="icon-check"/></th>
                         <th>Fail&nbsp;<i class="icon-thumbs-down"/></th>
-                        <th>Pending&nbsp;<i class="icon-ban-circle"/></th>
+                        <th>Pending&nbsp;<i class="icon-calendar"/></th>
+                        <th>Ignored&nbsp;<i class="icon-ban-circle"/></th>
                         <th>Untested&nbsp;<i class="icon-question"/></th>
                     </tr>
                 </head>
                 <body>
-                <#foreach requirementType in requirements.types>
-                <tr>
-                    <#assign requirementTitle = inflection.of(requirementType).inPluralForm().asATitle() />
-                    <td class="summary-leading-column">${requirementTitle}</td>
-                    <td>${requirements.requirementsOfType(requirementType).requirementCount}</td>
-                    <td>${requirements.requirementsOfType(requirementType).completedRequirementsCount}</td>
-                    <td>${requirements.requirementsOfType(requirementType).failingRequirementsCount}</td>
-                    <td>${requirements.requirementsOfType(requirementType).pendingRequirementsCount}</td>
-                    <td>${requirements.requirementsOfType(requirementType).requirementsWithoutTestsCount}</td>
-                </tr>
-                </#foreach>
+                    <#foreach requirementType in requirements.types>
+                    <tr>
+                        <#assign requirementTitle = inflection.of(requirementType).inPluralForm().asATitle() />
+                        <td class="summary-leading-column">${requirementTitle}</td>
+                        <td>${requirements.requirementsOfType(requirementType).requirementCount}</td>
+                        <td>${requirements.requirementsOfType(requirementType).completedRequirementsCount}</td>
+                        <td>${requirements.requirementsOfType(requirementType).failingRequirementsCount}</td>
+                        <td>${requirements.requirementsOfType(requirementType).pendingRequirementsCount}</td>
+                        <td>${requirements.requirementsOfType(requirementType).ignoredRequirementsCount}</td>
+                        <td>${requirements.requirementsOfType(requirementType).requirementsWithoutTestsCount}</td>
+                    </tr>
+                    </#foreach>
                 </body>
             </table>
         </div>
@@ -267,16 +282,28 @@
                             <th width="65" class="test-results-heading">${childrenTitle}</th>
                         </#if>
                         <th class="test-results-heading" width="75px">Auto.<br/>Tests</th>
-                        <th class="test-results-heading" width="25px"><i class="icon-check icon-large" title="Tests passed (automated)"></i></th>
-                        <th class="test-results-heading" width="25px"><i class="icon-ban-circle icon-large" title="Tests skipped or pending (automated)"></th>
-                        <th class="test-results-heading" width="25px"><i class="icon-thumbs-down icon-large" title="Tests failed (automated)"></th>
-                        <th class="test-results-heading" width="25px"><i class="icon-exclamation-sign icon-large" title="Tests failed with an error (automated)"></th>
+                        <th class="test-results-heading" width="25px"><i class="icon-check icon-large"
+                                                                         title="Tests passed (automated)"></i></th>
+                        <th class="test-results-heading" width="25px"><i class="icon-ban-circle icon-large"
+                                                                         title="Tests skipped or pending (automated)">
+                        </th>
+                        <th class="test-results-heading" width="25px"><i class="icon-thumbs-down icon-large"
+                                                                         title="Tests failed (automated)"></th>
+                        <th class="test-results-heading" width="25px"><i class="icon-exclamation-sign icon-large"
+                                                                         title="Tests failed with an error (automated)">
+                        </th>
                         <#if reportOptions.showManualTests>
                             <th class="test-results-heading" width="75px">Manual<br/>Tests</th>
-                            <th class="test-results-heading" width="25px"><i class="icon-check icon-large" title="Tests passed (manual)"></i></th>
-                            <th class="test-results-heading" width="25px"><i class="icon-ban-circle icon-large" title="Tests skipped or pending (manual)"></th>
-                            <th class="test-results-heading" width="25px"><i class="icon-thumbs-down icon-large" title="Tests failed (manual)"></th>
-                            <th class="test-results-heading" width="25px"><i class="icon-exclamation-sign icon-large" title="Tests failed with an error (manual)"></th>
+                            <th class="test-results-heading" width="25px"><i class="icon-check icon-large"
+                                                                             title="Tests passed (manual)"></i></th>
+                            <th class="test-results-heading" width="25px"><i class="icon-ban-circle icon-large"
+                                                                             title="Tests skipped or pending (manual)">
+                            </th>
+                            <th class="test-results-heading" width="25px"><i class="icon-thumbs-down icon-large"
+                                                                             title="Tests failed (manual)"></th>
+                            <th class="test-results-heading" width="25px"><i class="icon-exclamation-sign icon-large"
+                                                                             title="Tests failed with an error (manual)">
+                            </th>
                         </#if>
 
 
@@ -301,7 +328,8 @@
 
                         <tr class="test-${requirementOutcome.testOutcomes.result} requirementRow">
                             <td class="requirementRowCell">
-                                <img src="images/${status_icon}" class="summary-icon" title="${requirementOutcome.testOutcomes.result}"/>
+                                <img src="images/${status_icon}" class="summary-icon"
+                                     title="${requirementOutcome.testOutcomes.result}"/>
                                 <span style="display:none">${status_rank}</span>
                             </td>
                             <td class="cardNumber requirementRowCell">${requirementOutcome.cardNumberWithLinks}</td>
@@ -309,9 +337,11 @@
                             <#assign requirementReport = reportName.forRequirement(requirementOutcome.requirement) >
                             <td class="${requirementOutcome.testOutcomes.result}-text requirementRowCell">
                                 <#if requirementOutcome.requirement.displayName?has_content>
-                                    <a href="javaScript:void(0)" class="read-more-link"><img src="images/plus.png" height="20" /></a>
+                                    <a href="javaScript:void(0)" class="read-more-link"><img src="images/plus.png"
+                                                                                             height="20"/></a>
                                 </#if>
-                                <span class="requirementName"><a href="${requirementReport}">${requirementOutcome.requirement.displayName}</a></span>
+                                <span class="requirementName"><a
+                                        href="${requirementReport}">${requirementOutcome.requirement.displayName}</a></span>
                                 <#if requirementOutcome.requirement.narrative.renderedText?has_content>
                                     <div class="requirementNarrative read-more-text">${formatter.renderDescription(requirementOutcome.requirement.narrative.renderedText)}</div>
                                 </#if>
@@ -322,30 +352,35 @@
                             </#if>
 
                             <#assign successCount = requirementOutcome.testOutcomes.totalTests.withResult("success") >
+                            <#assign pendingCount = requirementOutcome.testOutcomes.totalTests.withResult("pending") >
+                            <#assign ignoredCount = requirementOutcome.testOutcomes.totalTests.withResult("ignored") >
                             <#assign indeterminateCount = requirementOutcome.testOutcomes.totalTests.withIndeterminateResult() >
                             <#assign skipCount = requirementOutcome.testOutcomes.totalTests.withResult("skipped") >
                             <#assign failureCount = requirementOutcome.testOutcomes.totalTests.withResult("failure") >
                             <#assign errorCount = requirementOutcome.testOutcomes.totalTests.withResult("error") >
 
-                            <#--<td class="bluetext requirementRowCell">${requirementOutcome.testOutcomes.total}</td>-->
-                            <#--<td class="greentext requirementRowCell">${successCount}</td>-->
-                            <#--<td class="redtext requirementRowCell">${failureCount}</td>-->
-                            <#--<td class="lightredtext requirementRowCell">${errorCount}</td>-->
-                            <#--<td class="bluetext requirementRowCell">${indeterminateCount}</td>-->
+                        <#--<td class="bluetext requirementRowCell">${requirementOutcome.testOutcomes.total}</td>-->
+                        <#--<td class="greentext requirementRowCell">${successCount}</td>-->
+                        <#--<td class="redtext requirementRowCell">${failureCount}</td>-->
+                        <#--<td class="lightredtext requirementRowCell">${errorCount}</td>-->
+                        <#--<td class="bluetext requirementRowCell">${indeterminateCount}</td>-->
 
                             <#assign totalAutomated = requirementOutcome.tests.count("AUTOMATED").withAnyResult()/>
                             <#assign automatedPassedPercentage = requirementOutcome.tests.getFormattedPercentage("AUTOMATED").withResult("SUCCESS")/>
                             <#assign automatedFailedPercentage = requirementOutcome.tests.getFormattedPercentage("AUTOMATED").withFailureOrError()/>
-                            <#assign automatedPendingPercentage = requirementOutcome.tests.getFormattedPercentage("AUTOMATED").withIndeterminateResult()/>
+                            <#assign automatedPendingPercentage = requirementOutcome.tests.getFormattedPercentage("AUTOMATED").withResult("PENDING")/>
+                            <#assign automatedIgnoredPercentage = requirementOutcome.tests.getFormattedPercentage("AUTOMATED").withResult("IGNORED")/>
                             <#assign automatedPassed = requirementOutcome.tests.count("AUTOMATED").withResult("SUCCESS")/>
-                            <#assign automatedPending = requirementOutcome.tests.count("AUTOMATED").withIndeterminateResult()/>
+                            <#assign automatedPending = requirementOutcome.tests.count("AUTOMATED").withResult("PENDING")/>
+                            <#assign automatedIgnored = requirementOutcome.tests.count("AUTOMATED").withResult("IGNORED")/>
                             <#assign automatedFailed = requirementOutcome.tests.count("AUTOMATED").withResult("FAILURE")/>
                             <#assign automatedError = requirementOutcome.tests.count("AUTOMATED").withResult("ERROR")/>
                             <#assign totalManual = requirementOutcome.tests.count("MANUAL").withAnyResult()/>
                             <#assign manualPassedPercentage = requirementOutcome.tests.getFormattedPercentage("MANUAL").withResult("SUCCESS")/>
                             <#assign manualFailedPercentage = requirementOutcome.tests.getFormattedPercentage("MANUAL").withFailureOrError()/>
-                            <#assign manualPending = requirementOutcome.tests.count("MANUAL").withIndeterminateResult()/>
-                            <#assign manualPendingPercentage = requirementOutcome.tests.getFormattedPercentage("MANUAL").withIndeterminateResult()/>
+                            <#assign manualPending = requirementOutcome.tests.count("MANUAL").withResult("PENDING")/>
+                            <#assign manualIgnored = requirementOutcome.tests.count("MANUAL").withResult("IGNORED")/>
+                            <#assign manualPendingPercentage = requirementOutcome.tests.getFormattedPercentage("MANUAL").withResult("PENDING")/>
                             <#assign manualPassed = requirementOutcome.tests.count("MANUAL").withResult("SUCCESS")/>
                             <#assign manualFailed = requirementOutcome.tests.count("MANUAL").withResult("FAILURE")/>
                             <#assign manualError = requirementOutcome.tests.count("MANUAL").withResult("ERROR")/>
@@ -364,15 +399,21 @@
                             </#if>
 
                             <td width="125px" class="lightgreentext requirementRowCell">
-                                <#assign percentPending = requirementOutcome.percent.withIndeterminateResult()/>
+                                <#assign percentPending = requirementOutcome.percent.withResult("PENDING")/>
+                                <#assign percentIgnored = requirementOutcome.percent.withResult("IGNORED")/>
                                 <#assign percentError = requirementOutcome.percent.withResult("ERROR")/>
                                 <#assign percentFailing = requirementOutcome.percent.withResult("FAILURE")/>
                                 <#assign percentPassing = requirementOutcome.percent.withResult("SUCCESS")/>
+                                <#assign percentIndeterminate = requirementOutcome.percent.withIndeterminateResult()/>
                                 <#assign passing = requirementOutcome.formattedPercentage.withResult("SUCCESS")>
                                 <#assign failing = requirementOutcome.formattedPercentage.withResult("FAILURE")>
                                 <#assign error = requirementOutcome.formattedPercentage.withResult("ERROR")>
-                                <#assign pending = requirementOutcome.formattedPercentage.withIndeterminateResult()>
+                                <#assign pending = requirementOutcome.formattedPercentage.withResult("PENDING")>
+                                <#assign ignored = requirementOutcome.formattedPercentage.withResult("IGNORED")>
+                                <#assign indeterminate = requirementOutcome.formattedPercentage.withIndeterminateResult()>
 
+
+                                <#assign ignoredbar = (percentPassing + percentFailing + percentError + percentIgnored)*125>
                                 <#assign errorbar = (percentPassing + percentFailing + percentError)*125>
                                 <#assign failingbar = (percentPassing + percentFailing)*125>
                                 <#assign passingbar = percentPassing*125>
@@ -392,35 +433,47 @@
                                 Estimated unimplemented tests: 7
                                 -->
                                 <#assign overviewCaption =
-                                "${requirementOutcome.requirement.displayName}|
+                                "${requirementOutcome.requirement.displayName}
 Tests implemented: ${requirementOutcome.testCount}
   - Passing tests: ${successCount} (${passing} of specified requirements)
   - Failing tests: ${failureCount} (${failing} of specified requirements)
   - Tests with errors: ${errorCount} (${error} of specified requirements)
 
+Tests not implemented or not executed: ${pendingCount + ignoredCount}
+  - Pending tests: ${pendingCount} (${pending} of specified requirements)
+  - Ignored tests: ${ignoredCount} (${ignored} of specified requirements)
+
 Requirements specified:     ${requirementOutcome.flattenedRequirementCount}
 Requirements with no tests: ${requirementOutcome.requirementsWithoutTestsCount}
 
-Pending tests: ${indeterminateCount}
+
 Estimated unimplemented tests: ${requirementOutcome.estimatedUnimplementedTests}
-Estimated unimplemented or pending requirements: ${pending}">
+Estimated unimplemented or pending requirements: ${pending}
+Estimated ignored requirements: ${ignored}"
+                                >
 
                                 <table>
                                     <tr>
-                                        <td width="40px"><div class="small">${passing}</div></td>
+                                        <td width="40px">
+                                            <div class="small">${passing}</div>
+                                        </td>
                                         <td width="125px">
                                             <div class="percentagebar"
                                                  title="${overviewCaption}"
                                                  style="width: 125px;">
-                                                <div class="errorbar"
-                                                     style="width: ${errorbar?string("0")}px;"
+                                                <div class="ignoredbar"
+                                                     style="width: ${ignoredbar?string("0")}px;"
                                                      title="${overviewCaption}">
-                                                    <div class="failingbar"
-                                                         style="width: ${failingbar?string("0")}px;"
+                                                    <div class="errorbar"
+                                                         style="width: ${errorbar?string("0")}px;"
                                                          title="${overviewCaption}">
-                                                        <div class="passingbar"
-                                                             style="width: ${passingbar?string("0")}px;"
+                                                        <div class="failingbar"
+                                                             style="width: ${failingbar?string("0")}px;"
                                                              title="${overviewCaption}">
+                                                            <div class="passingbar"
+                                                                 style="width: ${passingbar?string("0")}px;"
+                                                                 title="${overviewCaption}">
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -466,8 +519,10 @@ Estimated unimplemented or pending requirements: ${pending}">
                     <tbody>
                         <#assign testResultSet = testOutcomes.tests >
                         <#foreach testOutcome in testResultSet>
-                            <#if testOutcome.result == "PENDING" || testOutcome.result == "IGNORED">
+                            <#if testOutcome.result == "PENDING">
                                 <#assign testrun_outcome_icon = "pending.png">
+                            <#elseif testOutcome.result == "IGNORED">
+                                <#assign testrun_outcome_icon = "ignor.png">
                             <#elseif testOutcome.result == "FAILURE">
                                 <#assign testrun_outcome_icon = "fail.png">
                             <#elseif testOutcome.result == "ERROR">
@@ -497,8 +552,11 @@ Estimated unimplemented or pending requirements: ${pending}">
                             </#if>
 
                         <tr class="test-${testOutcome.result}">
-                            <td><img src="images/${testrun_outcome_icon}" title="${testOutcome.result}" class="summary-icon"/><span style="display:none">${testOutcome.result}</span></td>
-                            <td class="${testOutcome.result}-text"><a href="${relativeLink!}${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a></td>
+                            <td><img src="images/${testrun_outcome_icon}" title="${testOutcome.result}"
+                                     class="summary-icon"/><span style="display:none">${testOutcome.result}</span></td>
+                            <td class="${testOutcome.result}-text"><a
+                                    href="${relativeLink!}${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a>
+                            </td>
 
                             <td class="lightgreentext">${testOutcome.nestedStepCount}</td>
                             <#if reportOptions.showStepDetails>

@@ -135,6 +135,7 @@ public class TestOutcome {
     private String project;
 
     private Throwable testFailureCause;
+    private String testFailureClassname;
 
     /**
      * Used to determine what result should be returned if there are no steps in this test.
@@ -298,12 +299,21 @@ public class TestOutcome {
         this.tags = tags;
         this.userStory = userStory;
         this.testFailureCause = testFailureCause;
+        this.testFailureClassname = classnameFrom(testFailureCause);
         this.qualifier = qualifier;
         this.annotatedResult = annotatedResult;
         this.dataTable = dataTable;
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
         this.manual = manualTest;
+    }
+
+    private String classnameFrom(Throwable testFailureCause) {
+        if (testFailureCause == null) {
+            return null;
+        } else {
+            return testFailureCause.getClass().getCanonicalName();
+        }
     }
 
     private List<String> removeDuplicates(List<String> issues) {
@@ -641,8 +651,12 @@ public class TestOutcome {
      * @return The outcome of this test.
      */
     public TestResult getResult() {
-        if (testFailureCause != null) {
-            return new FailureAnalysis().resultFor(testFailureCause);
+        if (testFailureClassname != null) {
+            try {
+                return new FailureAnalysis().resultFor((Throwable) Class.forName(testFailureClassname).newInstance());
+            } catch (ReflectiveOperationException e) {
+                return TestResult.ERROR;
+            }
         }
 
         if (annotatedResult != null) {
@@ -797,16 +811,33 @@ public class TestOutcome {
 
     public void setTestFailureCause(Throwable cause) {
         this.testFailureCause = cause;
+        this.testFailureClassname = classnameFrom(testFailureCause);
     }
 
     public Throwable getTestFailureCause() {
         return testFailureCause;
     }
 
+    public String getTestFailureClassname() {
+        return testFailureClassname;
+    }
+
     public void setAnnotatedResult(final TestResult annotatedResult) {
         if (this.annotatedResult != PENDING) {
             this.annotatedResult = annotatedResult;
         }
+    }
+
+    public TestResult getAnnotatedResult() {
+        return annotatedResult;
+    }
+
+    public List<String> getAdditionalVersions() {
+        return additionalVersions;
+    }
+
+    public List<String> getAdditionalIssues() {
+        return additionalIssues;
     }
 
     private List<String> issues() {
@@ -909,7 +940,7 @@ public class TestOutcome {
     public String getFormattedIssues() {
         List<String> issues = getIssues();
         if (!issues.isEmpty()) {
-            List<String> orderedIssues = sort(getIssues(), on(String.class));
+            List<String> orderedIssues = sort(issues, on(String.class));
             return "(" + getFormatter().addLinks(StringUtils.join(orderedIssues, ", ")) + ")";
         } else {
             return "";

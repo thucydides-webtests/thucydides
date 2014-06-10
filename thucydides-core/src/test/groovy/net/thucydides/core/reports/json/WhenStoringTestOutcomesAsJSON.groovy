@@ -3,8 +3,10 @@ package net.thucydides.core.reports.json
 import com.github.goldin.spock.extensions.tempdir.TempDir
 import net.thucydides.core.annotations.*
 import net.thucydides.core.digest.Digest
+import net.thucydides.core.issues.IssueTracking
 import net.thucydides.core.model.DataTable
 import net.thucydides.core.model.TestOutcome
+import net.thucydides.core.model.TestResult
 import net.thucydides.core.model.TestStep
 import net.thucydides.core.model.TestTag
 import net.thucydides.core.reports.AcceptanceTestLoader
@@ -19,6 +21,9 @@ import org.joda.time.LocalDateTime
 import org.skyscreamer.jsonassert.JSONCompare
 import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Specification
+import spock.lang.Unroll
+
+import static org.mockito.Mockito.when
 
 class WhenStoringTestOutcomesAsJSON extends Specification {
 
@@ -102,6 +107,21 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         }
 
         @Issue("#789")
+        public void should_do_this() {
+        }
+
+        public void should_do_that() {
+        }
+    }
+
+
+    @Story(AUserStory.class)
+    @Issues(["PROJ-123", "PROJ-456"])
+    class ATestScenarioWithLongIssues {
+        public void a_simple_test_case() {
+        }
+
+        @Issue("PROJ-456")
         public void should_do_this() {
         }
 
@@ -262,6 +282,25 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         then:
         reloadedOutcome.issues as Set == ["#123", "#456", "#789"] as Set
     }
+
+    def "should restore formatted issues from JSON report"() {
+        given:
+        def issueTracking = Mock(IssueTracking)
+        and:
+        def testOutcome = TestOutcome.forTest("should_do_this", ATestScenarioWithLongIssues.class)
+        issueTracking.issueTrackerUrl >> "http://my.issue.tracker/MY-PROJECT/browse/{0}"
+        testOutcome = testOutcome.usingIssueTracking(issueTracking)
+        testOutcome.startTime = FIRST_OF_JANUARY
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").startingAt(FIRST_OF_JANUARY))
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        and:
+        TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
+        reloadedOutcome = reloadedOutcome.usingIssueTracking(issueTracking)
+        then:
+        reloadedOutcome.formattedIssues == "(<a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/PROJ-123\">PROJ-123</a>, <a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/PROJ-456\">PROJ-456</a>)"
+    }
+
 
 
     def "should generate an JSON report for a manual acceptance test run"() {
@@ -530,4 +569,61 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         !reloadedOutcome.testSteps[0].screenshots[0].htmlSource.isPresent()
     }
 
+    @Unroll
+    def "should record test results for #result"() {
+        given:
+            def testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
+            testOutcome.setStartTime(FIRST_OF_JANUARY);
+            testOutcome.recordStep(TestStep.forStepCalled("some step").withResult(result))
+        when:
+            def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        then:
+            TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
+            reloadedOutcome.getResult() == result
+        where:
+        result << [ TestResult.SUCCESS, TestResult.FAILURE, TestResult.ERROR, TestResult.PENDING, TestResult.IGNORED ]
+    }
+
+    def "should record test results for test with failing steps"() {
+        given:
+        def testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
+        testOutcome.setStartTime(FIRST_OF_JANUARY);
+        testOutcome.recordStep(TestStep.forStepCalled("some step").withResult(TestResult.SUCCESS))
+        testOutcome.lastStepFailedWith(new AssertionError("a failure"))
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        then:
+        TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
+        reloadedOutcome.getResult() == TestResult.FAILURE
+    }
+
+
+    def "should record test results for test with an error"() {
+        given:
+        def testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
+        testOutcome.setStartTime(FIRST_OF_JANUARY);
+        testOutcome.recordStep(TestStep.forStepCalled("some step").withResult(TestResult.SUCCESS))
+        testOutcome.lastStepFailedWith(new RuntimeException("an error"))
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        then:
+        TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
+        reloadedOutcome.getResult() == TestResult.ERROR
+    }
+
+
+    @Unroll
+    def "should record test results for #result with no steps"() {
+        given:
+        def testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
+        testOutcome.setStartTime(FIRST_OF_JANUARY);
+        testOutcome.setAnnotatedResult(result)
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        then:
+        TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
+        reloadedOutcome.getResult() == result
+        where:
+        result << [ TestResult.SUCCESS, TestResult.FAILURE, TestResult.ERROR, TestResult.PENDING, TestResult.IGNORED ]
+    }
 }

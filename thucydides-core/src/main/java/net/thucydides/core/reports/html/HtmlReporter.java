@@ -66,10 +66,9 @@ public abstract class HtmlReporter extends ThucydidesReporter {
 
     protected void copyResourcesToOutputDirectory() throws IOException {
         if (!alreadyCopied) {
+            alreadyCopied = true;
             updateResourceDirectoryFromSystemPropertyIfDefined();
             copyResources();
-
-            alreadyCopied = true;
         }
     }
 

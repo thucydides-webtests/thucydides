@@ -544,6 +544,7 @@ public class WhenUsingTheStepEventBus {
         String expectedSteps =
                 "TEST a_test\n" +
                         "-assumption_failed\n" +
+                        "--> TEST IGNORED\n" +
                         "---> ASSUMPTION VIOLATED\n" +
                         "-step1\n" +
                         "---> STEP IGNORED\n" +

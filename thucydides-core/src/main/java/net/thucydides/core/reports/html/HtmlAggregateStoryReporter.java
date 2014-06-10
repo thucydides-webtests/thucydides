@@ -245,12 +245,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         return TestOutcomeLoader.loadTestOutcomes().inFormat(getFormat()).from(sourceDirectory).withHistory();
     }
 
-    private OutcomeFormat configuredFormat() {
-        String formatValue = ThucydidesSystemProperty.OUTPUT_FORMATS
-                .from(environmentVariables, OutcomeFormat.JSON.toString());
-        return OutcomeFormat.valueOf(formatValue.toUpperCase());
-    }
-
     private void generateAggregateReportFor(TestOutcomes testOutcomes) throws IOException {
 
         ReportNameProvider defaultNameProvider = new ReportNameProvider();

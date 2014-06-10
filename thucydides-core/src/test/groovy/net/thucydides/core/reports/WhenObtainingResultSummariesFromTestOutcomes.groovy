@@ -1,6 +1,9 @@
 package net.thucydides.core.reports
 
+import net.thucydides.core.model.Story
+import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.model.TestResult
+import net.thucydides.core.model.TestStep
 import net.thucydides.core.model.TestType
 import spock.lang.Specification
 
@@ -308,4 +311,80 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             testOutcomes.proportion.withResult("error") == 0.0
             testOutcomes.proportion.withResult("pending") == 0.0
     }
+
+
+    def "should calulcate the average test size in steps"() {
+        when:
+        def aTest = TestOutcome.forTestInStory("passingTest", Story.called("a story"))
+        aTest.recordStep(TestStep.forStepCalled("passing step 1").withResult(TestResult.SUCCESS))
+        aTest.recordStep(TestStep.forStepCalled("passing step 2").withResult(TestResult.SUCCESS))
+
+        def anotherTest = TestOutcome.forTestInStory("passingTest", Story.called("a story"))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 1").withResult(TestResult.SUCCESS))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 2").withResult(TestResult.SUCCESS))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 3").withResult(TestResult.SUCCESS))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 4").withResult(TestResult.SUCCESS))
+
+        def testOutcomes = TestOutcomes.of([aTest, anotherTest])
+
+        then:
+        testOutcomes.averageTestSize == 3.0
+        testOutcomes.stepCount == 6
+    }
+
+    def "should not use skipped or ignored tests to calulcate the average test size in steps"() {
+        when:
+        def ignoredTest = TestOutcome.forTestInStory("ignoredTest", Story.called("a story"))
+        ignoredTest.setAnnotatedResult(TestResult.IGNORED)
+
+        def skippedTest = TestOutcome.forTestInStory("skippedTest", Story.called("a story"))
+        skippedTest.setAnnotatedResult(TestResult.SKIPPED)
+
+        def aTest = TestOutcome.forTestInStory("passingTest", Story.called("a story"))
+        aTest.recordStep(TestStep.forStepCalled("passing step 1").withResult(TestResult.SUCCESS))
+        aTest.recordStep(TestStep.forStepCalled("passing step 2").withResult(TestResult.SUCCESS))
+
+        def anotherTest = TestOutcome.forTestInStory("passingTest", Story.called("a story"))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 1").withResult(TestResult.SUCCESS))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 2").withResult(TestResult.SUCCESS))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 3").withResult(TestResult.SUCCESS))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 4").withResult(TestResult.SUCCESS))
+
+        def testOutcomes = TestOutcomes.of([aTest, anotherTest, ignoredTest, skippedTest])
+
+        then:
+        testOutcomes.averageTestSize == 3.0
+        testOutcomes.estimatedTotalStepCount == 12
+    }
+
+    def "should estimate the size of ignored tests"() {
+        when:
+        def ignoredTest = TestOutcome.forTestInStory("ignoredTest", Story.called("a story"))
+        ignoredTest.setAnnotatedResult(TestResult.IGNORED)
+
+        def skippedTest = TestOutcome.forTestInStory("skippedTest", Story.called("a story"))
+        skippedTest.setAnnotatedResult(TestResult.SKIPPED)
+
+        def aTest = TestOutcome.forTestInStory("passingTest", Story.called("a story"))
+        aTest.recordStep(TestStep.forStepCalled("passing step 1").withResult(TestResult.SUCCESS))
+        aTest.recordStep(TestStep.forStepCalled("passing step 2").withResult(TestResult.SUCCESS))
+
+        def anotherTest = TestOutcome.forTestInStory("passingTest", Story.called("a story"))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 1").withResult(TestResult.SUCCESS))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 2").withResult(TestResult.SUCCESS))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 3").withResult(TestResult.SUCCESS))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 4").withResult(TestResult.SUCCESS))
+
+        def testOutcomes = TestOutcomes.of([aTest, anotherTest, ignoredTest, skippedTest])
+
+        then:
+        testOutcomes.averageTestSize == 3.0
+        testOutcomes.estimatedTotalStepCount == 12
+        testOutcomes.withResult()
+        testOutcomes.proportionalStepsOf(TestType.ANY).withResult(TestResult.IGNORED) == 0.25
+        testOutcomes.proportionalStepsOf(TestType.ANY).withResult(TestResult.SKIPPED) == 0.25
+        testOutcomes.proportionalStepsOf(TestType.ANY).withResult(TestResult.SUCCESS) == 0.50
+    }
+
+
 }

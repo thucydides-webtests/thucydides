@@ -509,7 +509,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public void assumptionViolated(String message) {
         if (thereAreUnfinishedSteps()) {
             getCurrentStep().testAborted(new PendingStepException(message));
-            stepPending();
+            stepIgnored();
         }
         testIgnored();
     }

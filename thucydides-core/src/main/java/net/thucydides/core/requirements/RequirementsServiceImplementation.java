@@ -3,6 +3,7 @@ package net.thucydides.core.requirements;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Release;
@@ -196,9 +197,11 @@ public class RequirementsServiceImplementation implements RequirementsService {
 
     @Override
     public List<String> getRequirementTypes() {
-        List<Requirement> requirements = getAllRequirements();
-        Set<String> typeSet = newHashSet(extract(requirements, on(Requirement.class).getType()));
-        return ImmutableList.copyOf(typeSet);
+        Set<String> requirementTypes = Sets.newHashSet();
+        for(Requirement requirement : getAllRequirements()) {
+            requirementTypes.add(requirement.getType());
+        }
+        return ImmutableList.copyOf(requirementTypes);
     }
 
     private List<List<String>> getReleaseVersionsFrom(List<Requirement> requirements) {

@@ -1,9 +1,8 @@
 package net.thucydides.core.reports;
 
-import net.thucydides.core.concurrency.Parallel;
+import com.google.common.util.concurrent.*;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import org.slf4j.Logger;
@@ -17,6 +16,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Generates different Thucydides reports in a given output directory.
@@ -40,11 +43,13 @@ public class ReportService {
     public ReportService(final Configuration configuration) {
         this(configuration.getOutputDirectory(), getDefaultReporters());
     }
+
     /**
      * Reports are generated using the test results in a given directory.
      * The actual reports are generated using a set of reporter objects. The report service passes test outcomes
      * to the reporter objects, which generate different types of reports.
-     * @param outputDirectory Where the test data is stored, and where the generated reports will go.
+     *
+     * @param outputDirectory     Where the test data is stored, and where the generated reports will go.
      * @param subscribedReporters A set of reporters that generate the actual reports.
      */
     public ReportService(final File outputDirectory, final Collection<AcceptanceTestReporter> subscribedReporters) {
@@ -56,9 +61,9 @@ public class ReportService {
         this.outputDirectory = outputDirectory;
     }
 
-    public  List<AcceptanceTestReporter> getSubscribedReporters() {
+    public List<AcceptanceTestReporter> getSubscribedReporters() {
         if (subscribedReporters == null) {
-            subscribedReporters = new ArrayList<AcceptanceTestReporter>();
+            subscribedReporters = new ArrayList<>();
         }
         return subscribedReporters;
     }
@@ -84,28 +89,73 @@ public class ReportService {
      *                           These may be stored in memory (e.g. by a Listener instance) or read from the XML
      *                           test results.
      */
-    public void generateReportsFor(final List<TestOutcome> testOutcomeResults) {
 
-        LOGGER.info("Generating reports for test outcomes: " + testOutcomeResults.size());
+    public void generateReportsFor(final List<TestOutcome> testOutcomeResults) {
         final TestOutcomes allTestOutcomes = TestOutcomes.of(testOutcomeResults);
         for (final AcceptanceTestReporter reporter : getSubscribedReporters()) {
-            LOGGER.info("Generating reports using: " + reporter);
-//            for(TestOutcome testOutcomeResult : testOutcomeResults) {
-//                generateReportFor(testOutcomeResult, allTestOutcomes, reporter);
-//            }
+            generateReportsFor(reporter, allTestOutcomes);
+        }
 
-            Parallel.blockingFor(8, testOutcomeResults, new Parallel.Operation<TestOutcome>() {
+    }
+
+    private void generateReportsFor(final AcceptanceTestReporter reporter, final TestOutcomes testOutcomes) {
+        LOGGER.info("Generating reports using: " + reporter);
+        long t0 = System.currentTimeMillis();
+
+        ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(8));
+
+        List<? extends TestOutcome> outcomes = testOutcomes.getOutcomes();
+        final AtomicInteger remainingReportCount = new AtomicInteger(outcomes.size());
+        for (final TestOutcome outcome : outcomes) {
+            final ListenableFuture<TestOutcome> future = executorService.submit(new Callable<TestOutcome>() {
                 @Override
-                public void perform(TestOutcome testOutcome) {
-                    generateReportFor(testOutcome, allTestOutcomes, reporter);
+                public TestOutcome call() throws Exception {
+                    return outcome;
                 }
             });
+            future.addListener(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        final TestOutcome outcome = future.get();
+                        LOGGER.info("Processing test outcome " + outcome.getCompleteName());
+                        generateReportFor(outcome, testOutcomes, reporter);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, MoreExecutors.sameThreadExecutor());
+            Futures.addCallback(future, new FutureCallback<TestOutcome>() {
+                @Override
+                public void onSuccess(TestOutcome result) {
+                    remainingReportCount.decrementAndGet();
+                    LOGGER.info("Report generated for " + result.getCompleteName());
+                }
 
+                @Override
+                public void onFailure(Throwable t) {
+                    LOGGER.info("Report generated failed " + t.getMessage());
+                }
+            });
+        }
+        waitForReportGenerationToFinish(remainingReportCount);
+        LOGGER.info("Reports generated in: " + (System.currentTimeMillis() - t0) );
+
+    }
+
+    private void waitForReportGenerationToFinish(AtomicInteger reportCount) {
+        while(reportCount.get() > 0) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {}
         }
     }
 
     /**
      * The default reporters applicable for standard test runs.
+     *
      * @return a list of default reporters.
      */
     public static List<AcceptanceTestReporter> getDefaultReporters() {
@@ -118,7 +168,7 @@ public class ReportService {
         LOGGER.info("Reporting formats: " + formatConfiguration.getFormats());
 
         while (reporterImplementations.hasNext()) {
-            AcceptanceTestReporter reporter = (AcceptanceTestReporter)reporterImplementations.next();
+            AcceptanceTestReporter reporter = (AcceptanceTestReporter) reporterImplementations.next();
             LOGGER.info("Found reporter: " + reporter + "(format = " + reporter.getFormat() + ")");
             if (!reporter.getFormat().isPresent() || formatConfiguration.getFormats().contains(reporter.getFormat().get())) {
                 LOGGER.info("Registering reporter: " + reporter);

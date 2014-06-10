@@ -659,6 +659,11 @@ font-family:euphemia, verdana, sans-serif; font-size:16px; color: #88a717; font-
     background-color: #fc6e1f; height: 1.1em;
 }
 
+.ignoredbar {
+    background-color: #eeeadd; height: 1.1em;
+}
+
+
 .failingbar {
     background-color: #f8001f; height: 1.1em;
 }

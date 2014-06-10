@@ -27,9 +27,7 @@ public class ReportOptions {
     final private boolean showTagMenus;
     final private boolean showRelatedTags;
     final private String projectName;
-
-    private RequirementsService requirementsService;
-
+    final private RequirementsService requirementsService;
     final private boolean displayPiechart;
 
     public ReportOptions(EnvironmentVariables environmentVariables) {
@@ -54,7 +52,7 @@ public class ReportOptions {
     }
 
     public boolean isShowReleases() {
-        return showReleases || (!requirementsService.getReleasesFromRequirements().isEmpty());
+        return showReleases && (!requirementsService.getReleasesFromRequirements().isEmpty());
     }
 
     public boolean isShowProgress() {

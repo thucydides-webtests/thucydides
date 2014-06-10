@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>Thucydides Reports</title>
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
@@ -11,7 +11,7 @@
     <![endif]-->
     <link rel="stylesheet" href="css/core.css"/>
     <link rel="stylesheet" href="css/link.css"/>
-    <link type="text/css" media="screen" href="css/screen.css" rel="Stylesheet" />
+    <link type="text/css" media="screen" href="css/screen.css" rel="Stylesheet"/>
 
     <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
 
@@ -24,12 +24,13 @@
     <script type="text/javascript" src="jqplot/jquery.jqplot.min.js"></script>
     <script type="text/javascript" src="jqplot/plugins/jqplot.pieRenderer.min.js"></script>
 
-    <link type="text/css" href="jqueryui/css/start/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
+    <link type="text/css" href="jqueryui/css/start/jquery-ui-1.8.18.custom.css" rel="Stylesheet"/>
     <script type="text/javascript" src="jqueryui/js/jquery-ui-1.8.18.custom.min.js"></script>
 
 
 <#assign successfulManualTests = (testOutcomes.count("manual").withResult("SUCCESS") > 0)>
-<#assign pendingManualTests = (testOutcomes.count("manual").withIndeterminateResult() > 0)>
+<#assign pendingManualTests = (testOutcomes.count("manual").withResult("PENDING") > 0)>
+<#assign ignoredManualTests = (testOutcomes.count("manual").withResult("IGNORED") > 0)>
 <#assign failingManualTests = (testOutcomes.count("manual").withResult("FAILURE") > 0)>
 
     <script class="code" type="text/javascript">$(document).ready(function () {
@@ -37,50 +38,58 @@
             [
                 ['Passing', ${testOutcomes.proportionOf("automated").withResult("success")}],
                 <#if (successfulManualTests)>['Passing (manual)', ${testOutcomes.proportionOf("manual").withResult("success")}],</#if>
-                ['Pending', ${testOutcomes.proportionOf("automated").withIndeterminateResult()}],
-                <#if (pendingManualTests)>['Pending (manual)', ${testOutcomes.proportionOf("manual").withIndeterminateResult()}],</#if>
+                ['Pending', ${testOutcomes.proportionOf("automated").withResult("pending")}],
+                <#if (pendingManualTests)>['Pending (manual)', ${testOutcomes.proportionOf("manual").withResult("pending")}],</#if>
+                ['Ignored', ${testOutcomes.proportionOf("automated").withResult("ignored")}],
+                <#if (pendingManualTests)>['Ignored (manual)', ${testOutcomes.proportionOf("manual").withResult("ignored")}],</#if>
                 ['Failing', ${testOutcomes.proportionOf("automated").withResult("failure")}],
                 <#if (failingManualTests)>['Failing (manual)', ${testOutcomes.proportionOf("manual").withResult("failure")}],</#if>
                 ['Errors',  ${testOutcomes.proportionOf("automated").withResult("error")}]
             ]
         ], {
 
-            gridPadding:{top:0, bottom:38, left:0, right:0},
-            seriesColors:['#30cb23',
+            gridPadding: {top: 0, bottom: 38, left: 0, right: 0},
+            seriesColors: ['#30cb23',
                 <#if (successfulManualTests)>'#009818',</#if>
                 '#a2f2f2',
                 <#if (pendingManualTests)>'#8bb1df',</#if>
+                '#eeeadd',
+                <#if (ignoredManualTests)>'#d3d3d3',</#if>
                 '#f8001f',
                 <#if (failingManualTests)>'#a20019',</#if>
                 '#fc6e1f'],
-            seriesDefaults:{
-                renderer:$.jqplot.PieRenderer,
-                trendline:{ show:false },
-                rendererOptions:{ padding:8, showDataLabels:true }
+            seriesDefaults: {
+                renderer: $.jqplot.PieRenderer,
+                trendline: { show: false },
+                rendererOptions: { padding: 8, showDataLabels: true }
             },
-            legend:{
-                show:true,
-                placement:'outside',
-                rendererOptions:{
-                    numberRows:2
+            legend: {
+                show: true,
+                placement: 'outside',
+                rendererOptions: {
+                    numberRows: 2
                 },
-                location:'s',
-                marginTop:'15px'
+                location: 's',
+                marginTop: '15px'
             },
-            series:[
-                {label:'${testOutcomes.count("automated").withResult("success")} / ${testOutcomes.total} tests passed' },
-                <#if (successfulManualTests)>
-                    {label:'${testOutcomes.count("manual").withResult("success")} / ${testOutcomes.total} manual tests passed' },
-                </#if>
-                {label:'${testOutcomes.count("automated").withIndeterminateResult()} / ${testOutcomes.total} tests pending or not executed'},
-                <#if (pendingManualTests)>
-                    {label:'${testOutcomes.count("manual").withIndeterminateResult()} / ${testOutcomes.total} manual tests pending or not executed' },
-                </#if>
-                {label:'${testOutcomes.count("automated").withResult("failure")} / ${testOutcomes.total} tests failed'},
-                <#if (failingManualTests)>
-                    {label:'${testOutcomes.count("manual").withResult("failure")} / ${testOutcomes.total} manual tests failed' },
-                </#if>
-                {label:'${testOutcomes.count("automated").withResult("error")} / ${testOutcomes.total} errors'}
+            series: [
+                {label: '${testOutcomes.count("automated").withResult("success")} / ${testOutcomes.total} tests passed' },
+            <#if (successfulManualTests)>
+                {label: '${testOutcomes.count("manual").withResult("success")} / ${testOutcomes.total} manual tests passed' },
+            </#if>
+                {label: '${testOutcomes.count("automated").withResult("pending")} / ${testOutcomes.total} tests pending'},
+            <#if (pendingManualTests)>
+                {label: '${testOutcomes.count("manual").withResult("pending")} / ${testOutcomes.total} manual tests pending' },
+            </#if>
+                {label: '${testOutcomes.count("automated").withResult("ignored")} / ${testOutcomes.total} tests not executed'},
+            <#if (ignoredManualTests)>
+                {label: '${testOutcomes.count("manual").withResult("ignored")} / ${testOutcomes.total} manual tests not executed' },
+            </#if>
+                {label: '${testOutcomes.count("automated").withResult("failure")} / ${testOutcomes.total} tests failed'},
+            <#if (failingManualTests)>
+                {label: '${testOutcomes.count("manual").withResult("failure")} / ${testOutcomes.total} manual tests failed' },
+            </#if>
+                {label: '${testOutcomes.count("automated").withResult("error")} / ${testOutcomes.total} errors'}
             ]
         });
 
@@ -89,75 +98,85 @@
                 ['Passing', ${testOutcomes.proportionalStepsOf("automated").withResult("success")}],
                 <#if (successfulManualTests)>['Passing (manual)', ${testOutcomes.proportionalStepsOf("manual").withResult("success")}],</#if>
                 ['Pending', ${testOutcomes.proportionalStepsOf("automated").withResult("pending")}],
-                <#if (pendingManualTests)>['Pending (manual)', ${testOutcomes.proportionalStepsOf("manual").withIndeterminateResult()}],</#if>
+                <#if (pendingManualTests)>['Pending (manual)', ${testOutcomes.proportionalStepsOf("manual").withResult("pending")}],</#if>
+                ['Ignored', ${testOutcomes.proportionalStepsOf("automated").withResult("ignored")}],
+                <#if (ignoredManualTests)>['Pending (manual)', ${testOutcomes.proportionalStepsOf("manual").withResult("ignored")}],</#if>
                 ['Failing', ${testOutcomes.proportionalStepsOf("automated").withResult("failure")}],
                 <#if (failingManualTests)>['Failing (manual)', ${testOutcomes.proportionalStepsOf("manual").withResult("failure")}],</#if>
                 ['Errors', ${testOutcomes.proportionalStepsOf("automated").withResult("error")}]
             ]
         ], {
 
-            gridPadding:{top:0, bottom:38, left:0, right:0},
-            seriesColors:['#30cb23',
+            gridPadding: {top: 0, bottom: 38, left: 0, right: 0},
+            seriesColors: ['#30cb23',
                 <#if (successfulManualTests)>'#28a818',</#if>
                 '#a2f2f2',
                 <#if (pendingManualTests)>'#8be1df',</#if>
+                '#eeeadd',
+                <#if (ignoredManualTests)>'#d3d3d3',</#if>
                 '#f8001f',
                 <#if (failingManualTests)>'#e20019',</#if>
                 '#fc6e1f'],
 
-            seriesDefaults:{
-                renderer:$.jqplot.PieRenderer,
-                trendline:{ show:false },
-                rendererOptions:{ padding:8, showDataLabels:true }
+            seriesDefaults: {
+                renderer: $.jqplot.PieRenderer,
+                trendline: { show: false },
+                rendererOptions: { padding: 8, showDataLabels: true }
             },
-            legend:{
-                show:true,
-                placement:'outside',
-                rendererOptions:{
-                    numberRows:2
+            legend: {
+                show: true,
+                placement: 'outside',
+                rendererOptions: {
+                    numberRows: 2
                 },
-                location:'s',
-                marginTop:'15px'
+                location: 's',
+                marginTop: '15px'
             },
-        series:[
-                {label:'${testOutcomes.count("automated").withResult("success")} / ${testOutcomes.total} tests passed (${testOutcomes.decimalPercentageSteps("automated").withResult("success")}% of all test steps)' },
-                <#if (successfulManualTests)>
-                    {label:'${testOutcomes.count("manual").withResult("success")} / ${testOutcomes.total} manual tests passed (${testOutcomes.decimalPercentageSteps("manual").withResult("success")}% of all test steps)' },
-                </#if>
-                {label:'${testOutcomes.count("automated").withIndeterminateResult()} / ${testOutcomes.total} tests pending or not executed (${testOutcomes.decimalPercentageSteps("automated").withIndeterminateResult()}% of all test steps)'},
-                <#if (pendingManualTests)>
-                    {label:'${testOutcomes.count("manual").withIndeterminateResult()} / ${testOutcomes.total} manual tests pending or not executed (${testOutcomes.decimalPercentageSteps("manual").withIndeterminateResult()}% of all test steps)' },
-                </#if>
-                {label:'${testOutcomes.count("automated").withResult("failure")} / ${testOutcomes.total} tests failed (${testOutcomes.decimalPercentageSteps("automated").withResult("failure")}% of all test steps)'},
-                <#if (failingManualTests)>
-                    {label:'${testOutcomes.count("manual").withResult("failure")} / ${testOutcomes.total} manual tests failed (${testOutcomes.decimalPercentageSteps("manual").withResult("failure")}% of all test steps)' },
-                </#if>
-                {label:'${testOutcomes.count("automated").withResult("error")} / ${testOutcomes.total} errors (${testOutcomes.decimalPercentageSteps("automated").withResult("error")}% of all test steps)'}
+            series: [
+                {label: '${testOutcomes.count("automated").withResult("success")} / ${testOutcomes.total} tests passed (${testOutcomes.decimalPercentageSteps("automated").withResult("success")}% of all test steps)' },
+            <#if (successfulManualTests)>
+                {label: '${testOutcomes.count("manual").withResult("success")} / ${testOutcomes.total} manual tests passed (${testOutcomes.decimalPercentageSteps("manual").withResult("success")}% of all test steps)' },
+            </#if>
+                {label: '${testOutcomes.count("automated").withResult("pending")} / ${testOutcomes.total} tests pending'},
+            <#if (pendingManualTests)>
+                {label: '${testOutcomes.count("manual").withResult("pending")} / ${testOutcomes.total} manual tests pending' },
+            </#if>
+                {label: '${testOutcomes.count("automated").withResult("ignored")} / ${testOutcomes.total} tests not executed'},
+            <#if (ignoredManualTests)>
+                {label: '${testOutcomes.count("manual").withResult("ignored")} / ${testOutcomes.total} manual tests not executed' },
+            </#if>
+                {label: '${testOutcomes.count("automated").withResult("failure")} / ${testOutcomes.total} tests failed (${testOutcomes.decimalPercentageSteps("automated").withResult("failure")}% of all test steps)'},
+            <#if (failingManualTests)>
+                {label: '${testOutcomes.count("manual").withResult("failure")} / ${testOutcomes.total} manual tests failed (${testOutcomes.decimalPercentageSteps("manual").withResult("failure")}% of all test steps)' },
+            </#if>
+                {label: '${testOutcomes.count("automated").withResult("error")} / ${testOutcomes.total} errors (${testOutcomes.decimalPercentageSteps("automated").withResult("error")}% of all test steps)'}
             ]
         });
 
         // Results table
-        $('#test-results-table').dataTable( {
-            "aaSorting": [[ 1, "asc" ]],
+        $('#test-results-table').dataTable({
+            "aaSorting": [
+                [ 1, "asc" ]
+            ],
             "bJQueryUI": true,
             "iDisplayLength": 25
-        } );
+        });
 
         // Pie charts
         $('#test-results-tabs').tabs()
 
-        $('#toggleNormalPieChart').click(function() {
+        $('#toggleNormalPieChart').click(function () {
             $("#test_results_pie_chart").toggle();
         });
 
-        $('#toggleWeightedPieChart').click(function() {
+        $('#toggleWeightedPieChart').click(function () {
             $("#weighted_test_results_pie_chart").toggle();
         });
 
-        <#if !reportOptions.displayPiechart>
-            $("#test_results_pie_chart").hide();
-            $("#weighted_test_results_pie_chart").hide();
-        </#if>
+    <#if !reportOptions.displayPiechart>
+        $("#test_results_pie_chart").hide();
+        $("#weighted_test_results_pie_chart").hide();
+    </#if>
 
 
     })
@@ -183,7 +202,7 @@
     <#assign pageTitle = 'Test Results: All Tests' >
 <#else>
     <#assign resultsContext = '> ' + testOutcomes.label>
-    <#--<#assign reportName = reportName.withPrefix(testOutcomes.label)>-->
+<#--<#assign reportName = reportName.withPrefix(testOutcomes.label)>-->
     <#if (currentTagType! != '')>
         <#assign pageTitle = inflection.of(currentTagType!"").asATitle() + ': ' +  inflection.of(testOutcomes.label).asATitle() >
     <#else>
@@ -206,27 +225,30 @@
 <div class="clr"></div>
 <div id="beforetable"></div>
 <div id="results-dashboard">
-    <div class="middlb">
-        <div class="table">
-            <h2>${pageTitle}</h2>
-            <table class='overview'>
-                <tr>
-                    <td width="375px" valign="top">
-                        <div class="test-count-summary">
-                            <span class="test-count-title">${testOutcomes.total} test scenarios <#if (testOutcomes.hasDataDrivenTests())>(including ${testOutcomes.totalDataRows} rows of test data)</#if>:</span>
-                            <#assign successReport = reportName.withPrefix(currentTag).forTestResult("success") >
-                            <#assign failureReport = reportName.withPrefix(currentTag).forTestResult("failure") >
-                            <#assign errorReport = reportName.withPrefix(currentTag).forTestResult("error") >
-                            <#assign pendingReport = reportName.withPrefix(currentTag).forTestResult("pending") >
+<div class="middlb">
+<div class="table">
+<h2>${pageTitle}</h2>
+<table class='overview'>
+    <tr>
+        <td width="375px" valign="top">
+            <div class="test-count-summary">
+                <span class="test-count-title">${testOutcomes.total}
+                    test scenarios <#if (testOutcomes.hasDataDrivenTests())>(including ${testOutcomes.totalDataRows}
+                    rows of test data)</#if>:</span>
+            <#assign successReport = reportName.withPrefix(currentTag).forTestResult("success") >
+            <#assign failureReport = reportName.withPrefix(currentTag).forTestResult("failure") >
+            <#assign errorReport = reportName.withPrefix(currentTag).forTestResult("error") >
+            <#assign pendingReport = reportName.withPrefix(currentTag).forTestResult("pending") >
 
-                            <#assign totalCount = testOutcomes.totalTests.total >
-                            <#assign successCount = testOutcomes.totalTests.withResult("success") >
-                            <#assign pendingCount = testOutcomes.totalTests.withIndeterminateResult() >
-                            <#assign failureCount = testOutcomes.totalTests.withResult("failure") >
-                            <#assign errorCount = testOutcomes.totalTests.withResult("error") >
-                            <#assign failureOrErrorCount = testOutcomes.totalTests.withFailureOrError() >
+            <#assign totalCount = testOutcomes.totalTests.total >
+            <#assign successCount = testOutcomes.totalTests.withResult("success") >
+            <#assign pendingCount = testOutcomes.totalTests.withResult("pending") >
+            <#assign ignoredCount = testOutcomes.totalTests.withResult("ignored") >
+            <#assign failureCount = testOutcomes.totalTests.withResult("failure") >
+            <#assign errorCount = testOutcomes.totalTests.withResult("error") >
+            <#assign failureOrErrorCount = testOutcomes.totalTests.withFailureOrError() >
 
-                            <span class="test-count">
+                <span class="test-count">
                                 ${successCount}
                                 <#if (successCount > 0 && report.shouldDisplayResultLink)>
                                     <a href="${relativeLink}${successReport}">passed</a>
@@ -242,10 +264,16 @@
                             </span>
 
                             <span class="test-count">
+                                <#if (pendingCount > 0 && report.shouldDisplayResultLink)>
+                                    ${ignoredCount} <a href="${relativeLink}${pendingReport}">ignored</a>
+                                </#if>,
+                            </span>
+
+                            <span class="test-count">
                                 ${failureCount}
-                                    <#if (failureCount > 0 && report.shouldDisplayResultLink)>
-                                        <a href="${relativeLink}${failureReport}">failed</a>
-                                    <#else>failed</#if>,
+                                <#if (failureCount > 0 && report.shouldDisplayResultLink)>
+                                    <a href="${relativeLink}${failureReport}">failed</a>
+                                <#else>failed</#if>,
                             </span>
                             <span class="test-count">
                                 ${errorCount}
@@ -253,169 +281,174 @@
                                     <a href="${relativeLink}${errorReport}">with errors</a>
                                 <#else>errors</#if>
                             </span>
-                            <#if (csvReport! != '')>
-                                <a href="${csvReport}">[Download CSV]</a>
-                            </#if>
-                        </div>
+            <#if (csvReport! != '')>
+                <a href="${csvReport}">[CSV]</a>
+            </#if>
+            </div>
 
-                        <div id="test-results-tabs">
-                            <ul>
-                                <li><a href="#test-results-tabs-1">Test Count</a></li>
-                                <li><a href="#test-results-tabs-2">Weighted Tests</a></li>
-                            </ul>
-                            <div id="test-results-tabs-1">
-                                <table>
-                                    <tr>
-                                        <td colspan="2">
-                                            <span class="caption">Total number of tests that pass, fail, or are pending.</span>
-                                            <span class="togglePieChart" id="toggleNormalPieChart"><a href="#">Show/Hide Pie Chart</a></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: text-top;">
-                                            <div id="test_results_pie_chart"></div>
-                                        </td>
-                                        <td class="related-tags-section">
-                                            <div>
-                                                <#include "test-result-summary.ftl"/>
-                                            </div>
-                                            <div>
-<#if reportOptions.showRelatedTags>
+            <div id="test-results-tabs">
+                <ul>
+                    <li><a href="#test-results-tabs-1">Test Count</a></li>
+                    <li><a href="#test-results-tabs-2">Weighted Tests</a></li>
+                </ul>
+                <div id="test-results-tabs-1">
+                    <table>
+                        <tr>
+                            <td colspan="2">
+                                <span class="caption">Total number of tests that pass, fail, or are pending.</span>
+                                <span class="togglePieChart" id="toggleNormalPieChart"><a href="#">Show/Hide Pie
+                                    Chart</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align: text-top;">
+                                <div id="test_results_pie_chart"></div>
+                            </td>
+                            <td class="related-tags-section">
+                                <div>
+                                <#include "test-result-summary.ftl"/>
+                                </div>
+                                <div>
+                                <#if reportOptions.showRelatedTags>
                                                 <@list_tags weighted="false"/>
 </#if>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div id="test-results-tabs-2">
-                                <table>
-                                    <tr>
-                                        <td colspan="2">
-                                            <span class="caption">Total number of tests, weighted by test steps.</span>
-                                            <span class="togglePieChart" id="toggleWeightedPieChart"><a href="#">Show/Hide Pie Chart</a></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="vertical-align: text-top;">
-                                            <div id="weighted_test_results_pie_chart"></div>
-                                        </td>
-                                        <td class="related-tags-section">
-                                            <div>
-                                                <#include "test-result-summary.ftl"/>
-                                            </div>
-                                            <div>
-<#if reportOptions.showRelatedTags>
-                                                <@list_tags weighted="true"/>
-</#if>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </td>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="test-results-tabs-2">
+                    <table>
+                        <tr>
+                            <td colspan="2">
+                                <span class="caption">Test results weighted by test size in steps (average steps per test: ${testOutcomes.averageTestSize}) .</span>
+                                <span class="togglePieChart" id="toggleWeightedPieChart"><a href="#">Show/Hide Pie
+                                    Chart</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align: text-top;">
+                                <div id="weighted_test_results_pie_chart"></div>
+                            </td>
+                            <td class="related-tags-section">
+                                <div>
+                                <#include "test-result-summary.ftl"/>
+                                </div>
+                                <div>
+                                <#if reportOptions.showRelatedTags>
+                                   <@list_tags weighted="true"/>
+                                </#if>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </td>
 
-                </tr>
-            </table>
-        <#--- Test Results -->
-            <table>
-                <tr>
-                    <td>
-                        <div><h3>Tests</h3></div>
-                        <div id="test_list_tests" class="table">
-                            <div class="test-results">
-                                <table id="test-results-table">
-                                    <thead>
-                                    <tr>
-                                        <th width="50" class="test-results-heading">&nbsp;</th>
-                                        <th width="%" class="test-results-heading">Tests</th>
-                                        <th width="70" class="test-results-heading">Steps</th>
+    </tr>
+</table>
+<#--- Test Results -->
+<table>
+    <tr>
+        <td>
+            <div><h3>Tests</h3></div>
+            <div id="test_list_tests" class="table">
+                <div class="test-results">
+                    <table id="test-results-table">
+                        <thead>
+                        <tr>
+                            <th width="50" class="test-results-heading">&nbsp;</th>
+                            <th width="%" class="test-results-heading">Tests</th>
+                            <th width="70" class="test-results-heading">Steps</th>
 
-                                    <#if reportOptions.showStepDetails>
-                                        <th width="65" class="test-results-heading">Fail</th>
-                                        <th width="65" class="test-results-heading">Error</th>
-                                        <th width="65" class="test-results-heading">Pend</th>
-                                        <th width="65" class="test-results-heading">Ignore</th>
-                                        <th width="65" class="test-results-heading">Skip</th>
-                                    </#if>
+                        <#if reportOptions.showStepDetails>
+                            <th width="65" class="test-results-heading">Fail</th>
+                            <th width="65" class="test-results-heading">Error</th>
+                            <th width="65" class="test-results-heading">Pend</th>
+                            <th width="65" class="test-results-heading">Ignore</th>
+                            <th width="65" class="test-results-heading">Skip</th>
+                        </#if>
 
-                                        <th width="65" class="test-results-heading">Stable</th>
-                                        <th width="100" class="test-results-heading">Duration<br>(seconds)</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <#assign testResultSet = testOutcomes.tests >
-                                    <#foreach testOutcome in testResultSet>
-                                        <#if testOutcome.result == "PENDING">
-                                            <#assign testrun_outcome_icon = "pending.png">
-                                        <#elseif testOutcome.result == "IGNORED">
-                                            <#assign testrun_outcome_icon = "ignor.png">
-                                        <#elseif testOutcome.result == "FAILURE">
-                                            <#assign testrun_outcome_icon = "fail.png">
-                                        <#elseif testOutcome.result == "ERROR">
-                                            <#assign testrun_outcome_icon = "cross.png">
-                                        <#elseif testOutcome.result == "SUCCESS">
-                                            <#assign testrun_outcome_icon = "success.png">
-                                        <#else>
-                                            <#assign testrun_outcome_icon = "ignor.png">
-                                        </#if>
+                            <th width="65" class="test-results-heading">Stable</th>
+                            <th width="100" class="test-results-heading">Duration<br>(seconds)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <#assign testResultSet = testOutcomes.tests >
+                        <#foreach testOutcome in testResultSet>
+                            <#if testOutcome.result == "PENDING">
+                                <#assign testrun_outcome_icon = "pending.png">
+                            <#elseif testOutcome.result == "IGNORED">
+                                <#assign testrun_outcome_icon = "ignor.png">
+                            <#elseif testOutcome.result == "FAILURE">
+                                <#assign testrun_outcome_icon = "fail.png">
+                            <#elseif testOutcome.result == "ERROR">
+                                <#assign testrun_outcome_icon = "cross.png">
+                            <#elseif testOutcome.result == "SUCCESS">
+                                <#assign testrun_outcome_icon = "success.png">
+                            <#else>
+                                <#assign testrun_outcome_icon = "ignor.png">
+                            </#if>
 
 
 
-                                        <#assign stability = testOutcome.recentStability>
-                                        <#if (testOutcome.recentTestRunCount == testOutcome.recentPendingCount)>
-                                            <#assign stability_icon = "traffic-in-progress.gif">
-                                            <#assign stability_rank = 0>
-                                        <#elseif stability < 0.25>
-                                            <#assign stability_icon = "traffic-red.gif">
-                                            <#assign stability_rank = 1>
-                                        <#elseif stability < 0.5 >
-                                            <#assign stability_icon = "traffic-orange.gif">
-                                            <#assign stability_rank = 2>
-                                        <#elseif stability < 0.5 >
-                                            <#assign stability_icon = "traffic-yellow.gif">
-                                            <#assign stability_rank = 3>
-                                        <#else>
-                                            <#assign stability_icon = "traffic-green.gif">
-                                            <#assign stability_rank = 4>                                               x
-                                        </#if>
+                            <#assign stability = testOutcome.recentStability>
+                            <#if (testOutcome.recentTestRunCount == testOutcome.recentPendingCount)>
+                                <#assign stability_icon = "traffic-in-progress.gif">
+                                <#assign stability_rank = 0>
+                            <#elseif stability < 0.25>
+                                <#assign stability_icon = "traffic-red.gif">
+                                <#assign stability_rank = 1>
+                            <#elseif stability < 0.5 >
+                                <#assign stability_icon = "traffic-orange.gif">
+                                <#assign stability_rank = 2>
+                            <#elseif stability < 0.5 >
+                                <#assign stability_icon = "traffic-yellow.gif">
+                                <#assign stability_rank = 3>
+                            <#else>
+                                <#assign stability_icon = "traffic-green.gif">
+                                <#assign stability_rank = 4>                                               x
+                            </#if>
 
-                                    <tr class="test-${testOutcome.result}">
-                                        <td><img src="images/${testrun_outcome_icon}" title="${testOutcome.result}" class="summary-icon"/>
-                                            <#if (testOutcome.manual)><img src="images/worker.png" title="Manual test"/></#if>
-                                            <span style="display:none">${testOutcome.result}</span></td>
-                                        <td class="${testOutcome.result}-text"><a href="${relativeLink}${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a></td>
+                        <tr class="test-${testOutcome.result}">
+                            <td><img src="images/${testrun_outcome_icon}" title="${testOutcome.result}"
+                                     class="summary-icon"/>
+                                <#if (testOutcome.manual)><img src="images/worker.png" title="Manual test"/></#if>
+                                <span style="display:none">${testOutcome.result}</span></td>
+                            <td class="${testOutcome.result}-text"><a
+                                    href="${relativeLink}${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a>
+                            </td>
 
-                                        <td class="lightgreentext">${testOutcome.nestedStepCount}</td>
+                            <td class="lightgreentext">${testOutcome.nestedStepCount}</td>
 
-                                        <#if reportOptions.showStepDetails>
-                                            <td class="redtext">${testOutcome.failureCount}</td>
-                                            <td class="redtext">${testOutcome.errorCount}</td>
-                                            <td class="bluetext">${testOutcome.pendingCount}</td>
-                                            <td class="bluetext">${testOutcome.skippedCount}</td>
-                                            <td class="bluetext">${testOutcome.ignoredCount}</td>
-                                        </#if>
+                            <#if reportOptions.showStepDetails>
+                                <td class="redtext">${testOutcome.failureCount}</td>
+                                <td class="redtext">${testOutcome.errorCount}</td>
+                                <td class="bluetext">${testOutcome.pendingCount}</td>
+                                <td class="bluetext">${testOutcome.skippedCount}</td>
+                                <td class="bluetext">${testOutcome.ignoredCount}</td>
+                            </#if>
 
-                                        <td class="bluetext">
-                                            <img src="images/${stability_icon}"
-                                                 title="Over the last ${testOutcome.recentTestRunCount} tests: ${testOutcome.recentPassCount} passed, ${testOutcome.recentFailCount} failed, ${testOutcome.recentPendingCount} pending"
-                                                 class="summary-icon"/>
-                                            <span style="display:none">${stability_rank }</span>
-                                        </td>
-                                        <td class="lightgreentext">${testOutcome.durationInSeconds}</td>
-                                    </tr>
-                                    </#foreach>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    <#--- Test Results end -->
-    </div>
+                            <td class="bluetext">
+                                <img src="images/${stability_icon}"
+                                     title="Over the last ${testOutcome.recentTestRunCount} tests: ${testOutcome.recentPassCount} passed, ${testOutcome.recentFailCount} failed, ${testOutcome.recentPendingCount} pending"
+                                     class="summary-icon"/>
+                                <span style="display:none">${stability_rank }</span>
+                            </td>
+                            <td class="lightgreentext">${testOutcome.durationInSeconds}</td>
+                        </tr>
+                        </#foreach>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+</div>
+<#--- Test Results end -->
+</div>
 </div>
 </div>
 </div>
@@ -468,42 +501,53 @@
                     </td>
                     <td width="150px" class="lightgreentext">
                         <#if weighted == "true">
-                            <#assign percentPending = outcomesForTag.percentSteps.withIndeterminateResult()/>
+                            <#assign percentPending = outcomesForTag.percentSteps.withResult("pending")/>
+                            <#assign percentIgnored = outcomesForTag.percentSteps.withResult("ignored") + outcomesForTag.percentSteps.withResult("skipped")/>
                             <#assign percentError = outcomesForTag.percentSteps.withResult("error")/>
                             <#assign percentFailing = outcomesForTag.percentSteps.withResult("failure")/>
                             <#assign percentPassing = outcomesForTag.percentSteps.withResult("success")/>
 
                             <#assign passing = outcomesForTag.formattedPercentageSteps.withResult("success")>
+                            <#assign ignored = outcomesForTag.formattedPercentageSteps.withResult("ignored") + outcomesForTag.formattedPercentageSteps.withResult("skipped")/>
                             <#assign failing = outcomesForTag.formattedPercentageSteps.withResult("failure")>
                             <#assign error = outcomesForTag.formattedPercentageSteps.withResult("error")>
-                            <#assign pending = outcomesForTag.formattedPercentageSteps.withIndeterminateResult()>
+                            <#assign pending = outcomesForTag.formattedPercentageSteps.withResult("pending")>
                         <#else>
-                            <#assign percentPending = outcomesForTag.proportion.withIndeterminateResult()/>
+                            <#assign percentPending = outcomesForTag.proportion.withResult("pending")/>
                             <#assign percentError = outcomesForTag.proportion.withResult("error")/>
+                            <#assign percentIgnored = outcomesForTag.proportion.withResult("ignored") + outcomesForTag.proportion.withResult("skipped")/>
                             <#assign percentFailing = outcomesForTag.proportion.withResult("failure")/>
                             <#assign percentPassing = outcomesForTag.proportion.withResult("success")/>
 
                             <#assign passing = outcomesForTag.formattedPercentage.withResult("success")>
                             <#assign failing = outcomesForTag.formattedPercentage.withResult("failure")>
                             <#assign error = outcomesForTag.formattedPercentage.withResult("error")>
-                            <#assign pending = outcomesForTag.formattedPercentage.withIndeterminateResult()>
+                            <#assign pending = outcomesForTag.formattedPercentage.withResult("pending")>
+                            <#assign ignored = outcomesForTag.formattedPercentage.withResult("ignored") + outcomesForTag.formattedPercentage.withResult("skipped") >
                         </#if>
 
+                        <#assign ignoredbar = (percentPassing + percentFailing + percentError + percentIgnored)*150>
                         <#assign errorbar = (percentPassing + percentFailing + percentError)*150>
                         <#assign failingbar = (percentPassing + percentFailing)*150>
                         <#assign passingbar = (percentPassing)*150>
 
                         <#assign successCount = outcomesForTag.totalTests.withResult("success") >
-                        <#assign indeterminateCount = outcomesForTag.totalTests.withIndeterminateResult() >
-                        <#assign skipCount = outcomesForTag.totalTests.withResult("skipped") >
+                        <#assign pendingCount = outcomesForTag.totalTests.withResult("pending") >
                         <#assign failureCount = outcomesForTag.totalTests.withResult("failure") >
                         <#assign errorCount = outcomesForTag.totalTests.withResult("error") >
+                        <#assign ignoredCount = outcomesForTag.totalTests.withResult("ignored") + outcomesForTag.totalTests.withResult("skipped")>
 
-                        <#assign tests = inflection.of(outcomesForTag.total).times('test') >
-                        <#assign pendingCaption = "${indeterminateCount} out of ${outcomesForTag.total} ${tests} pending or not executed">
-                        <#assign passingCaption = "${successCount} out of ${outcomesForTag.total} ${tests} passing">
-                        <#assign failingCaption = "${failureCount} out of ${outcomesForTag.total} ${tests} failing">
-                        <#assign errorCaption = "${errorCount} out of ${outcomesForTag.total} ${tests} broken">
+                        <#assign successStepCount = outcomesForTag.havingResult("success").stepCount >
+                        <#assign pendingStepCount = outcomesForTag.havingResult("pending").stepCount >
+                        <#assign failureStepCount = outcomesForTag.havingResult("failure").stepCount >
+                        <#assign errorStepCount = outcomesForTag.havingResult("error").stepCount >
+                        <#assign ignoredStepCount = outcomesForTag.havingResult("ignored").stepCount + outcomesForTag.havingResult("skipped").stepCount >
+
+                        <#assign pendingCaption = "${pendingCount} out of ${outcomesForTag.total} tests (${pendingStepCount} steps) pending">
+                        <#assign passingCaption = "${successCount} out of ${outcomesForTag.total} tests (${successStepCount} steps) passing">
+                        <#assign failingCaption = "${failureCount} out of ${outcomesForTag.total} tests (${failureStepCount} steps) failing">
+                        <#assign errorCaption = "${errorCount} out of ${outcomesForTag.total} tests (${errorStepCount} steps) broken">
+                        <#assign ignoredCaption = "${ignoredCount} out of ${outcomesForTag.total} tests (${ignoredStepCount} steps) skipped or ignored">
 
                         <table>
                             <tr>
@@ -513,18 +557,23 @@
                                         <div class="percentagebar"
                                              title="${pendingCaption}"
                                              style="width: 150px;">
-                                            <div class="errorbar"
-                                                 style="width: ${errorbar?string("0")}px;"
-                                                 title="${errorCaption}">
-                                                <div class="failingbar"
-                                                     style="width: ${failingbar?string("0")}px;"
-                                                     title="${failingCaption}">
-                                                    <div class="passingbar"
-                                                         style="width: ${passingbar?string("0")}px;"
-                                                         title="${passingCaption}">
+                                            <div class="ignoredbar"
+                                                 style="width: ${ignoredbar?string("0")}px;"
+                                                 title="${ignoredCaption}">
+                                                <div class="errorbar"
+                                                     style="width: ${errorbar?string("0")}px;"
+                                                     title="${errorCaption}">
+                                                    <div class="failingbar"
+                                                         style="width: ${failingbar?string("0")}px;"
+                                                         title="${failingCaption}">
+                                                        <div class="passingbar"
+                                                             style="width: ${passingbar?string("0")}px;"
+                                                             title="${passingCaption}">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
                                     </a>
                                 </td>
                             </tr>

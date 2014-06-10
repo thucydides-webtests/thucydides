@@ -1,10 +1,7 @@
 package net.thucydides.core.reports;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import net.thucydides.core.concurrency.Parallel;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.json.JSONTestOutcomeReporter;
@@ -56,26 +53,14 @@ public class TestOutcomeLoader {
     public List<TestOutcome> loadFrom(final File reportDirectory) throws IOException {
 
         final AcceptanceTestLoader testOutcomeReporter = getOutcomeReporter();
-
         List<File> reportFiles = getAllOutcomeFilesFrom(reportDirectory);
 
-        //List<TestOutcome> testOutcomes = Lists.newArrayList();
-//        for (File reportFile : reportFiles) {
-//            Optional<TestOutcome> testOutcome = testOutcomeReporter.loadReportFrom(reportFile);
-//            testOutcomes.addAll(testOutcome.asSet());
-//        }
-
         final List<TestOutcome> testOutcomes = Collections.synchronizedList(new ArrayList<TestOutcome>());
-        Parallel.blockingFor(8, reportFiles, new Parallel.Operation<File>() {
-            @Override
-            public void perform(File reportFile) {
-                Optional<TestOutcome> testOutcome = testOutcomeReporter.loadReportFrom(reportFile);
-                testOutcomes.addAll(testOutcome.asSet());
-            }
-        });
+        for(File reportFile : reportFiles) {
+            testOutcomes.addAll(testOutcomeReporter.loadReportFrom(reportFile).asSet());
+        }
         return ImmutableList.copyOf(testOutcomes);
     }
-
 
     private List<File> getAllOutcomeFilesFrom(final File reportsDirectory) throws IOException{
         File[] matchingFiles = reportsDirectory.listFiles(new SerializedOutcomeFilenameFilter());

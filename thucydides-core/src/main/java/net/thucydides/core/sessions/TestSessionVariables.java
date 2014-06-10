@@ -6,14 +6,15 @@ import net.thucydides.core.SessionMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TestSessionVariables extends ConcurrentHashMap implements SessionMap {
+public class TestSessionVariables<K,V> extends ConcurrentHashMap implements SessionMap {
 
     private final Map<String, String> metadata = new ConcurrentHashMap();
 
-    public void shouldContainKey(Object o) {
-        Object result = super.get(o);
+    @Override
+    public void shouldContainKey(Object key) {
+        Object result = super.get(key);
         if (result == null) {
-            throw new AssertionError("Session variable " + o + " expected but not found.");
+            throw new AssertionError("Session variable " + key + " expected but not found.");
         }
     }
 

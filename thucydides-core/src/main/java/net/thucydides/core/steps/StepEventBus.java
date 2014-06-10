@@ -352,6 +352,7 @@ public class StepEventBus {
     }
 
     public void assumptionViolated(String message) {
+        testIgnored();
         testPending();
         stepDone();
         getResultTally().logIgnoredTest();
@@ -419,6 +420,7 @@ public class StepEventBus {
         for (StepListener stepListener : getAllListeners()) {
             stepListener.testIgnored();
         }
+        testPending();
     }
 
     public boolean areStepsRunning() {

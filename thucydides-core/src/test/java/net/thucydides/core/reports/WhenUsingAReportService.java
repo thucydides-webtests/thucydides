@@ -1,8 +1,10 @@
 package net.thucydides.core.reports;
 
+import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
 import org.hamcrest.Matcher;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -20,6 +22,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,6 +56,24 @@ public class WhenUsingAReportService {
         verify(reporter).generateReportFor(eq(testOutcome), Matchers.any(TestOutcomes.class));
     }
 
+    @Test
+    public void a_report_service_should_generate_reports_for_each_test_outcome() throws Exception {
+
+        List<TestOutcome> testOutcomeResults = new ArrayList<>();
+        for(int i = 0; i < 1000; i++) {
+            TestOutcome outcome = TestOutcome.forTestInStory("test" + i, Story.withId("s1", "Story 1"));
+            testOutcomeResults.add(outcome);
+        }
+
+        ReportService reportService = new ReportService(outputDirectory, new ArrayList<AcceptanceTestReporter>());
+
+        reportService.subscribe(reporter);
+
+        reportService.generateReportsFor(testOutcomeResults);
+
+        verify(reporter, times(1000)).generateReportFor(Matchers.any(TestOutcome.class), Matchers.any(TestOutcomes.class));
+    }
+
 
     @Test
     public void a_report_service_uses_the_provided_output_directory_for_all_reports() throws Exception {
@@ -66,19 +87,6 @@ public class WhenUsingAReportService {
         reportService.generateReportsFor(testOutcomeResults);
 
         verify(reporter).setOutputDirectory(outputDirectory);
-    }
-
-    @Test(expected = ReportGenerationFailedError.class)
-    public void a_report_service_should_raise_an_error_if_report_generation_fails() throws Exception {
-        List<TestOutcome> testOutcomeResults = new ArrayList<TestOutcome>();
-        testOutcomeResults.add(testOutcome);
-
-        ReportService reportService = new ReportService(outputDirectory, new ArrayList<AcceptanceTestReporter>());
-
-        when(reporter.generateReportFor(eq(testOutcome), Matchers.any(TestOutcomes.class))).thenThrow(new IOException());
-        reportService.subscribe(reporter);
-
-        reportService.generateReportsFor(testOutcomeResults);
     }
 
     @Test

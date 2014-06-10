@@ -22,6 +22,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,7 +78,7 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
     @Before
     public void setupTestReporter() {
         MockitoAnnotations.initMocks(this);
-        driver = new HtmlUnitDriver();
+        driver = new PhantomJSDriver();
     }
 
     @Test
@@ -180,7 +181,7 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
         driver.get(urlFor(report));
 
         List<WebElement> testCounts = driver.findElements(By.cssSelector(".test-count"));
-        assertThat(testCounts, hasSize(4));
+        assertThat(testCounts, hasSize(5));
         Matcher<Iterable<? super WebElement>> passedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("2 passed ,")));
         Matcher<Iterable<? super WebElement>> pendingMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("2 pending ,")));
         Matcher<Iterable<? super WebElement>> failedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("3 failed ,")));

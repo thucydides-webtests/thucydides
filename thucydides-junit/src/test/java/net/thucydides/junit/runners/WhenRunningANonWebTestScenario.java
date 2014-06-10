@@ -47,9 +47,6 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Rule
-    public QuietThucydidesLoggingRule quietThucydidesLoggingRule = new QuietThucydidesLoggingRule();
-
-    @Rule
     public DisableThucydidesHistoryRule disableThucydidesHistoryRule = new DisableThucydidesHistoryRule();
 
     Injector injector;
@@ -168,7 +165,6 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
     }
 
 
-    @Ignore("Come back to check this")
     @Test
     public void the_test_runner_should_notify_test_failures() throws Exception {
 
@@ -211,14 +207,20 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
-        assertThat(executedScenarios.size(), is(1));
+        assertThat(executedScenarios.size(), is(2));
         TestOutcome testOutcome = executedScenarios.get(0);
+        TestOutcome failingTestOutcome = executedScenarios.get(1);
+        TestStep succeeds = testOutcome.getTestSteps().get(0);
         TestStep ignored = testOutcome.getTestSteps().get(1);
         TestStep pending = testOutcome.getTestSteps().get(2);
-        TestStep skipped = testOutcome.getTestSteps().get(5);
+        TestStep failed = failingTestOutcome.getTestSteps().get(0);
+        TestStep skipped = failingTestOutcome.getTestSteps().get(1);
 
+        assertThat(succeeds.getResult(), is(TestResult.SUCCESS));
         assertThat(ignored.getResult(), is(TestResult.IGNORED));
         assertThat(pending.getResult(), is(TestResult.PENDING));
+        assertThat(failed.getResult(), is(TestResult.FAILURE));
+        assertThat(skipped.getResult(), is(TestResult.SKIPPED));
     }
 
 
@@ -311,13 +313,26 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
 
         File outputDirectory = temporaryFolder.newFolder("output");
 
-        ThucydidesRunner runner = new TestableThucydidesRunnerSample(SamplePassingNonWebScenario.class,
-                outputDirectory);
+        ThucydidesRunner runner = new TestableThucydidesRunnerSample(SamplePassingNonWebScenario.class,outputDirectory);
         runner.run(new RunNotifier());
 
         List<String> generatedHtmlReports = Arrays.asList(outputDirectory.list(new HTMLFileFilter()));
         assertThat(generatedHtmlReports.size(), is(3));
     }
+
+    @Test
+    public void json_test_results_are_written_to_the_output_directory()  throws Exception {
+
+        File outputDirectory = temporaryFolder.newFolder("output");
+
+        ThucydidesRunner runner = new TestableThucydidesRunnerSample(SamplePassingNonWebScenario.class,
+                outputDirectory);
+        runner.run(new RunNotifier());
+
+        List<String> generatedHtmlReports = Arrays.asList(outputDirectory.list(new JSONFileFilter()));
+        assertThat(generatedHtmlReports.size(), is(3));
+    }
+
 
     private class XMLFileFilter implements FilenameFilter {
         public boolean accept(File file, String filename) {
@@ -328,6 +343,11 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
     private class HTMLFileFilter implements FilenameFilter {
         public boolean accept(File file, String filename) {
             return filename.endsWith(".html");
+        }
+    }
+    private class JSONFileFilter implements FilenameFilter {
+        public boolean accept(File file, String filename) {
+            return filename.endsWith(".json");
         }
     }
 }

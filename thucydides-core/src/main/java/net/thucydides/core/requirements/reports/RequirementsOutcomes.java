@@ -210,6 +210,16 @@ public class RequirementsOutcomes {
         return total;
     }
 
+    public int getIgnoredRequirementsCount() {
+        int total = 0;
+        for (RequirementOutcome requirementOutcome : requirementOutcomes) {
+            if (requirementOutcome.isIgnored()) {
+                total++;
+            }
+        }
+        return total;
+    }
+
     public int getRequirementsWithoutTestsCount() {
         int requirementsWithNoTests = 0;
         List<RequirementOutcome> flattenedRequirementOutcomes = getFlattenedRequirementOutcomes();

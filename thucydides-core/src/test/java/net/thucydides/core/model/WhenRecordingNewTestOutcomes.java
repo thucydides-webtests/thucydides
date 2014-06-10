@@ -142,6 +142,17 @@ public class WhenRecordingNewTestOutcomes {
     }
 
     @Story(AUserStory.class)
+    @Issue("#ISSUE-100")
+    class SomeAnnotatedTestScenarioWithDuplicatedIssues {
+        @Issues({"#ISSUE-100", "#ISSUE-200"})
+        public void should_do_this() {
+        }
+
+        public void should_do_that() {
+        }
+    }
+
+    @Story(AUserStory.class)
     @Issue("#123")
     class ATestScenarioWithIssuesWithNoPrefix {
         public void should_do_this() {
@@ -296,6 +307,8 @@ public class WhenRecordingNewTestOutcomes {
         assertThat(outcome.getTitleWithLinks() , is("Really should do this! (#<a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-ISSUE-123\">ISSUE-123</a>)"));
     }
 
+
+
     @Test
     public void should_be_able_to_add_extra_issues() {
         TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
@@ -347,6 +360,19 @@ public class WhenRecordingNewTestOutcomes {
     }
 
     @Test
+    public void a_test_outcome_should_inject_multiple__issue_links_from_the_Issue_annotation_if_requested() {
+        MockEnvironmentVariables environmentVariables = new MockEnvironmentVariables();
+        environmentVariables.setProperty("jira.url", "http://my.jira");
+        IssueTracking issueTracking = new SystemPropertiesIssueTracking(environmentVariables);
+
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeOtherTestScenario.class)
+                .usingIssueTracking(issueTracking);
+
+        assertThat(outcome.getFormattedIssues(), is("(#<a target=\"_blank\" href=\"http://my.jira/browse/ISSUE-123\">ISSUE-123</a>, #<a target=\"_blank\" href=\"http://my.jira/browse/ISSUE-456\">ISSUE-456</a>, #<a target=\"_blank\" href=\"http://my.jira/browse/ISSUE-789\">ISSUE-789</a>)"));
+    }
+
+
+    @Test
     public void a_test_outcome_should_also_inject_issue_links_from_the_Issue_annotation_at_the_class_level() {
         TestOutcome outcome = TestOutcome.forTest("should_do_that", SomeTestScenario.class);
 
@@ -379,6 +405,15 @@ public class WhenRecordingNewTestOutcomes {
         TestOutcome outcome = TestOutcome.forTest("should_do_something_else", SomeTestScenario.class);
 
         assertThat(outcome.getFormattedIssues(), is("(#ISSUE-123)"));
+    }
+
+
+    @Test
+    public void the_test_outcome_formatted_issues_should_contain_unique_links_to_duplicated_issues() {
+        when(issueTracking.getIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MY-PROJECT/browse/{0}");
+        TestOutcome outcome = TestOutcome.forTest("should_do_this", SomeAnnotatedTestScenarioWithDuplicatedIssues.class).usingIssueTracking(issueTracking);
+
+        assertThat(outcome.getFormattedIssues() , is("(#<a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-100\">ISSUE-100</a>, #<a target=\"_blank\" href=\"http://my.issue.tracker/MY-PROJECT/browse/ISSUE-200\">ISSUE-200</a>)"));
     }
 
     @Test

@@ -43,7 +43,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         environmentVariables.setProperty("output.formats","xml")
         reporter.formatConfiguration = new FormatConfiguration(environmentVariables)
 
-        driver = new HtmlUnitDriver();
+        driver = new PhantomJSDriver();
         mockTestHistory.progress >> NO_PROGRESS_HISTORY
         mockTestHistory.history >> NO_SNAPSHOTS
     }

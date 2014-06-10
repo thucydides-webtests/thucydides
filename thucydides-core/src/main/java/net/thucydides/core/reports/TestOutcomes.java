@@ -1,6 +1,5 @@
 package net.thucydides.core.reports;
 
-import ch.lambdaj.Lambda;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -8,13 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.model.OutcomeCounter;
-import net.thucydides.core.model.TestDuration;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestResultList;
-import net.thucydides.core.model.TestTag;
-import net.thucydides.core.model.TestType;
+import net.thucydides.core.model.*;
 import net.thucydides.core.model.formatters.TestCoverageFormatter;
 import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.requirements.model.Requirement;
@@ -29,17 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static ch.lambdaj.Lambda.convert;
-import static ch.lambdaj.Lambda.extract;
-import static ch.lambdaj.Lambda.filter;
-import static ch.lambdaj.Lambda.having;
-import static ch.lambdaj.Lambda.min;
-import static ch.lambdaj.Lambda.on;
-import static ch.lambdaj.Lambda.sort;
-import static ch.lambdaj.Lambda.sum;
-import static net.thucydides.core.model.TestResult.PENDING;
-import static net.thucydides.core.model.TestResult.SKIPPED;
-import static net.thucydides.core.model.TestResult.SUCCESS;
+import static ch.lambdaj.Lambda.*;
+import static net.thucydides.core.model.TestResult.*;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagName;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagType;
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.withResult;
@@ -103,6 +87,17 @@ public class TestOutcomes {
         return new TestOutcomes(this.outcomes, this.estimatedAverageStepCount, label);
     }
 
+    public TestOutcomes havingResult(String result) {
+        return havingResult(TestResult.valueOf(result.toUpperCase()));
+    }
+
+    public TestOutcomes havingResult(TestResult result) {
+
+        return TestOutcomes.of(filter(withResult(result), outcomes))
+                .withLabel(labelForTestsWithStatus(result.name()))
+                .withRootOutcomes(getRootOutcomes());
+    }
+
     public static TestOutcomes of(List<? extends TestOutcome> outcomes) {
         return new TestOutcomes(outcomes,
                 Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
@@ -114,6 +109,7 @@ public class TestOutcomes {
         return new TestOutcomes(NO_OUTCOMES,
                                 Injectors.getInjector().getInstance(Configuration.class).getEstimatedAverageStepCount());
     }
+
 
     public String getLabel() {
         return label;
@@ -555,8 +551,8 @@ public class TestOutcomes {
         }
 
         public Double withResult(TestResult expectedResult) {
-            int passingStepCount = countStepsWithResult(expectedResult, testType);
-            return (passingStepCount / (double) getEstimatedTotalStepCount());
+            int matchingStepCount = countStepsWithResult(expectedResult, testType);
+            return (matchingStepCount / (double) getEstimatedTotalStepCount());
         }
 
         public Double withIndeterminateResult() {
@@ -594,7 +590,7 @@ public class TestOutcomes {
     private int countStepsWithResult(TestResult expectedResult, TestType testType) {
         int stepCount = sum(outcomes, on(TestOutcome.class).countNestedStepsWithResult(expectedResult, testType));
         if ((stepCount == 0) && aMatchingTestExists(expectedResult, testType)) {
-            return 1;
+            return (int) Math.round(getAverageTestSize());
         }
         return stepCount;
     }
