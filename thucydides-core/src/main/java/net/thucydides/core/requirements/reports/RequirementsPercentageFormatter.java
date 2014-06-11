@@ -28,6 +28,11 @@ public class RequirementsPercentageFormatter {
             return formatter.percentage(result, 1);
         }
 
+        public String withSkippedOrIgnored() {
+            double result = counter.withResult(TestResult.SKIPPED) + counter.withResult(TestResult.IGNORED);
+            return formatter.percentage(result, 1);
+        }
+
         public String withFailureOrError() {
             double result = counter.withResult(TestResult.ERROR) + counter.withResult(TestResult.FAILURE);
             return formatter.percentage(result, 1);

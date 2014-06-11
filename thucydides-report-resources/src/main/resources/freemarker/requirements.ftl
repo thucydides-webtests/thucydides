@@ -242,6 +242,15 @@
                         <td>${requirements.requirementsOfType(requirementType).requirementsWithoutTestsCount}</td>
                     </tr>
                     </#foreach>
+                    <tr>
+                        <td class="summary-leading-column">Acceptance Criteria (tests)</td>
+                        <td>${requirements.testOutcomes.testCount}</td>
+                        <td>${requirements.testOutcomes.havingResult("success").testCount}</td>
+                        <td>${requirements.testOutcomes.havingResult("failure").testCount}</td>
+                        <td>${requirements.testOutcomes.havingResult("pending").testCount}</td>
+                        <td>${requirements.testOutcomes.havingResult("ignored").testCount + requirements.testOutcomes.havingResult("skipped").testCount}</td>
+                        <td></td>
+                    </tr>
                 </body>
             </table>
         </div>
@@ -400,7 +409,7 @@
 
                             <td width="125px" class="lightgreentext requirementRowCell">
                                 <#assign percentPending = requirementOutcome.percent.withResult("PENDING")/>
-                                <#assign percentIgnored = requirementOutcome.percent.withResult("IGNORED")/>
+                                <#assign percentIgnored = requirementOutcome.percent.withResult("IGNORED") + requirementOutcome.percent.withResult("SKIPPED")/>
                                 <#assign percentError = requirementOutcome.percent.withResult("ERROR")/>
                                 <#assign percentFailing = requirementOutcome.percent.withResult("FAILURE")/>
                                 <#assign percentPassing = requirementOutcome.percent.withResult("SUCCESS")/>
@@ -409,7 +418,7 @@
                                 <#assign failing = requirementOutcome.formattedPercentage.withResult("FAILURE")>
                                 <#assign error = requirementOutcome.formattedPercentage.withResult("ERROR")>
                                 <#assign pending = requirementOutcome.formattedPercentage.withResult("PENDING")>
-                                <#assign ignored = requirementOutcome.formattedPercentage.withResult("IGNORED")>
+                                <#assign ignored = requirementOutcome.formattedPercentage.withSkippedOrIgnored()>
                                 <#assign indeterminate = requirementOutcome.formattedPercentage.withIndeterminateResult()>
 
 
@@ -441,7 +450,7 @@ Tests implemented: ${requirementOutcome.testCount}
 
 Tests not implemented or not executed: ${pendingCount + ignoredCount}
   - Pending tests: ${pendingCount} (${pending} of specified requirements)
-  - Ignored tests: ${ignoredCount} (${ignored} of specified requirements)
+  - Ignored or skipped tests: ${ignoredCount} (${ignored} of specified requirements)
 
 Requirements specified:     ${requirementOutcome.flattenedRequirementCount}
 Requirements with no tests: ${requirementOutcome.requirementsWithoutTestsCount}
@@ -449,7 +458,7 @@ Requirements with no tests: ${requirementOutcome.requirementsWithoutTestsCount}
 
 Estimated unimplemented tests: ${requirementOutcome.estimatedUnimplementedTests}
 Estimated unimplemented or pending requirements: ${pending}
-Estimated ignored requirements: ${ignored}"
+Estimated ignored or skipped requirements: ${ignored}"
                                 >
 
                                 <table>

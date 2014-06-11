@@ -370,7 +370,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         if (testOutcomesForThisTag.getTotalTests().withResult(TestResult.SUCCESS) > 0) {
             generateResultReport(testOutcomesForThisTag.getPassingTests(), reportName, tag, "success");
         }
-        if (testOutcomesForThisTag.getTotalTests().withIndeterminateResult() > 0) {
+        if (testOutcomesForThisTag.getTotalTests().withResult(TestResult.PENDING) > 0) {
             generateResultReport(testOutcomesForThisTag.getPendingTests(), reportName, tag, "pending");
         }
         if (testOutcomesForThisTag.getTotalTests().withResult(TestResult.FAILURE) > 0) {
@@ -378,6 +378,12 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         }
         if (testOutcomesForThisTag.getTotalTests().withResult(TestResult.ERROR) > 0) {
             generateResultReport(testOutcomesForThisTag.getErrorTests(), reportName, tag, "error");
+        }
+        if (testOutcomesForThisTag.getTotalTests().withResult(TestResult.IGNORED) > 0) {
+            generateResultReport(testOutcomesForThisTag.havingResult(TestResult.IGNORED), reportName, tag, "ignored");
+        }
+        if (testOutcomesForThisTag.getTotalTests().withResult(TestResult.SKIPPED) > 0) {
+            generateResultReport(testOutcomesForThisTag.havingResult(TestResult.SKIPPED), reportName, tag, "skipped");
         }
     }
 

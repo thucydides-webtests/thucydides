@@ -112,7 +112,7 @@
                                     <#elseif outcomesForTag.result == "SUCCESS">
                                         <#assign outcome_icon = "success.png">
                                         <#assign outcome_text = "success-color">
-                                    <#elseif outcomesForTag.result == "PENDING" || outcomesForTag.result == "IGNORED" >
+                                    <#elseif outcomesForTag.result == "PENDING">
                                         <#assign outcome_icon = "pending.png">
                                         <#assign outcome_text = "pending-color">
                                     <#else>

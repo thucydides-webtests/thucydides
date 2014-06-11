@@ -380,10 +380,35 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
         then:
         testOutcomes.averageTestSize == 3.0
         testOutcomes.estimatedTotalStepCount == 12
-        testOutcomes.withResult()
         testOutcomes.proportionalStepsOf(TestType.ANY).withResult(TestResult.IGNORED) == 0.25
         testOutcomes.proportionalStepsOf(TestType.ANY).withResult(TestResult.SKIPPED) == 0.25
         testOutcomes.proportionalStepsOf(TestType.ANY).withResult(TestResult.SUCCESS) == 0.50
+    }
+
+    def "should filter test outcomes by result"() {
+        given:
+        def ignoredTest = TestOutcome.forTestInStory("ignoredTest", Story.called("a story"))
+        ignoredTest.setAnnotatedResult(TestResult.IGNORED)
+
+        def skippedTest = TestOutcome.forTestInStory("skippedTest", Story.called("a story"))
+        skippedTest.setAnnotatedResult(TestResult.SKIPPED)
+
+        def aTest = TestOutcome.forTestInStory("passingTest", Story.called("a story"))
+        aTest.recordStep(TestStep.forStepCalled("passing step 1").withResult(TestResult.SUCCESS))
+        aTest.recordStep(TestStep.forStepCalled("passing step 2").withResult(TestResult.SUCCESS))
+
+        def anotherTest = TestOutcome.forTestInStory("passingTest", Story.called("a story"))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 1").withResult(TestResult.SUCCESS))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 2").withResult(TestResult.SUCCESS))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 3").withResult(TestResult.SUCCESS))
+        anotherTest.recordStep(TestStep.forStepCalled("passing step 4").withResult(TestResult.SUCCESS))
+
+        def testOutcomes = TestOutcomes.of([aTest, anotherTest, ignoredTest, skippedTest])
+
+        when:
+        def successfulOutcomes = testOutcomes.havingResult("success")
+        then:
+        successfulOutcomes.testCount == 2
     }
 
 

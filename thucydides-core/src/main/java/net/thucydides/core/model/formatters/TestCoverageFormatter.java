@@ -73,7 +73,9 @@ public class TestCoverageFormatter {
             return formatter.percentage(percentageWithResult(TestResult.FAILURE) + percentageWithResult(TestResult.ERROR),1);
         }
 
-
+        public String withSkippedOrIgnored() {
+            return formatter.percentage(percentageWithResult(TestResult.SKIPPED) + percentageWithResult(TestResult.IGNORED),1);
+        }
     }
 
     public class FormattedPercentageCoverage extends FormattedCoverage {

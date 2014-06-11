@@ -234,56 +234,64 @@
             <div class="test-count-summary">
                 <span class="test-count-title">${testOutcomes.total}
                     test scenarios <#if (testOutcomes.hasDataDrivenTests())>(including ${testOutcomes.totalDataRows}
-                    rows of test data)</#if>:</span>
+                    rows of test data)</#if></span>
+                <div>
             <#assign successReport = reportName.withPrefix(currentTag).forTestResult("success") >
             <#assign failureReport = reportName.withPrefix(currentTag).forTestResult("failure") >
             <#assign errorReport = reportName.withPrefix(currentTag).forTestResult("error") >
             <#assign pendingReport = reportName.withPrefix(currentTag).forTestResult("pending") >
+            <#assign skippedReport = reportName.withPrefix(currentTag).forTestResult("skipped") >
+            <#assign ignoredReport = reportName.withPrefix(currentTag).forTestResult("ignored") >
 
             <#assign totalCount = testOutcomes.totalTests.total >
             <#assign successCount = testOutcomes.totalTests.withResult("success") >
             <#assign pendingCount = testOutcomes.totalTests.withResult("pending") >
             <#assign ignoredCount = testOutcomes.totalTests.withResult("ignored") >
+            <#assign skippedCount = testOutcomes.totalTests.withResult("skipped") >
             <#assign failureCount = testOutcomes.totalTests.withResult("failure") >
             <#assign errorCount = testOutcomes.totalTests.withResult("error") >
             <#assign failureOrErrorCount = testOutcomes.totalTests.withFailureOrError() >
 
                 <span class="test-count">
-                                ${successCount}
-                                <#if (successCount > 0 && report.shouldDisplayResultLink)>
-                                    <a href="${relativeLink}${successReport}">passed</a>
-                                <#else>passed</#if>,
-                            </span>
-
-
-                            <span class="test-count">
-                                ${pendingCount}
-                                <#if (pendingCount > 0 && report.shouldDisplayResultLink)>
-                                    <a href="${relativeLink}${pendingReport}">pending</a>
-                                <#else>pending</#if>,
-                            </span>
-
-                            <span class="test-count">
-                                <#if (pendingCount > 0 && report.shouldDisplayResultLink)>
-                                    ${ignoredCount} <a href="${relativeLink}${pendingReport}">ignored</a>
-                                </#if>,
-                            </span>
-
-                            <span class="test-count">
-                                ${failureCount}
-                                <#if (failureCount > 0 && report.shouldDisplayResultLink)>
-                                    <a href="${relativeLink}${failureReport}">failed</a>
-                                <#else>failed</#if>,
-                            </span>
-                            <span class="test-count">
-                                ${errorCount}
-                                <#if (errorCount > 0 && report.shouldDisplayResultLink)>
-                                    <a href="${relativeLink}${errorReport}">with errors</a>
-                                <#else>errors</#if>
-                            </span>
-            <#if (csvReport! != '')>
-                <a href="${csvReport}">[CSV]</a>
-            </#if>
+                    ${successCount}
+                    <#if (successCount > 0 && report.shouldDisplayResultLink)>
+                        <a href="${relativeLink}${successReport}">passed</a>
+                    <#else>passed</#if>,
+                </span>
+                <span class="test-count">
+                    ${pendingCount}
+                    <#if (pendingCount > 0 && report.shouldDisplayResultLink)>
+                        <a href="${relativeLink}${pendingReport}">pending</a>
+                    <#else>pending</#if>,
+                </span>
+                <span class="test-count">
+                    ${failureCount}
+                    <#if (failureCount > 0 && report.shouldDisplayResultLink)>
+                        <a href="${relativeLink}${failureReport}">failed</a>
+                    <#else>failed</#if>,
+                </span>
+                <span class="test-count">
+                    ${errorCount}
+                    <#if (errorCount > 0 && report.shouldDisplayResultLink)>
+                        <a href="${relativeLink}${errorReport}">errors</a>
+                    <#else>errors</#if>,
+                </span>
+                <span class="test-count">
+                    ${ignoredCount}
+                    <#if (ignoredCount > 0 && report.shouldDisplayResultLink)>
+                        <a href="${relativeLink}${ignoredReport}">ignored</a>
+                    <#else>ignored</#if>,
+                </span>
+                <span class="test-count">
+                    ${skippedCount}
+                    <#if (skippedCount > 0 && report.shouldDisplayResultLink)>
+                        <a href="${relativeLink}${skippedReport}">skipped</a>
+                    <#else>skipped</#if>
+                </span>
+                <#if (csvReport! != '')>
+                    <a href="${csvReport}">[CSV]</a>
+                </#if>
+                </div>
             </div>
 
             <div id="test-results-tabs">
@@ -482,7 +490,7 @@
                 <#elseif outcomesForTag.result == "SUCCESS">
                     <#assign outcome_icon = "success.png">
                     <#assign outcome_text = "success-color">
-                <#elseif outcomesForTag.result == "PENDING" || outcomesForTag.result == "IGNORED"|| outcomesForTag.result == "SKIPPED" >
+                <#elseif outcomesForTag.result == "PENDING">
                     <#assign outcome_icon = "pending.png">
                     <#assign outcome_text = "pending-color">
                 <#else>
@@ -508,7 +516,7 @@
                             <#assign percentPassing = outcomesForTag.percentSteps.withResult("success")/>
 
                             <#assign passing = outcomesForTag.formattedPercentageSteps.withResult("success")>
-                            <#assign ignored = outcomesForTag.formattedPercentageSteps.withResult("ignored") + outcomesForTag.formattedPercentageSteps.withResult("skipped")/>
+                            <#assign ignored = outcomesForTag.formattedPercentageSteps.withSkippedOrIgnored()/>
                             <#assign failing = outcomesForTag.formattedPercentageSteps.withResult("failure")>
                             <#assign error = outcomesForTag.formattedPercentageSteps.withResult("error")>
                             <#assign pending = outcomesForTag.formattedPercentageSteps.withResult("pending")>
