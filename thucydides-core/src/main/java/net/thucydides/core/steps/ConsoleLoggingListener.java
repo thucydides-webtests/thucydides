@@ -220,8 +220,8 @@ public class ConsoleLoggingListener implements StepListener {
     }
 
     private void logFailureCause(TestOutcome result) {
-        if (result.getTestFailureCause() != null) {
-            getLogger().info(failureHeading() + "\n" + result.getTestFailureCause().getMessage());
+        if (result.getTestFailureMessage() != null) {
+            getLogger().info(failureHeading() + "\n" + result.getTestFailureMessage());
         }
     }
 

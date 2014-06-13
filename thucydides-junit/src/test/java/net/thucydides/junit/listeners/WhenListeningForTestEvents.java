@@ -16,9 +16,7 @@ import org.mockito.MockitoAnnotations;
 import java.io.File;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 
 public class WhenListeningForTestEvents {
 
@@ -139,7 +137,7 @@ public class WhenListeningForTestEvents {
         steps.failingNormalMethod();
 
         assertThat(failureTestListener.hasRecordedFailures(), is(true));
-        assertThat(failureTestListener.getError().getMessage(), is("java.lang.AssertionError: Method failed"));
+        assertThat(failureTestListener.getError().getMessage(), endsWith("Method failed"));
     }
 
 
@@ -151,7 +149,7 @@ public class WhenListeningForTestEvents {
 
         failureTestListener.testFailure(failure);
 
-        assertThat(failureTestListener.getError(), is(cause));
+        assertThat(failureTestListener.getError().getMessage(), is("Test failed"));
     }
 
     @Test

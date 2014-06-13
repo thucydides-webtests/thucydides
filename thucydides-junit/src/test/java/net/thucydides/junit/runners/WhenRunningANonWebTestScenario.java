@@ -141,7 +141,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
         List<TestOutcome> executedSteps = runner.getTestOutcomes();
 
         assertThat(inTheTesOutcomes(executedSteps).theResultFor("happy_day_scenario"), is(TestResult.FAILURE));
-        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("happy_day_scenario").getTestFailureCause().getMessage(),
+        assertThat(inTheTesOutcomes(executedSteps).theOutcomeFor("happy_day_scenario").getTestFailureMessage(),
                                     is("Oh bother!"));
     }
 

@@ -804,7 +804,7 @@ public class WhenRecordingStepExecutionResults {
 
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
-        assertThat(testOutcome.getTestFailureCause().getMessage(), is("Step failed"));
+        assertThat(testOutcome.getTestFailureMessage(), is("Step failed"));
     }
 
     @Test
@@ -831,7 +831,7 @@ public class WhenRecordingStepExecutionResults {
         List<TestOutcome> results = stepListener.getTestOutcomes();
         TestOutcome testOutcome = results.get(0);
 
-        assertThat(testOutcome.getTestFailureCause().getMessage(), is("Test failed"));
+        assertThat(testOutcome.getTestFailureMessage(), is("Test failed"));
     }
 
     @Test

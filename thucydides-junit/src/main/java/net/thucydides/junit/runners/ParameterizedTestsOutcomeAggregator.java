@@ -80,7 +80,7 @@ public class ParameterizedTestsOutcomeAggregator {
     private void updateResultsForAnyExternalFailures(TestOutcome scenarioOutcome, TestOutcome testOutcome) {
         if (rowResultsAreInconsistantWithOverallResult(testOutcome)) {
             testOutcome.getDataTable().getRows().get(0).updateResult(testOutcome.getResult());
-            scenarioOutcome.addFailingExternalStep(testOutcome.getTestFailureCause());
+            scenarioOutcome.addFailingExternalStep(new AssertionError(testOutcome.getTestFailureMessage()));
         }
     }
 

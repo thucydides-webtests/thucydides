@@ -282,8 +282,8 @@
                 <tr class="test-${testOutcome.result}">
                     <td width="40">&nbsp</td>
                     <td width="%" colspan="4">
-                        <#if (testOutcome.testFailureCause)??>
-                            <span class="error-message" title="${testOutcome.testFailureCause}">${testOutcome.testFailureCause}</span>
+                        <#if (testOutcome.errorMessage)??>
+                            <span class="error-message" title="${testOutcome.errorMessage}">${testOutcome.errorMessage}</span>
                         </#if>
                     </td>
                 </tr>

@@ -196,7 +196,7 @@ class WhenRunningTestScenarios extends Specification {
         then:
         outcomes.size() == 1
         outcomes[0].result == FAILURE
-        outcomes[0].testFailureCause.message == "TestException without any steps."
+        outcomes[0].testFailureMessage == "TestException without any steps."
     }
 
     def "failing tests with with failure outside a step should still record the error"() {

@@ -682,7 +682,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     public boolean aStepHasFailed() {
-        return (!getTestOutcomes().isEmpty()) && (getCurrentTestOutcome().getTestFailureCause() != null);
+//        return (!getTestOutcomes().isEmpty()) && (getCurrentTestOutcome().getTestFailureMessage() != null);
+        return ((!getTestOutcomes().isEmpty()) &&
+                (getCurrentTestOutcome().getResult() == TestResult.FAILURE || getCurrentTestOutcome().getResult() == TestResult.ERROR));
     }
 
     public Throwable getTestFailureCause() {

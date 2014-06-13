@@ -61,20 +61,43 @@ class WhenStoringTestStepsAsJSON extends Specification {
 
     def "should read and write a test step containing an error"() {
         given:
-            TestStep failingStep = TestStep.forStepCalled("some step").withResult(TestResult.FAILURE)
+            TestStep stepWithError = TestStep.forStepCalled("some step").withResult(TestResult.ERROR)
                                            .startingAt(FIRST_OF_JANUARY);
-            failingStep.failedWith(new Throwable("Oh crap!"))
+            stepWithError.failedWith(new Throwable("Oh crap!"))
 
         when:
             StringWriter writer = new StringWriter();
-            converter.mapper.writerWithDefaultPrettyPrinter().writeValue(writer, failingStep);
+            converter.mapper.writerWithDefaultPrettyPrinter().writeValue(writer, stepWithError);
             def renderedJson = writer.toString()
         and:
             def reader = new StringReader(renderedJson)
             def step = converter.mapper.readValue(reader, net.thucydides.core.model.TestStep)
         then:
-            step.equals(failingStep)
+            step.equals(stepWithError)
+        and:
+            step.getResult() == TestResult.ERROR
+            step.getErrorMessage() == "Oh crap!"
     }
+
+    def "should read and write a test step containing a failure"() {
+        given:
+        TestStep failingStep = TestStep.forStepCalled("some step").withResult(TestResult.FAILURE)
+                .startingAt(FIRST_OF_JANUARY);
+        failingStep.failedWith(new AssertionError("Oh crap!"))
+
+        when:
+        StringWriter writer = new StringWriter();
+        converter.mapper.writerWithDefaultPrettyPrinter().writeValue(writer, failingStep);
+        def renderedJson = writer.toString()
+        and:
+        def reader = new StringReader(renderedJson)
+        def step = converter.mapper.readValue(reader, net.thucydides.core.model.TestStep)
+        then:
+        step.equals(failingStep)
+        step.getResult() == TestResult.FAILURE
+        step.getErrorMessage() == "Oh crap!"
+    }
+
 
     def "should read and write a test step containing a multi-line step"() {
         given:

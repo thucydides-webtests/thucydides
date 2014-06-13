@@ -248,7 +248,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private void generateAggregateReportFor(TestOutcomes testOutcomes) throws IOException {
 
         ReportNameProvider defaultNameProvider = new ReportNameProvider();
-        Map<String, Object> context = buildContext(testOutcomes, defaultNameProvider);
+        Map<String, Object> context = buildContext(testOutcomes, defaultNameProvider, true);
         context.put("report", ReportProperties.forAggregateResultsReport());
         context.put("csvReport", "results.csv");
 
@@ -440,11 +440,21 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     private Map<String, Object> buildContext(TestOutcomes testOutcomesForTagType,
                                              ReportNameProvider reportName) {
+        return buildContext(testOutcomesForTagType, reportName, false);
+    }
+
+    private Map<String, Object> buildContext(TestOutcomes testOutcomesForTagType,
+                                             ReportNameProvider reportName,
+                                             boolean useFiltering) {
         Map<String, Object> context = new HashMap<String, Object>();
         TagFilter tagFilter = new TagFilter(getEnvironmentVariables());
         context.put("testOutcomes", testOutcomesForTagType);
         context.put("allTestOutcomes", testOutcomesForTagType.getRootOutcomes());
-        context.put("tagTypes", tagFilter.filteredTagTypes(testOutcomesForTagType.getTagTypes()));
+        if (useFiltering) {
+            context.put("tagTypes", tagFilter.filteredTagTypes(testOutcomesForTagType.getTagTypes()));
+        } else {
+            context.put("tagTypes", testOutcomesForTagType.getTagTypes());
+        }
         context.put("currentTag", TestTag.EMPTY_TAG);
         context.put("reportName", reportName);
         context.put("absoluteReportName", new ReportNameProvider());

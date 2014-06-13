@@ -33,11 +33,7 @@ import static ch.lambdaj.Lambda.on;
 import static net.thucydides.core.matchers.FileMatchers.exists;
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 
 public class WhenGeneratingAnAggregateHtmlReportSet {
@@ -181,12 +177,14 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
         driver.get(urlFor(report));
 
         List<WebElement> testCounts = driver.findElements(By.cssSelector(".test-count"));
-        assertThat(testCounts, hasSize(5));
-        Matcher<Iterable<? super WebElement>> passedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("2 passed ,")));
-        Matcher<Iterable<? super WebElement>> pendingMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("2 pending ,")));
-        Matcher<Iterable<? super WebElement>> failedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("3 failed ,")));
-        Matcher<Iterable<? super WebElement>> errorMatcher = hasItem(Matchers.<WebElement>hasProperty("text", is("1 with errors")));
-        assertThat(testCounts, allOf(passedMatcher, pendingMatcher, failedMatcher, errorMatcher));
+        assertThat(testCounts, hasSize(6));
+        Matcher<Iterable<? super WebElement>> passedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", containsString("2 passed")));
+        Matcher<Iterable<? super WebElement>> pendingMatcher = hasItem(Matchers.<WebElement>hasProperty("text", containsString("2 pending")));
+        Matcher<Iterable<? super WebElement>> failedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", containsString("3 failed")));
+        Matcher<Iterable<? super WebElement>> errorMatcher = hasItem(Matchers.<WebElement>hasProperty("text", containsString("1 with errors")));
+        Matcher<Iterable<? super WebElement>> skippedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", containsString("0 skipped")));
+        Matcher<Iterable<? super WebElement>> ignoredMatcher = hasItem(Matchers.<WebElement>hasProperty("text", containsString("0 ignored")));
+        assertThat(testCounts, allOf(passedMatcher, pendingMatcher, failedMatcher, errorMatcher,skippedMatcher, ignoredMatcher));
     }
 
     @Test

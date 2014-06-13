@@ -19,6 +19,40 @@ import static net.thucydides.core.model.TestResult.PENDING;
  * All other exceptions are an ERROR
  */
 public class FailureAnalysis {
+    // TODO: Finish (or not)
+    public TestResult resultFor(Class testFailureCause) {
+        if (isA(PendingStepException.class, testFailureCause)) {
+            return PENDING;
+        }
+        if (isFailure(testFailureCause.getName())) {
+            return FAILURE;
+        }
+        return ERROR;
+    }
+
+    public boolean isFailure(String testFailureCause) {
+        if (testFailureCause != null) {
+            try {
+                if (isA(AssertionError.class, Class.forName(testFailureCause))) {
+                    return true;
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    private boolean isA(Class<?> expectedClass, Class testFailureCause) {
+        while(testFailureCause != null) {
+            if (testFailureCause.equals(expectedClass)) {
+                return true;
+            }
+            testFailureCause = testFailureCause.getSuperclass();
+        }
+        return false;
+    }
+
     public TestResult resultFor(Throwable testFailureCause) {
         if (PendingStepException.class.isAssignableFrom(testFailureCause.getClass())) {
             return PENDING;

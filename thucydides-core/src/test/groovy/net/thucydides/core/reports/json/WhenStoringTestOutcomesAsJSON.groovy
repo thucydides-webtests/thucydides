@@ -18,12 +18,11 @@ import net.thucydides.core.screenshots.ScreenshotAndHtmlSource
 import net.thucydides.core.util.MockEnvironmentVariables
 import org.joda.time.DateTime
 import org.joda.time.LocalDateTime
+import org.junit.ComparisonFailure
 import org.skyscreamer.jsonassert.JSONCompare
 import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Specification
 import spock.lang.Unroll
-
-import static org.mockito.Mockito.when
 
 class WhenStoringTestOutcomesAsJSON extends Specification {
 
@@ -595,8 +594,8 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         then:
         TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
         reloadedOutcome.getResult() == TestResult.FAILURE
+        reloadedOutcome.errorMessage == "a failure"
     }
-
 
     def "should record test results for test with an error"() {
         given:
@@ -609,8 +608,56 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         then:
         TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
         reloadedOutcome.getResult() == TestResult.ERROR
+        reloadedOutcome.errorMessage == "an error"
     }
 
+    def "should record test results for test with an error outside a step"() {
+        given:
+        def testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
+        testOutcome.setStartTime(FIRST_OF_JANUARY);
+        testOutcome.setAnnotatedResult(TestResult.ERROR);
+        testOutcome.setTestFailureCause(new RuntimeException("an error"))
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        then:
+        TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
+        reloadedOutcome.getResult() == TestResult.ERROR
+        reloadedOutcome.errorMessage == "an error"
+    }
+
+
+    def "should record test results for test with an failure outside a step"() {
+        given:
+        def testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
+        testOutcome.setStartTime(FIRST_OF_JANUARY);
+        testOutcome.setAnnotatedResult(TestResult.FAILURE);
+        testOutcome.setTestFailureCause(new AssertionError("a failure"))
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        println jsonReport.text
+        then:
+        TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
+        reloadedOutcome.getResult() == TestResult.FAILURE
+        reloadedOutcome.errorMessage == "a failure"
+        reloadedOutcome.testFailureCause.class.name == "java.lang.AssertionError"
+    }
+
+
+    def "should record test results for test with an assertion failure outside a step"() {
+        given:
+        def testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
+        testOutcome.setStartTime(FIRST_OF_JANUARY);
+        testOutcome.setAnnotatedResult(TestResult.FAILURE);
+        testOutcome.setTestFailureCause(new ComparisonFailure("a failure","1","2"))
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        println jsonReport.text
+        then:
+        TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
+        reloadedOutcome.getResult() == TestResult.FAILURE
+        reloadedOutcome.errorMessage == "a failure expected:<[1]> but was:<[2]>"
+        reloadedOutcome.testFailureCause.class.name == "java.lang.AssertionError"
+    }
 
     @Unroll
     def "should record test results for #result with no steps"() {

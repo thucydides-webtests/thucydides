@@ -273,7 +273,7 @@
                 <span class="test-count">
                     ${errorCount}
                     <#if (errorCount > 0 && report.shouldDisplayResultLink)>
-                        <a href="${relativeLink}${errorReport}">errors</a>
+                        <a href="${relativeLink}${errorReport}">with errors</a>
                     <#else>errors</#if>,
                 </span>
                 <span class="test-count">
@@ -318,8 +318,8 @@
                                 </div>
                                 <div>
                                 <#if reportOptions.showRelatedTags>
-                                                <@list_tags weighted="false"/>
-</#if>
+                                    <@list_tags weighted="false"/>
+                                </#if>
                                 </div>
                             </td>
                         </tr>
@@ -425,7 +425,7 @@
                                 <#if (testOutcome.manual)><img src="images/worker.png" title="Manual test"/></#if>
                                 <span style="display:none">${testOutcome.result}</span></td>
                             <td class="${testOutcome.result}-text"><a
-                                    href="${relativeLink}${testOutcome.reportName}.html">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a>
+                                    href="${relativeLink}${testOutcome.reportName}.html" title="${testOutcome.errorMessage}">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a>
                             </td>
 
                             <td class="lightgreentext">${testOutcome.nestedStepCount}</td>

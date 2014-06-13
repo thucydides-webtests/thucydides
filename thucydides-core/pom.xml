@@ -14,14 +14,6 @@
         <root.package>net.thucydides.core</root.package>
         <spring.version>3.2.3.RELEASE</spring.version>
     </properties>
-    <!--<build>-->
-        <!--<plugins>-->
-            <!--<plugin>-->
-                <!--<groupId>org.jacoco</groupId>-->
-                <!--<artifactId>jacoco-maven-plugin</artifactId>-->
-            <!--</plugin>-->
-        <!--</plugins>-->
-    <!--</build>-->
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -48,12 +40,6 @@
             <artifactId>jackson-datatype-guava</artifactId>
             <version>2.4.0-rc3</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.github.nmorel.gwtjackson</groupId>-->
-            <!--<artifactId>gwt-jackson-guava</artifactId>-->
-            <!--<version>0.5.0</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>

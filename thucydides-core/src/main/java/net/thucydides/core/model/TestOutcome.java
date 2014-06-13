@@ -25,12 +25,14 @@ import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
+import net.thucydides.core.webdriver.WebdriverAssertionError;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -60,6 +62,7 @@ import static net.thucydides.core.model.TestResult.PENDING;
 import static net.thucydides.core.model.TestResult.SKIPPED;
 import static net.thucydides.core.model.TestResult.SUCCESS;
 import static net.thucydides.core.util.NameConverter.withNoArguments;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hamcrest.Matchers.is;
 
 /**
@@ -134,8 +137,9 @@ public class TestOutcome {
      */
     private String project;
 
-    private Throwable testFailureCause;
+    private Throwable originalTestFailureCause;
     private String testFailureClassname;
+    private String testFailureMessage;
 
     /**
      * Used to determine what result should be returned if there are no steps in this test.
@@ -281,6 +285,8 @@ public class TestOutcome {
                           final Set<TestTag> tags,
                           final Story userStory,
                           final Throwable testFailureCause,
+                          final String testFailureClassname,
+                          final String testFailureMessage,
                           final TestResult annotatedResult,
                           final DataTable dataTable,
                           final Optional<String> qualifier,
@@ -298,8 +304,9 @@ public class TestOutcome {
         this.additionalIssues = additionalIssues;
         this.tags = tags;
         this.userStory = userStory;
-        this.testFailureCause = testFailureCause;
-        this.testFailureClassname = classnameFrom(testFailureCause);
+        this.originalTestFailureCause = testFailureCause;
+        this.testFailureClassname = testFailureClassname;
+        this.testFailureMessage = testFailureMessage;
         this.qualifier = qualifier;
         this.annotatedResult = annotatedResult;
         this.dataTable = dataTable;
@@ -351,7 +358,9 @@ public class TestOutcome {
                     this.additionalIssues,
                     this.tags,
                     this.userStory,
-                    this.testFailureCause,
+                    this.originalTestFailureCause,
+                    this.testFailureClassname,
+                    this.testFailureMessage,
                     this.annotatedResult,
                     this.dataTable,
                     Optional.fromNullable(qualifier),
@@ -373,7 +382,9 @@ public class TestOutcome {
                 this.additionalIssues,
                 this.tags,
                 this.userStory,
-                this.testFailureCause,
+                this.originalTestFailureCause,
+                this.testFailureClassname,
+                this.testFailureMessage,
                 this.annotatedResult,
                 this.dataTable,
                 this.qualifier,
@@ -393,7 +404,9 @@ public class TestOutcome {
                     this.additionalIssues,
                     this.tags,
                     this.userStory,
-                    this.testFailureCause,
+                    this.originalTestFailureCause,
+                    this.testFailureClassname,
+                    this.testFailureMessage,
                     this.annotatedResult,
                     this.dataTable,
                     this.qualifier,
@@ -455,6 +468,7 @@ public class TestOutcome {
     public String getDescription() {
         return description;
     }
+
 
     /**
      * Tests may have a description.
@@ -651,18 +665,16 @@ public class TestOutcome {
      * @return The outcome of this test.
      */
     public TestResult getResult() {
+        if (annotatedResult != null) {
+            return annotatedResult;
+        }
         if (testFailureClassname != null) {
             try {
-                return new FailureAnalysis().resultFor((Throwable) Class.forName(testFailureClassname).newInstance());
+                return new FailureAnalysis().resultFor(Class.forName(testFailureClassname));
             } catch (ReflectiveOperationException e) {
                 return TestResult.ERROR;
             }
         }
-
-        if (annotatedResult != null) {
-            return annotatedResult;
-        }
-
         TestResultList testResults = TestResultList.of(getCurrentTestResults());
         return testResults.getOverallResult();
     }
@@ -810,12 +822,92 @@ public class TestOutcome {
     }
 
     public void setTestFailureCause(Throwable cause) {
-        this.testFailureCause = cause;
-        this.testFailureClassname = classnameFrom(testFailureCause);
+        this.originalTestFailureCause = cause;
+        if (cause != null) {
+            Throwable rootCause = rootCauseOf(cause);
+            this.testFailureClassname = classnameFrom(rootCause);
+            this.testFailureMessage = rootCause.getMessage();
+            this.setAnnotatedResult(new FailureAnalysis().resultFor(rootCause));
+        } else {
+            this.testFailureClassname = "";
+            this.testFailureMessage = "";
+        }
+    }
+
+    private Throwable rootCauseOf(Throwable cause) {
+        if (StepFailureException.class.isAssignableFrom(cause.getClass())) {
+            return cause.getCause();
+        } else if (WebdriverAssertionError.class.isAssignableFrom(cause.getClass())){
+            return (cause.getCause() != null) ? cause.getCause() : cause;
+        } else {
+            return cause;
+        }
     }
 
     public Throwable getTestFailureCause() {
-        return testFailureCause;
+        if (testFailureClassname == null) {
+            return null;
+        }
+        if (originalTestFailureCause != null) {
+            return originalTestFailureCause;
+        }
+        return restoredTestFailureCause();
+    }
+
+    private Throwable restoredTestFailureCause() {
+        Optional<Throwable> restoredException = restoreExceptionFrom(testFailureClassname, testFailureMessage);
+        if (restoredException.isPresent()) {
+            return restoredException.get();
+        }
+
+        if (isFailureClass(testFailureClassname)) {
+            return new AssertionError(testFailureMessage);
+        } else {
+            return new RuntimeException(testFailureMessage);
+        }
+    }
+
+    private Optional<Throwable> restoreExceptionFrom(String testFailureClassname, String testFailureMessage) {
+        try {
+            Class failureClass = Class.forName(testFailureClassname);
+            Constructor constructorWithMessage = getExceptionConstructor(failureClass);
+            return Optional.of( (Throwable) constructorWithMessage.newInstance(testFailureMessage));
+        } catch (Exception e) {
+            return Optional.absent();
+        }
+
+    }
+
+    private Constructor getExceptionConstructor(Class failureClass) throws NoSuchMethodException {
+        try {
+            return failureClass.getConstructor(String.class);
+        } catch (NoSuchMethodException e) {
+            return failureClass.getConstructor(Object.class);
+        }
+    }
+
+    private boolean isFailureClass(String testFailureClassname) {
+        return new FailureAnalysis().isFailure(testFailureClassname);
+    }
+
+    public String getErrorMessage() {
+        for (TestStep step : getFlattenedTestSteps()) {
+            if (isNotBlank(step.getErrorMessage())) {
+                return step.getErrorMessage();
+            }
+        }
+        if (testFailureMessage != null) {
+            return testFailureMessage;
+        }
+        return "";
+    }
+
+    public void setTestFailureMessage(String testFailureMessage) {
+        this.testFailureMessage = testFailureMessage;
+    }
+
+    public String getTestFailureMessage() {
+        return testFailureMessage;
     }
 
     public String getTestFailureClassname() {
