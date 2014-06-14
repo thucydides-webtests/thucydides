@@ -84,7 +84,7 @@
 <div class="middlecontent">
     <div id="contenttop">
         <div class="middlebg">
-            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > <a href="${narrativeView}.html">${formatter.truncatedHtmlCompatible(testOutcome.title,60)} </a> > Screenshots </span>
+            <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > <a href="${narrativeView}.html">${formatter.truncatedHtmlCompatible(testOutcome.unqualified.title,60)} </a> > Screenshots </span>
         </div>
         <div class="rightbg"></div>
     </div>

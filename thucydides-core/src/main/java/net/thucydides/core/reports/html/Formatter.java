@@ -66,6 +66,14 @@ public class Formatter {
         return render.replaceAll("\n","");
     }
 
+    public String stripQualifications(String title) {
+        if (title.contains("[")) {
+            return title.substring(0,title.lastIndexOf("["));
+        } else {
+            return title;
+        }
+    }
+
     static class IssueExtractor {
         private String workingCopy;
 

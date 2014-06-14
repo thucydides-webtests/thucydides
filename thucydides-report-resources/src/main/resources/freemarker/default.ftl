@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>${testOutcome.title}</title>
+    <title>${testOutcome.unqualified.title}</title>
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="css/core.css"/>
     <link rel="stylesheet" type="text/css" href="jqplot/jquery.jqplot.min.css"/>
@@ -60,7 +60,7 @@
                 <td width="25"><a href="${relativeLink!}${testOutcome.videoLink}"><img class="story-outcome-icon" src="images/video.png" width="25" height="25" alt="Video"/></a></td>
             </#if>
                 <td width="%"><span class="test-case-title"><span
-                        class="${outcome_text}">${testOutcome.titleWithLinks}<span class="related-issue-title">${testOutcome.formattedIssues}</span></span></span>
+                        class="${outcome_text}">${testOutcome.unqualified.titleWithLinks}<span class="related-issue-title">${testOutcome.formattedIssues}</span></span></span>
                 </td>
                 <td width="100"><span class="test-case-duration"><span class="greentext">${testOutcome.durationInSeconds}s</span></span>
                 </td>

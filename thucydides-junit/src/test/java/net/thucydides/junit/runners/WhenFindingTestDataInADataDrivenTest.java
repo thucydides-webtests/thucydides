@@ -95,7 +95,7 @@ public class WhenFindingTestDataInADataDrivenTest {
         TestClass testClass = new TestClass(CSVDataDrivenTestScenario.class);
         int dataEntries = DataDrivenAnnotations.forClass(testClass).countDataEntries();
 
-        assertThat(dataEntries, is(3));
+        assertThat(dataEntries, is(12));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class WhenFindingTestDataInADataDrivenTest {
     public void should_be_able_to_count_the_number_of_data_entries_using_a_class_directory() throws Throwable {
         int dataEntries = DataDrivenAnnotations.forClass(CSVDataDrivenTestScenario.class).countDataEntries();
 
-        assertThat(dataEntries, is(3));
+        assertThat(dataEntries, is(12));
     }
 
     @Test
@@ -150,7 +150,7 @@ public class WhenFindingTestDataInADataDrivenTest {
         List<PersonTestScenario> testScenarios
                 = DataDrivenAnnotations.forClass(testClass).getDataAsInstancesOf(PersonTestScenario.class);
 
-        assertThat(testScenarios.size(), is(3));
+        assertThat(testScenarios.size(), is(12));
         assertThat(testScenarios.get(0).getName(), is("Joe Smith"));
         assertThat(testScenarios.get(1).getName(), is("Jack Black"));
     }

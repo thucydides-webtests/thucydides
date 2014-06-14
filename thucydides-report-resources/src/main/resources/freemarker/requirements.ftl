@@ -564,7 +564,7 @@ Estimated ignored or skipped requirements: ${ignored}"
                             <td><img src="images/${testrun_outcome_icon}" title="${testOutcome.result}"
                                      class="summary-icon"/><span style="display:none">${testOutcome.result}</span></td>
                             <td class="${testOutcome.result}-text"><a
-                                    href="${relativeLink!}${testOutcome.reportName}.html" title="${testOutcome.errorMessage}">${testOutcome.titleWithLinks} ${testOutcome.formattedIssues}</a>
+                                    href="${relativeLink!}${testOutcome.reportName}.html" title="${testOutcome.errorMessage}">${testOutcome.unqualified.titleWithLinks} ${testOutcome.formattedIssues}</a>
                             </td>
 
                             <td class="lightgreentext">${testOutcome.nestedStepCount}</td>

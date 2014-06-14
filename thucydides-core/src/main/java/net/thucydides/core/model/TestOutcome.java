@@ -454,11 +454,42 @@ public class TestOutcome {
      * @return the human-readable name for this test.
      */
     public String getTitle() {
+        return getTitle(true);
+    }
+
+    public String getTitle(boolean qualified) {
         if (title == null) {
-            return obtainTitleFromAnnotationOrMethodName();
+            return (qualified) ? obtainQualifiedTitleFromAnnotationOrMethodName() : getBaseTitleFromAnnotationOrMethodName();
         } else {
-            return title;
+            return (qualified) ? title : getFormatter().stripQualifications(title);
         }
+    }
+
+    public TitleBuilder getUnqualified() {
+        return new TitleBuilder(this, false);
+    }
+
+    public TitleBuilder getQualified() {
+        return new TitleBuilder(this, true);
+    }
+
+    public class TitleBuilder {
+        private final boolean qualified;
+        private final TestOutcome testOutcome;
+
+        public TitleBuilder(TestOutcome testOutcome, boolean qualified) {
+            this.testOutcome = testOutcome;
+            this.qualified = qualified;
+        }
+
+        public String getTitleWithLinks() {
+            return getFormatter().addLinks(getTitle());
+        }
+
+        public String getTitle() {
+            return testOutcome.getTitle(qualified);
+        }
+
     }
 
     public void setDescription(String description) {
@@ -504,15 +535,21 @@ public class TestOutcome {
         return new Formatter(issueTracking);
     }
 
-    private String obtainTitleFromAnnotationOrMethodName() {
-        Optional<String> annotatedTitle = TestAnnotations.forClass(testCase).getAnnotatedTitleForMethod(methodName);
-        String rootTitle = annotatedTitle.or(NameConverter.humanize(withNoArguments(methodName)));
+    private String obtainQualifiedTitleFromAnnotationOrMethodName() {
         if ((qualifier != null) && (qualifier.isPresent())) {
-            return qualified(rootTitle);
+            return qualified(getBaseTitleFromAnnotationOrMethodName());
         } else {
-            return rootTitle;
+            return getBaseTitleFromAnnotationOrMethodName();
         }
+    }
 
+    private String obtainUnqualifiedTitleFromAnnotationOrMethodName() {
+         return getBaseTitleFromAnnotationOrMethodName();
+    }
+
+    private String getBaseTitleFromAnnotationOrMethodName() {
+        Optional<String> annotatedTitle = TestAnnotations.forClass(testCase).getAnnotatedTitleForMethod(methodName);
+        return annotatedTitle.or(NameConverter.humanize(withNoArguments(methodName)));
     }
 
     private String qualified(String rootTitle) {

@@ -120,7 +120,6 @@ public class ThucydidesParameterizedRunner extends Suite {
 
         List<?> testCases = getTestAnnotations().getDataAsInstancesOf(getTestClass().getJavaClass());
         DataTable parametersTable = getTestAnnotations().getParametersTableFromTestDataSource();
-
         for (int i = 0; i < testCases.size(); i++) {
             Object testCase = testCases.get(i);
             ThucydidesRunner runner = new TestClassRunnerForInstanciatedTestCase(testCase,

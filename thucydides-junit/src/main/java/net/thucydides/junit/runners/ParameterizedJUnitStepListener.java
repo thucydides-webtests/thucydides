@@ -23,10 +23,18 @@ public class ParameterizedJUnitStepListener extends JUnitStepListener {
     }
 
     @Override
+    public void testRunStarted(Description description) throws Exception {
+
+        super.testRunStarted(description);
+    }
+
+
+    @Override
     public void testStarted(final Description description) {
         if (testingThisDataSet(description)) {
             super.testStarted(description);
             StepEventBus.getEventBus().useExamplesFrom(dataTableRow());
+            //StepEventBus.getEventBus().useExamplesFrom(dataTable());
             if (!ignoredOrPending(description))
                 StepEventBus.getEventBus().exampleStarted(parametersTable.row(parameterSetNumber).toStringMap());
         }
@@ -46,6 +54,10 @@ public class ParameterizedJUnitStepListener extends JUnitStepListener {
 
     private DataTable dataTableRow() {
         return DataTable.withHeaders(parametersTable.getHeaders()).andCopyRowDataFrom(parametersTable.getRows().get(parameterSetNumber)).build();
+    }
+
+    private DataTable dataTable() {
+        return DataTable.withHeaders(parametersTable.getHeaders()).andRowData (parametersTable.getRows()).build();
     }
 
     private boolean testingThisDataSet(Description description) {

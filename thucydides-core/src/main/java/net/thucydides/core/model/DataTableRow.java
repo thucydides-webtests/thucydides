@@ -49,4 +49,12 @@ public class DataTableRow {
             setResult(testResults.getOverallResult());
         }
     }
+
+    @Override
+    public String toString() {
+        return "DataTableRow{" +
+                "values=" + values +
+                ", result=" + result +
+                '}';
+    }
 }

@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(ThucydidesParameterizedRunner.class)
-public class SampleDataDrivenScenario {
+public class SampleSingleDataDrivenScenario {
 
 
     @TestData
@@ -28,12 +28,15 @@ public class SampleDataDrivenScenario {
                     {"j", 10},
                     {"k", 11},
                     {"l", 12},
+                    {"j", 13},
+                    {"k", 14},
+                    {"l", 15},
             });
         }
     private String option1;
     private Integer option2;
 
-    public SampleDataDrivenScenario(String option1, Integer option2) {
+    public SampleSingleDataDrivenScenario(String option1, Integer option2) {
         this.option1 = option1;
         this.option2 = option2;
     }
@@ -45,11 +48,5 @@ public class SampleDataDrivenScenario {
     public void happy_day_scenario() {
         steps.stepWithParameters(option1, option2);
     }
-
-    @Test
-    public void another_happy_day_scenario() {
-        steps.stepWithParameters(option1,option2);
-    }
-
 
 }

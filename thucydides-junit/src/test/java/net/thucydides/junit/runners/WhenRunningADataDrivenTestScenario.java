@@ -20,16 +20,7 @@ import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.junit.runners.integration.SimpleSuccessfulParametrizedTestSample;
-import net.thucydides.samples.NestedDatadrivenSteps;
-import net.thucydides.samples.SampleCSVDataDrivenScenario;
-import net.thucydides.samples.SampleDataDrivenIgnoredScenario;
-import net.thucydides.samples.SampleDataDrivenPendingScenario;
-import net.thucydides.samples.SampleDataDrivenScenario;
-import net.thucydides.samples.SampleDataDrivenScenarioWithExternalFailure;
-import net.thucydides.samples.SampleParallelDataDrivenScenario;
-import net.thucydides.samples.SamplePassingScenarioWithTestSpecificData;
-import net.thucydides.samples.SampleScenarioSteps;
-import net.thucydides.samples.SampleSingleSessionDataDrivenScenario;
+import net.thucydides.samples.*;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -100,8 +91,20 @@ public class WhenRunningADataDrivenTestScenario {
 
         List<TestOutcome> aggregatedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).aggregateTestOutcomesByTestMethods();
         assertThat(aggregatedScenarios.size(), is(2));
-        assertThat(aggregatedScenarios.get(0).getStepCount(), is(10));
-        assertThat(aggregatedScenarios.get(1).getStepCount(), is(10));
+        assertThat(aggregatedScenarios.get(0).getStepCount(), is(12));
+        assertThat(aggregatedScenarios.get(1).getStepCount(), is(12));
+        assertThat(aggregatedScenarios.get(1).getUnqualified().getTitleWithLinks(), is("Happy day scenario"));
+    }
+
+    @Test
+    public void a_data_driven_test_driver_should_record_a_table_of_example() throws Throwable  {
+
+        ThucydidesParameterizedRunner runner = getStubbedTestRunnerUsing(SampleSingleDataDrivenScenario.class);
+        runner.run(new RunNotifier());
+
+        List<TestOutcome> aggregatedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).aggregateTestOutcomesByTestMethods();
+        assertThat(aggregatedScenarios.size(), is(1));
+        assertThat(aggregatedScenarios.get(1).getStepCount(), is(15));
     }
 
     @Test
@@ -168,7 +171,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         List<TestOutcome> executedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).getTestOutcomesForAllParameterSets();
 
-        assertThat(executedScenarios.size(), is(6));
+        assertThat(executedScenarios.size(), is(24));
     }
 
 
