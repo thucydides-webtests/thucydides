@@ -1,4 +1,4 @@
-project.ext {
+ext {
 	currentBranch = getCurrentBranch()
     releaseBranch = "release-${versionNumber}"
     workDirectory = createWorkDirectory()
