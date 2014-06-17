@@ -1049,7 +1049,7 @@ public class WhenRecordingStepExecutionResults {
         StepEventBus.getEventBus().testFinished(testOutcome);
 
         assertThat(testOutcome.toString(), is("App should work:Step one, Ignored group [Step three, Step two, Step one]"));
-        assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.SKIPPED));
+        assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.IGNORED));
     }
 
     @Test

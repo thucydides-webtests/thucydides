@@ -119,6 +119,10 @@ public class Photographer {
         return Optional.absent();
     }
 
+    public String getPageSource() {
+        return driver.getPageSource();
+    }
+
     private String getDigestScreenshotNameFor(File screenshotTempFile) throws IOException {
         ScreenshotDigest screenshotDigest = new ScreenshotDigest(environmentVariables, blurLevel.orNull());
         return screenshotDigest.forScreenshot(screenshotTempFile);

@@ -37,7 +37,7 @@ class WhenObtainingResultSummariesFromTestOutcomes extends Specification {
             directory                                  | result
             "/test-outcomes/all-successful"            | TestResult.SUCCESS
             "/test-outcomes/containing-failure"        | TestResult.FAILURE
-            "/test-outcomes/containing-nostep-errors"  | TestResult.FAILURE
+            "/test-outcomes/containing-nostep-errors"  | TestResult.ERROR
             "/test-outcomes/containing-errors"         | TestResult.ERROR
             "/test-outcomes/containing-pending"        | TestResult.PENDING
             "/test-outcomes/containing-skipped"        | TestResult.SUCCESS

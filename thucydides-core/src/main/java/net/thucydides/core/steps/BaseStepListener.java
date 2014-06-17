@@ -28,6 +28,7 @@ import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -35,6 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -436,8 +440,8 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public void stepFinished() {
         updateSessionIdIfKnown();
         takeEndOfStepScreenshotFor(SUCCESS);
-        currentStepDone();
-        markCurrentStepAs(SUCCESS);
+        currentStepDone(SUCCESS);
+//        markCurrentStepAs(SUCCESS);
         pauseIfRequired();
     }
 
@@ -469,9 +473,9 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public void stepFailed(StepFailure failure) {
         takeEndOfStepScreenshotFor(FAILURE);
         getCurrentTestOutcome().setTestFailureCause(failure.getException());
-        markCurrentStepAs(failureAnalysis.resultFor(failure));
+//        markCurrentStepAs(failureAnalysis.resultFor(failure));
         recordFailureDetailsInFailingTestStep(failure);
-        currentStepDone();
+        currentStepDone(failureAnalysis.resultFor(failure));
     }
 
     public void lastStepFailed(StepFailure failure) {
@@ -489,16 +493,16 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public void stepIgnored() {
         if (aStepHasFailed()) {
             markCurrentStepAs(SKIPPED);
-            currentStepDone();
+            currentStepDone(SKIPPED);
         } else {
-            markCurrentStepAs(IGNORED);
-            currentStepDone();
+//            markCurrentStepAs(IGNORED);
+            currentStepDone(IGNORED);
         }
     }
 
     public void stepPending() {
-        markCurrentStepAs(PENDING);
-        currentStepDone();
+//        markCurrentStepAs(PENDING);
+        currentStepDone(PENDING);
     }
 
     public void stepPending(String message) {
@@ -514,15 +518,18 @@ public class BaseStepListener implements StepListener, StepPublisher {
         testIgnored();
     }
 
-    private void currentStepDone() {
+    private void currentStepDone(TestResult result) {
         if ((!inFluentStepSequence) && currentStepExists()) {
             TestStep finishedStep = currentStepStack.pop();
             finishedStep.recordDuration();
-
+            if (result != null) {
+                finishedStep.setResult(result);
+            }
             if ((finishedStep == getCurrentGroup())) {
                 finishGroup();
             }
         }
+        updateExampleTableIfNecessary(result);
     }
 
     private boolean currentStepExists() {
@@ -623,15 +630,29 @@ public class BaseStepListener implements StepListener, StepPublisher {
     private Optional<ScreenshotAndHtmlSource> grabScreenshot() {
         Optional<File> screenshot = getPhotographer().takeScreenshot();
         if (screenshot.isPresent()) {
-            return Optional.of(new ScreenshotAndHtmlSource(screenshot.get()));
-//            if (shouldStoreSourcecode()) {
-//                File sourcecode = getPhotographer().getMatchingSourceCodeFor(screenshot.get());
-//                return Optional.of(new ScreenshotAndHtmlSource(screenshot.get(), sourcecode));
-//            } else {
-//                return Optional.of(new ScreenshotAndHtmlSource(screenshot.get()));
-//            }
+            if (shouldStoreSourcecode()) {
+                File sourcecodeFile = sourcecodeForScreenshot(screenshot.get(), getPageSource());
+                return Optional.of(new ScreenshotAndHtmlSource(screenshot.get(), sourcecodeFile));
+            } else {
+                return Optional.of(new ScreenshotAndHtmlSource(screenshot.get()));
+            }
         }
         return Optional.absent();
+    }
+
+    public String getPageSource() {
+        return getPhotographer().getPageSource();
+    }
+
+    private File sourcecodeForScreenshot(File screenshotFile, String pageSource) {
+        File pageSourceFile = new File(screenshotFile.getAbsolutePath() + ".html");
+
+        try {
+            Files.write(pageSourceFile.toPath(), pageSource.getBytes());
+        } catch (IOException e) {
+            LOGGER.warn("Failed to write screen source code",e);
+        }
+        return pageSourceFile;
     }
 
     private boolean shouldStoreSourcecode() {
@@ -682,7 +703,6 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     public boolean aStepHasFailed() {
-//        return (!getTestOutcomes().isEmpty()) && (getCurrentTestOutcome().getTestFailureMessage() != null);
         return ((!getTestOutcomes().isEmpty()) &&
                 (getCurrentTestOutcome().getResult() == TestResult.FAILURE || getCurrentTestOutcome().getResult() == TestResult.ERROR));
     }
@@ -735,7 +755,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void exampleFinished() {
-        currentStepDone();
+        currentStepDone(null);
         getCurrentTestOutcome().moveToNextRow();
     }
 }

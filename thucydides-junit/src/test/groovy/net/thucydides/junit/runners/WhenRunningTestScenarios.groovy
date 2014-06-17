@@ -101,6 +101,23 @@ class WhenRunningTestScenarios extends Specification {
         results["happy_day_scenario"].testSteps[2].result == ERROR
     }
 
+    def "a failure in a nested step method should cause the test to fail"() {
+        given:
+        def runner = new ThucydidesRunner(SampleScenarioWithFailingNestedStepMethod, webDriverFactory)
+        when:
+        runner.run(new RunNotifier())
+        def outcomes = runner.testOutcomes;
+        def results = resultsFrom(outcomes)
+        then:
+        outcomes.size() == 3
+        and:
+        results["happy_day_scenario"].result == FAILURE
+        results["happy_day_scenario"].testSteps[2].result == FAILURE
+        results["happy_day_scenario"].testSteps[2].children[0].result == SUCCESS
+        results["happy_day_scenario"].testSteps[2].errorMessage == "Oh crap!"
+    }
+
+
     def "an error in a non-step method should be displayed as a failing step"() {
         given:
         def runner = new ThucydidesRunner(SampleScenarioWithFailingNonStepMethod, webDriverFactory)

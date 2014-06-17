@@ -13,6 +13,8 @@ import java.util.Locale;
  */
 public final class NameConverter {
 
+    private static final String INDEXED_METHOD_NAME = ".*\\[\\d+]";
+
     private NameConverter() {}
 
     /**
@@ -125,16 +127,12 @@ public final class NameConverter {
         }
     }
 
+
     public static String stripIndexesFrom(final String methodName)  {
         if (methodName == null) {
             return null;
         }
-        int firstBracket = methodName.indexOf('[');
-        if (firstBracket > 0) {
-            return methodName.substring(0, firstBracket);
-        } else {
-            return methodName;
-        }
+        return (methodName.matches(INDEXED_METHOD_NAME)) ?  methodName.substring(0, methodName.lastIndexOf('[')) :  methodName;
     }
 
     /**

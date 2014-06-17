@@ -2,6 +2,7 @@ package net.thucydides.core.model
 
 import com.google.common.base.Optional
 import net.thucydides.core.annotations.Screenshots
+import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
 import net.thucydides.core.webdriver.Configuration
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration
@@ -98,6 +99,16 @@ class WhenDecidingWhetherToTakeScreenshots extends Specification {
             checkOverrideOnlyOnFailureWithVerboseMode()
     }
 
+    def "onlyOnFailures in annotations should override AFTER_EACH_STEP in system properties"() {
+        when:
+            EnvironmentVariables environmentVariables = new MockEnvironmentVariables()
+            environmentVariables.setProperty("thucydides.take.screenshots","AFTER_EACH_STEP")
+
+            Configuration configuration = new SystemPropertiesConfiguration(environmentVariables)
+        then:
+            shouldTakeScreenshotsOnlyOnFailures(configuration)
+    }
+
     @Screenshots(onlyOnFailures=true)
     void checkOnlyTakeOnFailures() {
         ScreenshotPermission permissions = new ScreenshotPermission(configuration)
@@ -164,5 +175,12 @@ class WhenDecidingWhetherToTakeScreenshots extends Specification {
         assert permissions.areAllowed(TakeScreenshots.FOR_EACH_ACTION)
         assert permissions.areAllowed(TakeScreenshots.AFTER_EACH_STEP)
         assert permissions.areAllowed(TakeScreenshots.FOR_FAILURES)
+    }
+
+    @Screenshots(onlyOnFailures=true)
+    public void shouldTakeScreenshotsOnlyOnFailures(Configuration configuration) {
+        ScreenshotPermission permissions = new ScreenshotPermission(configuration)
+        assert permissions.areAllowed(TakeScreenshots.FOR_FAILURES)
+        assert !permissions.areAllowed(TakeScreenshots.FOR_EACH_ACTION)
     }
 }

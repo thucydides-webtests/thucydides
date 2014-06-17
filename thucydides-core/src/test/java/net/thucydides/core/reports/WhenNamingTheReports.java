@@ -111,6 +111,15 @@ public class WhenNamingTheReports {
     }
 
     @Test
+    public void a_data_driven_test_should_have_the_same_report_for_all_examples() {
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this[0]", SomeTestScenario.class);
+
+        String reportName = testOutcome.getReportName(HTML);
+
+        assertThat(reportName, is(Digest.ofTextValue("net.thucydides.core.reports.WhenNamingTheReports/a_user_story_should_do_this") + ".html"));
+    }
+
+    @Test
     public void a_null_qualifier_should_be_ignored() {
         TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
 

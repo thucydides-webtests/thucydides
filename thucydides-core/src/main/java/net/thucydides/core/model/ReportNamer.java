@@ -4,6 +4,7 @@ import net.thucydides.core.digest.Digest;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 
+import static net.thucydides.core.util.NameConverter.stripIndexesFrom;
 import static net.thucydides.core.util.NameConverter.withNoArguments;
 import static net.thucydides.core.util.NameConverter.withNoIssueNumbers;
 
@@ -30,7 +31,8 @@ public class ReportNamer {
      */
     public String getNormalizedTestNameFor(final TestOutcome testOutcome) {
         String testName = getBaseTestNameFor(testOutcome);
-        return appendSuffixTo(Digest.ofTextValue(testName));
+        String testNameWithoutIndex = stripIndexesFrom(testName);
+        return appendSuffixTo(Digest.ofTextValue(testNameWithoutIndex));
     }
 
     private String getBaseTestNameFor(TestOutcome testOutcome) {

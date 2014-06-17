@@ -576,7 +576,7 @@ public class WhenGeneratingAnXMLReport {
         testOutcome.setStartTime(startTime);
 
         String expectedReport =
-                "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='9' successful='2' failures='2' errors='1' skipped='1' ignored='2' pending='1' result='FAILURE' duration='0' timestamp='2013-01-01T00:00:00.000-05:00'>\n"
+                "<acceptance-test-run title='A simple test case' name='a_simple_test_case' steps='9' successful='2' failures='2' errors='1' skipped='1' ignored='2' pending='1' result='ERROR' duration='0' timestamp='2013-01-01T00:00:00.000-05:00'>\n"
                         + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"

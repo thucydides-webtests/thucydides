@@ -65,8 +65,8 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 
 	private boolean calledFromAQuickMethod() {
         for (StackTraceElement elt : Thread.currentThread().getStackTrace()) {
-            if (QUICK_METHODS.contains(elt.getMethodName())
-                    && QUICK_CLASSES.contains(elt.getClassName())) {
+            //if (QUICK_METHODS.contains(elt.getMethodName())
+            if (elt.getMethodName().contains("Currently")) {
                 return true;
             }
         }

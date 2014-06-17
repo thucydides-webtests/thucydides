@@ -38,6 +38,12 @@ public class SampleNonWebSteps {
     }
 
     @Step
+    public void anotherStepThatFails() {
+        stepThatSucceeds();
+        throw new AssertionError("Oh crap!");
+    }
+
+    @Step
     public void stepWithAParameter(String param) {}
 
     @Step

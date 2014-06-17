@@ -182,7 +182,8 @@ public class TestStep {
 
     public TestResult getResult() {
         if (isAGroup() && !groupResultOverridesChildren()) {
-            return getResultFromChildren();
+            return (result != null) ? TestResultList.of(result, getResultFromChildren()).getOverallResult() : getResultFromChildren();
+            //return getResultFromChildren();
         } else {
             return getResultFromThisStep();
         }

@@ -41,7 +41,7 @@ public class ParameterizedTestsOutcomeAggregator {
     }
 
     private List<TestOutcome> aggregatedScenarioOutcomes(List<TestOutcome> allOutcomes) {
-        Map<String, TestOutcome> scenarioOutcomes = new HashMap<String, TestOutcome>();
+        Map<String, TestOutcome> scenarioOutcomes = new HashMap<>();
 
         for (TestOutcome testOutcome : allOutcomes) {
             String normalizedMethodName = normalizeMethodName(testOutcome);

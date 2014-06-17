@@ -829,8 +829,9 @@ public class TestOutcome {
         } else {
             TestStep currentStepGroup = groupStack.peek();
             return lastStepIn(currentStepGroup.getChildren());
+//            Optional<TestStep> lastUnfinishedChild = lastUnfinishedStepIn(currentStepGroup.getChildren());
+//            return lastUnfinishedChild.or(currentStepGroup);
         }
-
     }
 
     public TestStep lastStep() {
@@ -847,6 +848,15 @@ public class TestOutcome {
 
     private TestStep lastStepIn(final List<TestStep> testSteps) {
         return testSteps.get(testSteps.size() - 1);
+    }
+
+    private Optional<TestStep> lastUnfinishedStepIn(final List<TestStep> testSteps) {
+        TestStep lastStep = testSteps.get(testSteps.size() - 1);
+        if (lastStep.getResult() == null) {
+            return Optional.of(lastStep);
+        } else {
+            return Optional.absent();
+        }
     }
 
     public TestStep currentGroup() {

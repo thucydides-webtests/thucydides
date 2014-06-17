@@ -40,12 +40,12 @@ public class TestResultList {
             return SUCCESS;
         }
 
-        if (testResults.contains(FAILURE)) {
-            return FAILURE;
-        }
-
         if (testResults.contains(ERROR)) {
             return ERROR;
+        }
+
+        if (testResults.contains(FAILURE)) {
+            return FAILURE;
         }
 
         if (testResults.contains(PENDING)) {
