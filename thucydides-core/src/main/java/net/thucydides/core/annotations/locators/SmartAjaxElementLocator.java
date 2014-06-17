@@ -19,14 +19,6 @@ import java.util.List;
 public class SmartAjaxElementLocator extends SmartElementLocator {
 	protected final int timeOutInSeconds;
 	private final Clock clock;
-	private static final List<String> QUICK_METHODS = Arrays.asList("isCurrentlyVisible",
-			"isCurrentlyEnabled",
-			"waitUntilVisible",
-			"waitUntilEnabled",
-			"shouldNotBeVisible");
-
-	private static final List<String> QUICK_CLASSES = Arrays.asList(WebElementFacadeImpl.class.getName(), PageObject.class.getName());
-
 	private final Field field;
 	private final WebDriver driver;
 
@@ -65,8 +57,7 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 
 	private boolean calledFromAQuickMethod() {
         for (StackTraceElement elt : Thread.currentThread().getStackTrace()) {
-            if (QUICK_METHODS.contains(elt.getMethodName())
-                    && QUICK_CLASSES.contains(elt.getClassName())) {
+            if (elt.getMethodName().contains("Currently")) {
                 return true;
             }
         }
