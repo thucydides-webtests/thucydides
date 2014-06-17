@@ -56,12 +56,12 @@ public class WhenInstanciatingANewDriver {
 
     @Test
     public void should_pass_chrome_switches_when_creating_a_chrome_driver() throws Exception {
-        environmentVariables.setProperty("chrome.switches","--homepage=about:blank,--no-first-run");
-
+        environmentVariables.setProperty("chrome.switches","--no-sandbox,--ignore-certificate-errors,--homepage=about:blank,--no-first-run");
         webDriverFactory.newInstanceOf(SupportedWebDriver.CHROME);
 
         verify(webdriverInstanceFactory).newChromeDriver(chromeOptionsArgument.capture());
-        assertThat(argumentsFrom(chromeOptionsArgument), hasItems("--homepage=about:blank", "--no-first-run"));
+        assertThat(argumentsFrom(chromeOptionsArgument), hasItems("--no-sandbox","--ignore-certificate-errors",
+                                                                  "--homepage=about:blank", "--no-first-run"));
     }
 
     @Test
