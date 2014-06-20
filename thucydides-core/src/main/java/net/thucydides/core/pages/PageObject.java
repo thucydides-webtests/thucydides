@@ -309,6 +309,16 @@ public abstract class PageObject {
         return this;
     }
 
+	/**
+	 * Waits for a given text to appear anywhere on the page.
+	 */
+	public PageObject waitForTextToAppear(final String expectedText,
+											 final long timeout) {
+
+		getRenderedView().waitForTextToAppear(expectedText, timeout);
+		return this;
+	}
+
     /**
      * Waits for any of a number of text blocks to appear anywhere on the
      * screen.
