@@ -195,6 +195,12 @@ class RenderedPageObjectView {
                 .until(textNotPresent(expectedText));
     }
 
+	public void waitForTextToAppear(final String expectedText, final long timeout) {
+		waitForCondition()
+				.withTimeout(timeout, TimeUnit.MILLISECONDS)
+				.until(textPresent(expectedText));
+	}
+
     private ExpectedCondition<Boolean> titleNotPresent(final String expectedTitle) {
         return new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver driver) {
