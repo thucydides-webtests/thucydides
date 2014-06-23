@@ -66,7 +66,7 @@ public class ResizableImage {
 			resizedImage.setData(image.getRaster());
 	        return new ResizedImage(resizedImage, screenshotFile);
 		} catch (Throwable e) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException(e);
 		}
     }
 
