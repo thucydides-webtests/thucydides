@@ -16,6 +16,7 @@ import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.reports.html.Formatter;
+import net.thucydides.core.reports.json.JSONConverter;
 import net.thucydides.core.reports.saucelabs.LinkGenerator;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.statistics.model.TestStatistics;
@@ -26,10 +27,12 @@ import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -71,8 +74,8 @@ import static org.hamcrest.Matchers.is;
  * the results of each step, and the overall result. A test scenario
  * can be associated with a user story using the UserStory annotation.
  *
- * A TestOutcome is stored as an XML file after a test is executed. When the aggregate reports
- * are generated, the test outcome XML files are loaded into memory and processed.
+ * A TestOutcome is stored after a test is executed. When the aggregate reports
+ * are generated, the test outcome files are loaded into memory and processed.
  *
  * @author johnsmart
  */
@@ -81,9 +84,12 @@ public class TestOutcome {
     private static final int RECENT_TEST_RUN_COUNT = 10;
     private static final String ISSUES = "issues";
     private static final String NEW_LINE = System.getProperty("line.separator");
+
+
     /**
      * The name of the method implementing this test.
      */
+    @NotNull
     private final String methodName;
 
     /**
@@ -525,6 +531,16 @@ public class TestOutcome {
             return Optional.absent();
         }
 
+    }
+
+    public String toJson() {
+        JSONConverter jsonConverter = Injectors.getInjector().getInstance(JSONConverter.class);
+        try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            jsonConverter.toJson(this, outputStream);
+            return outputStream.toString();
+        } catch (IOException e) {
+            return "";
+        }
     }
 
     public String getTitleWithLinks() {
@@ -1077,7 +1093,7 @@ public class TestOutcome {
     }
 
     public String getFormattedIssues() {
-        List<String> issues = getIssues();
+        Set<String> issues = Sets.newHashSet(getIssues());
         if (!issues.isEmpty()) {
             List<String> orderedIssues = sort(issues, on(String.class));
             return "(" + getFormatter().addLinks(StringUtils.join(orderedIssues, ", ")) + ")";

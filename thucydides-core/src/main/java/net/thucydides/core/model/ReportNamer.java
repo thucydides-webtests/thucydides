@@ -37,8 +37,11 @@ public class ReportNamer {
 
     private String getBaseTestNameFor(TestOutcome testOutcome) {
         String testName = "";
+
         if (testOutcome.getUserStory() != null) {
-             testName = NameConverter.underscore(testOutcome.getUserStory().getName());
+            testName = NameConverter.underscore(testOutcome.getUserStory().getName());
+        } else if (testOutcome.getPath() != null) {
+            testName = NameConverter.underscore(testOutcome.getPath());
         }
         String scenarioName = NameConverter.underscore(testOutcome.getQualifiedMethodName());
         return pathFrom(testOutcome) + withNoIssueNumbers(appendToIfNotNull(testName, scenarioName));

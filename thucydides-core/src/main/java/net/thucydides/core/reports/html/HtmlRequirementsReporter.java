@@ -9,6 +9,7 @@ import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.util.Inflector;
+import net.thucydides.core.util.VersionProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,6 +63,11 @@ public class HtmlRequirementsReporter extends HtmlReporter {
         context.put("absoluteReportName", new ReportNameProvider());
         context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
         context.put("relativeLink", relativeLink);
+
+        VersionProvider versionProvider = new VersionProvider(getEnvironmentVariables());
+        context.put("thucydidesVersionNumber", versionProvider.getVersion());
+        context.put("buildNumber", versionProvider.getBuildNumberText());
+
         addFormattersToContext(context);
 
         String htmlContents = mergeTemplate(DEFAULT_REQUIREMENTS_REPORT).usingContext(context);

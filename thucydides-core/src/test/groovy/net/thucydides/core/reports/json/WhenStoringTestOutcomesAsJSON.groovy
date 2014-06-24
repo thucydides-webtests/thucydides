@@ -634,7 +634,6 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         testOutcome.setTestFailureCause(new AssertionError("a failure"))
         when:
         def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
-        println jsonReport.text
         then:
         TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
         reloadedOutcome.getResult() == TestResult.FAILURE
@@ -651,7 +650,6 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         testOutcome.setTestFailureCause(new ComparisonFailure("a failure","1","2"))
         when:
         def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
-        println jsonReport.text
         then:
         TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
         reloadedOutcome.getResult() == TestResult.FAILURE
@@ -672,5 +670,28 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         reloadedOutcome.getResult() == result
         where:
         result << [ TestResult.SUCCESS, TestResult.FAILURE, TestResult.ERROR, TestResult.PENDING, TestResult.IGNORED ]
+    }
+
+
+    def "should be able to write a test outcome as a JSON string"() {
+        given:
+        def testOutcome = TestOutcome.forTest("a_nested_test_case", SomeNestedTestScenario.class);
+        when:
+        def jsonString = testOutcome.toJson()
+        then:
+        def savedOutcome = new File(outputDirectory,"saved.json")
+        savedOutcome << jsonString
+        TestOutcome reloadedOutcome = loader.loadReportFrom(savedOutcome).get()
+        reloadedOutcome.methodName == testOutcome.methodName
+    }
+
+    def "should throw a violation exception if the json file is badly formed"() {
+        given:
+            def savedOutcome = new File(outputDirectory,"saved.json")
+            savedOutcome << """{"firstname":"joe","lastname":"smith"}"""
+        when:
+            def loadedOutcome = loader.loadReportFrom(savedOutcome)
+        then:
+            !loadedOutcome.isPresent()
     }
 }

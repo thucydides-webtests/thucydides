@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -297,15 +299,24 @@ public class Formatter {
     }
 
     private String insertShortenedIssueTrackingUrls(String value) {
-        String formattedValue = value;
         String issueUrlFormat = issueTracking.getShortenedIssueTrackerUrl();
-        List<String> issues = shortenedIssuesIn(value);
+        List<String> issues = sortByDecreasingSize(shortenedIssuesIn(value));
+        String formattedValue = replaceWithTokens(value, issues);
+        int i = 0;
         for (String issue : issues) {
             String issueUrl = MessageFormat.format(issueUrlFormat, stripLeadingHashFrom(issue));
             String issueLink = MessageFormat.format(ISSUE_LINK_FORMAT, issueUrl, issue);
-            formattedValue = formattedValue.replaceAll(issue, issueLink);
+            String token = "##" + i++ + "##";
+            formattedValue = formattedValue.replaceAll(token, issueLink);
         }
         return formattedValue;
+    }
+
+    private String replaceWithTokens(String value, List<String> issues) {
+        for(int i = 0; i < issues.size(); i++) {
+            value = value.replaceAll(issues.get(i), "##" + i  + "##");
+        }
+        return value;
     }
 
     public static List<String> shortenedIssuesIn(String value) {
@@ -319,15 +330,28 @@ public class Formatter {
     }
 
     private String insertFullIssueTrackingUrls(String value) {
-        String formattedValue = value;
         String issueUrlFormat = issueTracking.getIssueTrackerUrl();
-        List<String> issues = fullIssuesIn(value);
+        List<String> issues = sortByDecreasingSize(fullIssuesIn(value));
+        String formattedValue = replaceWithTokens(value, issues);
+        int i = 0;
         for (String issue : issues) {
             String issueUrl = MessageFormat.format(issueUrlFormat, issue);
             String issueLink = MessageFormat.format(ISSUE_LINK_FORMAT, issueUrl, issue);
-            formattedValue = formattedValue.replaceAll(issue, issueLink);
+            String token = "##" + i++ + "##";
+            formattedValue = formattedValue.replaceAll(token, issueLink);
         }
         return formattedValue;
+    }
+
+    private List<String> sortByDecreasingSize(List<String> issues) {
+        List<String> sortedIssues = Lists.newArrayList(issues);
+        Collections.sort(sortedIssues, new Comparator<String>() {
+            @Override
+            public int compare(String a, String b) {
+                return new Integer(-a.length()).compareTo(new Integer(b.length()));
+            }
+        });
+        return sortedIssues;
     }
 
     public String formatWithFields(String textToFormat, List<String> fields) {

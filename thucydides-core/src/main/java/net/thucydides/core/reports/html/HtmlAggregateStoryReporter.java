@@ -22,6 +22,7 @@ import net.thucydides.core.requirements.reports.RequirementsOutcomes;
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
+import net.thucydides.core.util.VersionProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -462,8 +463,14 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
         //context.put("timestamp", timestampFrom(testOutcomesForTagType.getRootOutcomes()));
         context.put("timestamp", timestampFrom(currentTime()));
-        context.put("requirementTypes",requirementsService.getRequirementTypes());
+        context.put("requirementTypes", requirementsService.getRequirementTypes());
         addFormattersToContext(context);
+
+
+        VersionProvider versionProvider = new VersionProvider(environmentVariables);
+        context.put("thucydidesVersionNumber", versionProvider.getVersion());
+        context.put("buildNumber", versionProvider.getBuildNumberText());
+
         return context;
     }
 

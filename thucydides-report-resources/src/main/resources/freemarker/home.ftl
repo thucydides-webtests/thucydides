@@ -461,7 +461,9 @@
 </div>
 </div>
 <div id="beforefooter"></div>
-<div id="bottomfooter"></div>
+<div id="bottomfooter">
+    <span class="version">Thucydides version ${thucydidesVersionNumber} - Build ${buildNumber}</span>
+</div>
 <#macro list_tags(weighted)>
 <h4>${tagsTitle}</h4>
     <#foreach tagType in tagTypes>

@@ -168,7 +168,8 @@
     </div>
 </div>
 <div id="beforefooter"></div>
-<div id="bottomfooter"></div>
-
+<div id="bottomfooter">
+    <span class="version">Thucydides version ${thucydidesVersionNumber} - Build ${buildNumber}</span>
+</div>
 </body>
 </html>

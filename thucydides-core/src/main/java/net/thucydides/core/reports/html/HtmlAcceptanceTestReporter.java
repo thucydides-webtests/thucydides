@@ -7,7 +7,6 @@ import com.google.common.base.Predicate;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.images.ResizableImage;
 import net.thucydides.core.issues.IssueTracking;
-import net.thucydides.core.model.ReportType;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestStep;
@@ -20,6 +19,7 @@ import net.thucydides.core.reports.html.screenshots.ScreenshotFormatter;
 import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
+import net.thucydides.core.util.VersionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,6 +129,10 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         context.put("reportName", new ReportNameProvider());
         context.put("absoluteReportName", new ReportNameProvider());
         context.put("reportOptions", new ReportOptions(getEnvironmentVariables()));
+
+        VersionProvider versionProvider = new VersionProvider(getEnvironmentVariables());
+        context.put("thucydidesVersionNumber", versionProvider.getVersion());
+        context.put("buildNumber", versionProvider.getBuildNumberText());
     }
 
     private void generateScreenshotReportsFor(final TestOutcome testOutcome, final TestOutcomes allTestOutcomes) throws IOException {

@@ -1278,3 +1278,11 @@ ul.second-level-requirements  {
 .step-parameter {
     color: darkblue;
 }
+
+.version {
+    float: right;
+    color: white;
+    padding-top: 4px;
+    font-size: smaller;
+    font-family:euphemia, verdana, sans-serif;
+}
