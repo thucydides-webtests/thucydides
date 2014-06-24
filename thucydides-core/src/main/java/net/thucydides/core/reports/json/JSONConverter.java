@@ -2,9 +2,7 @@ package net.thucydides.core.reports.json;
 
 import net.thucydides.core.model.TestOutcome;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.nio.file.Path;
 
 /**
@@ -14,6 +12,6 @@ import java.nio.file.Path;
  * Time: 5:10 PM
  */
 public interface JSONConverter {
-    TestOutcome fromJson(File jsonTestOutcome) throws IOException;
-    void writeJsonToFile(TestOutcome storedTestOutcome, Path report) throws IOException;
+    TestOutcome fromJson(InputStream inputStream) throws IOException;
+    void toJson(TestOutcome storedTestOutcome, OutputStream outputStream) throws IOException;
 }

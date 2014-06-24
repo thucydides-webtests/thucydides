@@ -12,6 +12,10 @@ public class TestOutcomeModule extends SimpleModule {
         super("TestOutcomes", new Version(0,0,1,"RELEASE","net.thucydides.core","thucydides-core-json"));
     }
 
+    public TestOutcomeModule(String name, Version version) {
+        super(name, version);
+    }
+
     @Override
     public void setupModule(SetupContext context) {
         context.setMixInAnnotations(TestOutcome.class, JSONTestOutcomeMixin.class);

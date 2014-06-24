@@ -9,9 +9,16 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.json.JSONConverter;
 import net.thucydides.core.util.EnvironmentVariables;
 
-import java.io.File;
+import javax.validation.ConstraintViolation;
+import javax.validation.ValidationException;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Set;
 
 public class JacksonJSONConverter implements JSONConverter {
 
@@ -19,6 +26,7 @@ public class JacksonJSONConverter implements JSONConverter {
     private final ObjectReader reader;
     private final ObjectWriter writer;
     private final EnvironmentVariables environmentVariables;
+    private final Validator validator;
 
     @Inject
     public JacksonJSONConverter(EnvironmentVariables environmentVariables) {
@@ -33,6 +41,8 @@ public class JacksonJSONConverter implements JSONConverter {
         reader = mapper.reader(TestOutcome.class);
         writer = mapper.writerWithType(TestOutcome.class);
 
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
 
     }
 
@@ -44,16 +54,25 @@ public class JacksonJSONConverter implements JSONConverter {
     }
 
     @Override
-    public TestOutcome fromJson(File jsonTestOutcome) throws IOException {
-        return reader.readValue(jsonTestOutcome);
+    public TestOutcome fromJson(InputStream inputStream) throws IOException {
+        TestOutcome outcome = reader.readValue(inputStream);
+        checkConstraints(outcome);
+        return outcome;
+    }
+
+    private void checkConstraints(TestOutcome outcome) {
+        Set<ConstraintViolation<TestOutcome>> violations = validator.validate(outcome);
+        if (!violations.isEmpty()) {
+            throw new ValidationException(Arrays.toString(violations.toArray()));
+        }
     }
 
     @Override
-    public void writeJsonToFile(TestOutcome testOutcome, Path report) throws IOException {
+    public void toJson(TestOutcome testOutcome, OutputStream outputStream) throws IOException {
         if (usePrettyPrinting()) {
-            writer.withDefaultPrettyPrinter().writeValue(report.toFile(), testOutcome);
+            writer.withDefaultPrettyPrinter().writeValue(outputStream, testOutcome);
         } else {
-            writer.writeValue(report.toFile(), testOutcome);
+            writer.writeValue(outputStream, testOutcome);
         }
     }
 

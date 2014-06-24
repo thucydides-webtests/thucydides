@@ -274,11 +274,27 @@ class WhenFormattingDataForTheHTMLReports extends Specification {
         when:
         def embeddedTable = formatter.convertAnyTables(tableText)
         then:
-        println embeddedTable
-//        embeddedTable == "Given a Transmission with the following details: ␤{trim=false} ␤|record| ␤|ABC-123 SOMEBANK, SYDNEY 2000 ADDATE PAGE 1 | ␤|0 GST 8.56- | ␤|lots of filler text | ␤|0 SUB-TOTAL BILLER VALUE 1,962 486,941.32 934.32- 486,007.00| ␤|0 GST 93.56-| ␤|more filler text |"
+        embeddedTable.contains("<table class='embedded'>")
 
     }
 
+
+    def "should work with more JBehave commands"() {
+
+        given:
+        def tableText = """Given a Transmission FILE.TYPE.P999999.T123456 with the following details:
+    {trim=false}
+    |record|
+    |\$\$ TRANSACTION STATUS HISTORY 01                                                                                                           |
+    |999990065001306259999                                                                                                                      |
+    |9999930625092002002814462000000000100019999SUNNY5000 XXX   032916000000000000000099999XXXXXXX Exchange Settlement        NN                |"""
+
+        def formatter = new Formatter(issueTracking);
+        when:
+        def embeddedTable = formatter.convertAnyTables(tableText)
+        then:
+        embeddedTable.contains("<table class='embedded'>")
+    }
 
 
 }

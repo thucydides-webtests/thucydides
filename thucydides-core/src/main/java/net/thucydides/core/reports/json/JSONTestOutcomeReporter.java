@@ -15,16 +15,11 @@ import net.thucydides.core.reports.TestOutcomes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,7 +50,9 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter, Acceptan
         Preconditions.checkNotNull(outputDirectory);
         String reportFilename = reportFor(storedTestOutcome);
         File report = new File(getOutputDirectory(), reportFilename);
-        jsonConverter.writeJsonToFile(storedTestOutcome, report.toPath());
+        try(OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(report))){
+            jsonConverter.toJson(storedTestOutcome, outputStream);
+        }
         return report;
     }
 
@@ -81,13 +78,16 @@ public class JSONTestOutcomeReporter implements AcceptanceTestReporter, Acceptan
     }
 
     public Optional<TestOutcome> loadReportFrom(final File reportFile) {
-        try{
-            TestOutcome fromJson = jsonConverter.fromJson(reportFile);
+        try(BufferedInputStream report = new BufferedInputStream(new FileInputStream(reportFile))) {
+            TestOutcome fromJson = jsonConverter.fromJson(report);
             return Optional.of(fromJson);
-        } catch (JsonMappingException mappingException) {
-            throw new RuntimeException("Error loading JSON test outcomes", mappingException);
-        } catch (Exception e) {
-            LOGGER.warn("this file was not a valid JSON Thucydides test report: " + reportFile.getName());
+//        } catch (JsonMappingException mappingException) {
+//            throw new RuntimeException("Error loading JSON test outcomes", mappingException);
+        } catch (Throwable e) {
+            LOGGER.warn("this file was not a valid JSON Thucydides test report: " + reportFile.getName()
+                        + System.lineSeparator()
+                        + e.getMessage());
+
             return Optional.absent();
         }
     }

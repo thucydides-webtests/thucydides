@@ -25,17 +25,16 @@ class WhenOpeningAndClosingBrowserSessions extends Specification {
     def remote = Mock(RemoteWebDriver)
 
     def webdriverInstanceFactory = new WebdriverInstanceFactory() {
-        @Override
-        WebDriver newFirefoxDriver(FirefoxProfile profile) { return firefox }
+        WebDriver newFirefoxDriver(Capabilities capabilities) { return firefox }
 
         @Override
-        WebDriver newChromeDriver(ChromeOptions options) { return chrome }
+        WebDriver newChromeDriver(Capabilities capabilities) { return chrome }
 
         @Override
-        WebDriver newHtmlUnitDriver(DesiredCapabilities caps) { return htmlunit }
+        WebDriver newHtmlUnitDriver(Capabilities capabilities){ return htmlunit }
 
         @Override
-        WebDriver newRemoteDriver(URL remoteUrl, DesiredCapabilities capabilities) { return remote }
+        WebDriver newRemoteDriver(URL remoteUrl, Capabilities capabilities) { return remote }
 
         @Override
         WebDriver newInstanceOf(Class<? extends WebDriver> webdriverClass) {

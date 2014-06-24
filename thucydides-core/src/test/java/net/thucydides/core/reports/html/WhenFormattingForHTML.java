@@ -93,6 +93,16 @@ public class WhenFormattingForHTML {
     }
 
     @Test
+    public void should_allow_overlapping_issue_number() {
+        when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MYPROJECT/browse/{0}");
+        Formatter formatter = new Formatter(issueTracking);
+
+        String formattedValue = formatter.addLinks("A big story (#MYPROJECT-12,#MYPROJECT-123)");
+
+        assertThat(formattedValue, is("A big story (<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-12\">#MYPROJECT-12</a>,<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-123\">#MYPROJECT-123</a>)"));
+    }
+
+    @Test
     public void should_allow_dashes_in_issue_number() {
         when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MYPROJECT/browse/{0}");
         Formatter formatter = new Formatter(issueTracking);
