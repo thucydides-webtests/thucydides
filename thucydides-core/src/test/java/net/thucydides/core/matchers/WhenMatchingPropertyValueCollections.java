@@ -5,7 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static net.thucydides.core.matchers.BeanMatcherAsserts.filterElements;
 import static net.thucydides.core.matchers.BeanMatcherAsserts.matches;
@@ -16,6 +18,7 @@ import static net.thucydides.core.matchers.BeanMatchers.min;
 import static net.thucydides.core.matchers.BeanMatchers.the;
 import static net.thucydides.core.matchers.BeanMatchers.the_count;
 import static org.fest.assertions.Assertions.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 public class WhenMatchingPropertyValueCollections {
@@ -308,6 +311,22 @@ public class WhenMatchingPropertyValueCollections {
                 firstNameIsBill,
                 lastNamesAreDifferent,
                 maxAgeIs35);
+    }
+
+    @Test
+    public void should_allow_fields_with_dots_for_maps() {
+        Map<String, String> map = new HashMap<>();
+        map.put("test.a", "result1");
+        BeanMatcher matcher1 = the("test.a", equalTo("result1"));
+        matcher1.matches(map);
+    }
+
+    @Test
+    public void should_allow_fields_with_brackets_for_maps() {
+        Map<String, String> map = new HashMap<>();
+        map.put("test[0]", "result1");
+        BeanMatcher matcher1 = the("test[0]", equalTo("result1"));
+        matcher1.matches(map);
     }
 
 }

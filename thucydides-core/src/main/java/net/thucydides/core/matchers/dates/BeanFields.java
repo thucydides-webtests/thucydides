@@ -2,6 +2,8 @@ package net.thucydides.core.matchers.dates;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import java.util.Map;
+
 public class BeanFields {
 
     private final Object bean;
@@ -16,10 +18,18 @@ public class BeanFields {
     
     public Object forField(String fieldName) {
         try {
-            return PropertyUtils.getProperty(bean, fieldName);
+            if (isAMap(bean)) {
+               return  ((Map) bean).get(fieldName);
+            } else {
+                return PropertyUtils.getProperty(bean, fieldName);
+            }
         } catch (Exception e) {
             throw new IllegalArgumentException("Could not find property value for " + fieldName);
         }
+    }
+
+    private boolean isAMap(Object bean) {
+        return (Map.class.isAssignableFrom(bean.getClass()));
     }
 
 }

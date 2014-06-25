@@ -18,6 +18,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -140,7 +142,12 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     }
 
     private Optional<String> getRootDirectoryFromClasspath() throws IOException {
-        Enumeration<URL> requirementResources = getDirectoriesFrom(rootDirectoryPath);
+        Enumeration<URL> requirementResources = null;
+        try {
+            requirementResources = getDirectoriesFrom(rootDirectoryPath);
+        } catch (URISyntaxException e) {
+            throw new  IOException(e);
+        }
         if (requirementResources.hasMoreElements()) {
             return Optional.of(withRestoredSpaces(requirementResources.nextElement().getPath()));
         } else {
@@ -181,8 +188,10 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     }
 
 
-    private Enumeration<URL> getDirectoriesFrom(String root) throws IOException {
-        return getClass().getClassLoader().getResources(root);
+    private Enumeration<URL> getDirectoriesFrom(String root) throws IOException, URISyntaxException {
+        String rootWithEscapedSpaces = root.replaceAll(" ","%20");
+        URI rootUri = new URI(rootWithEscapedSpaces);
+        return getClass().getClassLoader().getResources(rootUri.getPath());
     }
 
     public Set<TestTag> getTagsFor(final TestOutcome testOutcome) {

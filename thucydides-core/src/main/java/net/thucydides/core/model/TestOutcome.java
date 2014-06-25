@@ -1150,21 +1150,45 @@ public class TestOutcome {
         return ImmutableSet.copyOf(tags);
     }
 
+
     private Set<TestTag> getTagsUsingTagProviders(List<TagProvider> tagProviders) {
         Set<TestTag> tags  = Sets.newHashSet();
         for (TagProvider tagProvider : tagProviders) {
             try {
-                Set<TestTag> providedTags = tagProvider.getTagsFor(this);
-                if (providedTags != null) {
-                    tags.addAll(providedTags);
-                }
+                addTagsWithOverride(tags, tagProvider.getTagsFor(this));
             } catch(Throwable theTagProviderFailedBueThereIsntMuchWeCanDoAboutIt) {
                 logger.error("Tag provider " + tagProvider + " failure",
-                             theTagProviderFailedBueThereIsntMuchWeCanDoAboutIt);
+                        theTagProviderFailedBueThereIsntMuchWeCanDoAboutIt);
             }
         }
         return tags;
     }
+
+    private void addTagsWithOverride(Set<TestTag> tags, Set<TestTag> newTags) {
+        if (newTags != null) {
+            for (TestTag tag : newTags) {
+                if (isAStory(tag)) {
+                    removeAnyExistingStoryTags(tags, tag.getName());
+                }
+                tags.add(tag);
+            }
+        }
+    }
+
+    private void removeAnyExistingStoryTags(Set<TestTag> tags, String storyName) {
+        Set<TestTag> duplicatedTags = Sets.newHashSet();
+        for(TestTag tag : tags) {
+            if (tag.getType().equalsIgnoreCase("story") && (tag.getName().equalsIgnoreCase(storyName))) {
+                duplicatedTags.add(tag);
+            }
+        }
+        tags.removeAll(duplicatedTags);
+    }
+
+    private boolean isAStory(TestTag tag) {
+        return (tag.getType().equalsIgnoreCase("story"));
+    }
+
 
     public void setTags(Set<TestTag> tags) {
         this.tags = Sets.newHashSet(tags);
