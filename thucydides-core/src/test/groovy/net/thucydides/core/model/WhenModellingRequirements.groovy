@@ -8,7 +8,7 @@ class WhenModellingRequirements extends Specification {
 
     def "should be able to store a custom requirement field"() {
         given: "a requirement"
-            def requirement = new Requirement()
+            def requirement = Requirement.named("some requirement").withType("story").withNarrative("narrative")
         when: "I store a custom field value"
             requirement = requirement.withCustomField("Acceptance Criteria").setTo("It should work")
         then: "I should be able to retrieve this value"
@@ -18,7 +18,7 @@ class WhenModellingRequirements extends Specification {
 
     def "should be able to store the rendered form of a custom requirement field"() {
         given: "a requirement"
-            def requirement = new Requirement()
+            def requirement = Requirement.named("some requirement").withType("story").withNarrative("narrative")
         when: "I store a custom field value"
             requirement = requirement.withCustomField("Acceptance Criteria").setTo("It should work","<p>It should work</p>")
         then: "I should be able to retrieve this value"
@@ -28,7 +28,7 @@ class WhenModellingRequirements extends Specification {
 
     def "should be able to list the custom requirement fields"() {
         given: "a requirement"
-            def requirement = new Requirement()
+            def requirement = Requirement.named("some requirement").withType("story").withNarrative("narrative")
         when: "I store some custom field values"
             requirement = requirement.withCustomField("Acceptance Criteria").setTo("It should work")
             requirement = requirement.withCustomField("Background").setTo("A long time ago...")

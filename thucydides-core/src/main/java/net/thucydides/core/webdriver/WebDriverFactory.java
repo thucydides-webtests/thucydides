@@ -199,8 +199,6 @@ public class WebDriverFactory {
         if (!phantomJSIsAvailable()) {
             String phantomJSPath = System.getProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY);
             String phantomJSPathEnvironmentProperty = System.getenv("PHANTOMJS_BINARY_PATH");
-            System.out.println("phantomJSPath = " + phantomJSPath);
-            System.out.println("phantomJSPath system environment variable = " + phantomJSPathEnvironmentProperty);
             if (StringUtils.isNotEmpty(phantomJSPath)) {
                 System.setProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, phantomJSPath);
             } else if (StringUtils.isNotEmpty(phantomJSPathEnvironmentProperty)) {

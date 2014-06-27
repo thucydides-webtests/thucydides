@@ -35,7 +35,7 @@
     <#assign manualPercentageSuccessCount = manualSuccessCount / manualTotalCount >
     <#assign manualPercentagePendingCount = manualPendingCount / manualTotalCount  >
     <#assign manualPercentageIgnoredCount = manualIgnoredCount / manualTotalCount  >
-    <#assign manualPercentageFailureOrErrorCount = manualPendingCount / manualTotalCount  >
+    <#assign manualPercentageFailureOrErrorCount = manualFailureOrErrorCount / manualTotalCount  >
 <#else>
     <#assign manualPercentageSuccessCount = 0.0 >
     <#assign manualPercentagePendingCount = 0.0 >

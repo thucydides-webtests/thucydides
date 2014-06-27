@@ -48,7 +48,6 @@ public class WhenWorkingWithPersistentServices {
 
     @Before
     public void setupTestData() {
-        System.out.println("Current user count: " + userService.listUsers().size());
         userService.addNewUser(new User("Jake", "secret", "USA"));
         userService.addNewUser(new User("Jill", "secret", "USA"));
     }

@@ -39,7 +39,7 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
             def testOutcome = new TestOutcome("someTest",ASampleNestedTestWithACapability)
         then:
             capabilityProvider.getTagsFor(testOutcome) == [TestTag.withName("Grow potatoes").andType("capability"),
-                                                           TestTag.withName("Grow new potatoes").andType("feature")]  as Set
+                                                           TestTag.withName("Grow potatoes/Grow new potatoes").andType("feature")]  as Set
     }
 
     def "Should associate a nested test case to the nearest above capacity"() {

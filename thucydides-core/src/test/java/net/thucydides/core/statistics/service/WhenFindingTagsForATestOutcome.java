@@ -272,10 +272,11 @@ public class WhenFindingTagsForATestOutcome {
     public void should_get_tags_from_story_path() {
         FileSystemRequirementsTagProvider tagProvider = new FileSystemRequirementsTagProvider();
 
-        when(testOutcome.getPath()).thenReturn("stories.grow_potatoes.grow_new_potatoes.PlantNewPotatoes");
+        when(testOutcome.getPath()).thenReturn("stories.grow_potatoes.grow_new_potatoes.PlantPotatoes");
         Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
         assertThat(tags, hasItem(TestTag.withName("Grow potatoes").andType("capability")));
-        assertThat(tags, hasItem(TestTag.withName("Grow new potatoes").andType("feature")));
+        assertThat(tags, hasItem(TestTag.withName("Grow potatoes/Grow new potatoes").andType("feature")));
+        assertThat(tags, hasItem(TestTag.withName("Grow new potatoes/Plant potatoes").andType("story")));
     }
 
     @Test
@@ -285,7 +286,7 @@ public class WhenFindingTagsForATestOutcome {
         when(testOutcome.getPath()).thenReturn("stories/grow_potatoes/grow_new_potatoes/PlantNewPotatoes");
         Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
         assertThat(tags, hasItem(TestTag.withName("Grow potatoes").andType("capability")));
-        assertThat(tags, hasItem(TestTag.withName("Grow new potatoes").andType("feature")));
+        assertThat(tags, hasItem(TestTag.withName("Grow potatoes/Grow new potatoes").andType("feature")));
     }
 
     @Test
@@ -295,8 +296,8 @@ public class WhenFindingTagsForATestOutcome {
         when(testOutcome.getPath()).thenReturn("stories/grow_potatoes/grow_new_potatoes/PlantNewPotatoes.story");
         Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
         assertThat(tags, hasItem(TestTag.withName("Grow potatoes").andType("capability")));
-        assertThat(tags, hasItem(TestTag.withName("Grow new potatoes").andType("feature")));
-        assertThat(tags, hasItem(TestTag.withName("Plant new potatoes").andType("story")));
+        assertThat(tags, hasItem(TestTag.withName("Grow potatoes/Grow new potatoes").andType("feature")));
+        assertThat(tags, hasItem(TestTag.withName("Grow new potatoes/Plant new potatoes").andType("story")));
     }
 
     @Test
@@ -306,7 +307,7 @@ public class WhenFindingTagsForATestOutcome {
         when(testOutcome.getPath()).thenReturn("stories\\grow_potatoes\\grow_new_potatoes\\PlantNewPotatoes");
         Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
         assertThat(tags, hasItem(TestTag.withName("Grow potatoes").andType("capability")));
-        assertThat(tags, hasItem(TestTag.withName("Grow new potatoes").andType("feature")));
+        assertThat(tags, hasItem(TestTag.withName("Grow potatoes/Grow new potatoes").andType("feature")));
     }
 
     @Test

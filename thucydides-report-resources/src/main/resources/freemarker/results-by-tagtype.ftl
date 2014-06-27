@@ -102,7 +102,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <#foreach tagName in testOutcomes.getTagsOfType(tagType)>
+                                <#foreach tagName in testOutcomes.getMostSpecificTagsOfType(tagType)>
+                                    <tr><td><h3>${tagName}</h3></td></tr>
                                     <#assign tagTitle = inflection.of(tagName).asATitle() >
                                     <#assign outcomesForTag = testOutcomes.withTag(tagName) >
                                     <#assign tagReport = reportName.forTag(tagName) >

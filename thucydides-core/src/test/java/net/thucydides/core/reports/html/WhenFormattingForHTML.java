@@ -18,6 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class WhenFormattingForHTML {
@@ -94,6 +95,7 @@ public class WhenFormattingForHTML {
 
     @Test
     public void should_allow_overlapping_issue_number() {
+        IssueTracking issueTracking = mock(IssueTracking.class);
         when(issueTracking.getShortenedIssueTrackerUrl()).thenReturn("http://my.issue.tracker/MYPROJECT/browse/{0}");
         Formatter formatter = new Formatter(issueTracking);
 

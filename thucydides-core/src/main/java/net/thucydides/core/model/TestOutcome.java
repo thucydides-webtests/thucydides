@@ -1155,7 +1155,8 @@ public class TestOutcome {
         Set<TestTag> tags  = Sets.newHashSet();
         for (TagProvider tagProvider : tagProviders) {
             try {
-                addTagsWithOverride(tags, tagProvider.getTagsFor(this));
+                //addTagsWithOverride(tags, tagProvider.getTagsFor(this));
+                tags.addAll(tagProvider.getTagsFor(this));
             } catch(Throwable theTagProviderFailedBueThereIsntMuchWeCanDoAboutIt) {
                 logger.error("Tag provider " + tagProvider + " failure",
                         theTagProviderFailedBueThereIsntMuchWeCanDoAboutIt);
@@ -1168,21 +1169,25 @@ public class TestOutcome {
         if (newTags != null) {
             for (TestTag tag : newTags) {
                 if (isAStory(tag)) {
-                    removeAnyExistingStoryTags(tags, tag.getName());
+                    removeAnyLessSpecificMatchingStoryTags(tags, tag.getName());
                 }
                 tags.add(tag);
             }
         }
     }
 
-    private void removeAnyExistingStoryTags(Set<TestTag> tags, String storyName) {
+    private void removeAnyLessSpecificMatchingStoryTags(Set<TestTag> tags, String storyName) {
         Set<TestTag> duplicatedTags = Sets.newHashSet();
         for(TestTag tag : tags) {
-            if (tag.getType().equalsIgnoreCase("story") && (tag.getName().equalsIgnoreCase(storyName))) {
+            if (tag.getType().equalsIgnoreCase("story") && (isLessSpecific(tag, storyName))) {
                 duplicatedTags.add(tag);
             }
         }
         tags.removeAll(duplicatedTags);
+    }
+
+    private boolean isLessSpecific(TestTag tag, String storyName) {
+        return storyName.toLowerCase().endsWith("/" + tag.getName().toLowerCase());
     }
 
     private boolean isAStory(TestTag tag) {

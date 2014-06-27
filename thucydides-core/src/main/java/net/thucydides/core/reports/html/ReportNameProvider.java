@@ -81,8 +81,8 @@ public class ReportNameProvider {
         }
     }
 
-    public String forRequirement(Requirement parentRequirement) {
-        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "requirement_" + parentRequirement.getName());
+    public String forRequirement(Requirement requirement) {
+        return reportNamer.getNormalizedTestNameFor(prefixUsing(context) + "requirement_" + requirement.qualifiedName());
     }
 
     public String forRelease(Release release) {

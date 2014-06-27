@@ -1,6 +1,7 @@
 package net.thucydides.core.requirements.model;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -13,6 +14,8 @@ public class Narrative {
     private String type;
 
     public Narrative(Optional<String> title, Optional<String> cardNumber, List<String> versionNumbers, String type, String text) {
+        Preconditions.checkNotNull(type);
+        Preconditions.checkNotNull(text);
         this.title = title;
         this.cardNumber = cardNumber;
         this.versionNumbers = versionNumbers;

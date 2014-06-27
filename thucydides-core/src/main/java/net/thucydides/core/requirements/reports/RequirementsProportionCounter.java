@@ -24,7 +24,7 @@ public class RequirementsProportionCounter {
 
         public Double withResult(TestResult expectedTestResult) {
             int testCount = testOutcomes.count(testType).withResult(expectedTestResult);
-            return ((double) testCount) / ((double) estimatedTotalTests);
+            return (estimatedTotalTests == 0) ? 0.0 : ((double) testCount) / ((double) estimatedTotalTests);
         }
 
         public Double withIndeterminateResult() {
@@ -32,7 +32,7 @@ public class RequirementsProportionCounter {
             int failingStepCount =  testOutcomes.count(testType).withResult(TestResult.FAILURE);
             int errorStepCount =  testOutcomes.count(testType).withResult(TestResult.ERROR);
             int total = estimatedTotalTests;
-            return ((total - passingStepCount - failingStepCount - errorStepCount) / (double) total);
+            return (total == 0) ? 0.0 : ((total - passingStepCount - failingStepCount - errorStepCount) / (double) total);
         }
 
     }

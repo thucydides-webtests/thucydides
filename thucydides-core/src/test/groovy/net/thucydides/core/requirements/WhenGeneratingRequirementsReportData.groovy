@@ -196,18 +196,18 @@ class WhenGeneratingRequirementsReportData extends Specification {
     def "functional coverage should cater for requirements with no tests at the requirement outcome level"() {
         given: "there are some test results"
             def noTestOutcomes = TestOutcomes.of(someVariedTestResults())
-        and: "we have configured 5 tests per unimplemented requirement"
+        and: "we have configured 2 tests per unimplemented requirement"
             def environmentVariables = new MockEnvironmentVariables()
-            environmentVariables.setProperty("thucydides.estimated.tests.per.requirement", "3")
+            environmentVariables.setProperty("thucydides.estimated.tests.per.requirement", "2")
         and: "we read the requirements from the directory structure"
             RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking, environmentVariables)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the proportionOf of failing, passing and total steps should include estimations for requirements with no tests"
-            outcomes.requirementOutcomes[1].percent.withResult(TestResult.SUCCESS) == 0.25
+            outcomes.requirementOutcomes[1].percent.withResult(TestResult.SUCCESS) == 0.2
             outcomes.requirementOutcomes[1].percent.withResult(TestResult.FAILURE)  == 0.0
             outcomes.requirementOutcomes[1].percent.withResult(TestResult.ERROR)  == 0.0
-            outcomes.requirementOutcomes[1].percent.withIndeterminateResult()  == 0.75
+            outcomes.requirementOutcomes[1].percent.withIndeterminateResult()  == 0.8
         and: "the number of requirements should be available"
             outcomes.requirementOutcomes[1].flattenedRequirementCount == 5
         and: "the number of implemented tests should be available"
@@ -217,14 +217,14 @@ class WhenGeneratingRequirementsReportData extends Specification {
             outcomes.requirementOutcomes[1].total.withResult(TestResult.ERROR) == 0
             outcomes.requirementOutcomes[1].total.withIndeterminateResult() == 0
         and: "the number of requirements without tests should be available"
-            outcomes.requirementOutcomes[1].requirementsWithoutTestsCount == 2
+            outcomes.requirementOutcomes[1].requirementsWithoutTestsCount == 4
         and: "the estimated unimplemented test count should be available"
-            outcomes.requirementOutcomes[1].estimatedUnimplementedTests == 6
+            outcomes.requirementOutcomes[1].estimatedUnimplementedTests == 8
         and: "the results should be available as formatted values"
-            outcomes.requirementOutcomes[1].formattedPercentage.withResult(TestResult.SUCCESS) == "25%"
+            outcomes.requirementOutcomes[1].formattedPercentage.withResult(TestResult.SUCCESS) == "20%"
             outcomes.requirementOutcomes[1].formattedPercentage.withResult(TestResult.FAILURE) == "0%"
             outcomes.requirementOutcomes[1].formattedPercentage.withResult(TestResult.ERROR) == "0%"
-            outcomes.requirementOutcomes[1].formattedPercentage.withIndeterminateResult() == "75%"
+            outcomes.requirementOutcomes[1].formattedPercentage.withIndeterminateResult() == "80%"
     }
 
     def "should get test outcomes for a given release"() {

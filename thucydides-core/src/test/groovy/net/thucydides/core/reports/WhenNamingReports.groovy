@@ -102,7 +102,7 @@ class WhenNamingReports extends Specification {
         given:
             def reportNameProvider = new ReportNameProvider()
             def requirement = Mock(Requirement)
-            requirement.getName() >> "foo"
+            requirement.qualifiedName() >> "foo"
         when:
             def reportName = reportNameProvider.forRequirement(requirement)
         then:
@@ -114,7 +114,7 @@ class WhenNamingReports extends Specification {
         given:
             def reportNameProvider = new ReportNameProvider("sometest")
             def requirement = Mock(Requirement)
-            requirement.getName() >> "foo"
+            requirement.qualifiedName() >> "foo"
         when:
             def reportName = reportNameProvider.forRequirement(requirement)
         then:

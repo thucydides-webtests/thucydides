@@ -14,6 +14,7 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.cert.ocsp.Req;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -32,6 +33,7 @@ import java.util.Set;
 import static ch.lambdaj.Lambda.convert;
 import static net.thucydides.core.requirements.RequirementsPath.pathElements;
 import static net.thucydides.core.requirements.RequirementsPath.stripRootFromPath;
+import static net.thucydides.core.util.NameConverter.humanize;
 
 //import javax.persistence.Transient;
 
@@ -122,8 +124,25 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
                 requirements = NO_REQUIREMENTS;
                 throw new IllegalArgumentException("Could not load requirements from '" + rootDirectoryPath + "'", e);
             }
+            if (level == 0) {
+                requirements = addParentsTo(requirements);
+            }
         }
         return requirements;
+    }
+
+    private List<Requirement> addParentsTo(List<Requirement> requirements) {
+        return addParentsTo(requirements, null);
+    }
+
+    private List<Requirement> addParentsTo(List<Requirement> requirements, String parent) {
+        List<Requirement> augmentedRequirements = Lists.newArrayList();
+        for(Requirement requirement : requirements) {
+            List<Requirement> children = requirement.hasChildren()
+                    ? addParentsTo(requirement.getChildren(),requirement.getName()) : NO_REQUIREMENTS;
+            augmentedRequirements.add(requirement.withParent(parent).withChildren(children));
+        }
+        return augmentedRequirements;
     }
 
     private Optional<String> getRootDirectoryPath() throws IOException {
@@ -195,7 +214,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     }
 
     public Set<TestTag> getTagsFor(final TestOutcome testOutcome) {
-        Set<TestTag> tags = new HashSet<TestTag>();
+        Set<TestTag> tags = new HashSet<>();
         if (testOutcome.getPath() != null) {
             List<String> storyPathElements = stripRootFrom(pathElements(stripRootPathFrom(testOutcome.getPath())));
             addStoryTagIfPresent(tags, storyPathElements);
@@ -227,11 +246,18 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     private Optional<TestTag> storyTagFrom(List<String> storyPathElements) {
         if (!storyPathElements.isEmpty() && (last(storyPathElements).equals("story"))) {
             String storyName = Lists.reverse(storyPathElements).get(1);
-            TestTag storyTag = TestTag.withName(NameConverter.humanize(storyName)).andType("story");
+            String storyParent = parentElement(storyPathElements);
+            String qualifiedName = storyParent == null ?
+                    humanize(storyName) : humanize(storyParent).trim() + "/" + humanize(storyName);
+            TestTag storyTag = TestTag.withName(qualifiedName).andType("story");
             return Optional.of(storyTag);
         } else {
             return Optional.absent();
         }
+    }
+
+    private String parentElement(List<String> storyPathElements) {
+        return storyPathElements.size() > 2 ? Lists.reverse(storyPathElements).get(2) : null;
     }
 
     private String last(List<String> list) {
@@ -243,7 +269,6 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     }
 
     public Optional<Requirement> getParentRequirementOf(final TestOutcome testOutcome) {
-
         if (testOutcome.getPath() != null) {
             List<String> storyPathElements = stripStorySuffixFrom(stripRootFrom(pathElements(stripRootPathFrom(testOutcome.getPath()))));
             return lastRequirementFrom(storyPathElements);
@@ -326,7 +351,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
         } else {
             Optional<Requirement> matchingRequirement = findMatchingRequirementIn(next(storyPathElements), requirements);
             if (matchingRequirement.isPresent()) {
-                TestTag thisTag = TestTag.withName(matchingRequirement.get().getName()).andType(matchingRequirement.get().getType());
+                TestTag thisTag = matchingRequirement.get().asTag();
                 List<TestTag> remainingTags = getMatchingCapabilities(matchingRequirement.get().getChildren(), tail(storyPathElements));
                 return concat(thisTag, remainingTags);
             } else {

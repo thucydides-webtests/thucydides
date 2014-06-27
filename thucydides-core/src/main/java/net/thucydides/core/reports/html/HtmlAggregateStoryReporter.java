@@ -1,5 +1,6 @@
 package net.thucydides.core.reports.html;
 
+import com.beust.jcommander.internal.Lists;
 import net.thucydides.core.ThucydidesSystemProperties;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
@@ -212,31 +213,43 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         csvReporter.generateReportFor(testOutcomes, reportName);
     }
 
+    List<Requirement> reportTally = Lists.newArrayList();
+
     public void generateRequirementsReportsFor(RequirementsOutcomes requirementsOutcomes) throws IOException {
 
         htmlRequirementsReporter.setOutputDirectory(getOutputDirectory());
         htmlRequirementsReporter.generateReportFor(requirementsOutcomes);
 
-        htmlProgressReporter.setOutputDirectory(getOutputDirectory());
-        htmlProgressReporter.generateReportFor(requirementsOutcomes);
+//        htmlProgressReporter.setOutputDirectory(getOutputDirectory());
+//        htmlProgressReporter.generateReportFor(requirementsOutcomes);
 
+        clearReportTally();
         generateRequirementsReportsForChildRequirements(requirementsOutcomes);
+    }
+
+    private void clearReportTally() {
+        reportTally.clear();
     }
 
     private void generateRequirementsReportsForChildRequirements(RequirementsOutcomes requirementsOutcomes) throws IOException {
         List<RequirementOutcome> requirementOutcomes = requirementsOutcomes.getRequirementOutcomes();
         for (RequirementOutcome outcome : requirementOutcomes) {
             Requirement requirement = outcome.getRequirement();
-            TestOutcomes testOutcomesForThisRequirement = outcome.getTestOutcomes().withTag(requirement.getName());
-            RequirementsOutcomes requirementOutcomesForThisRequirement = requirementsFactory.buildRequirementsOutcomesFrom(requirement, testOutcomesForThisRequirement);
-            generateNestedRequirementsReportsFor(requirement, requirementOutcomesForThisRequirement);
+            if (!reportTally.contains(requirement)) {
+                TestOutcomes testOutcomesForThisRequirement = outcome.getTestOutcomes().withTag(requirement.asTag());
+                RequirementsOutcomes requirementOutcomesForThisRequirement = requirementsFactory.buildRequirementsOutcomesFrom(requirement, testOutcomesForThisRequirement);
+                generateNestedRequirementsReportsFor(requirement, requirementOutcomesForThisRequirement);
+            }
         }
     }
 
     private void generateNestedRequirementsReportsFor(Requirement parentRequirement, RequirementsOutcomes requirementsOutcomes) throws IOException {
         htmlRequirementsReporter.setOutputDirectory(getOutputDirectory());
         String reportName = reportNameProvider.forRequirement(parentRequirement);
-        htmlRequirementsReporter.generateReportFor(requirementsOutcomes, requirementsOutcomes.getTestOutcomes(), reportName);
+        if (!reportTally.contains(parentRequirement)) {
+            reportTally.add(parentRequirement);
+            htmlRequirementsReporter.generateReportFor(requirementsOutcomes, requirementsOutcomes.getTestOutcomes(), reportName);
+        }
 
         generateRequirementsReportsForChildRequirements(requirementsOutcomes);
 
@@ -418,6 +431,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
 
     private void generateTagTypeReport(TestOutcomes testOutcomes, ReportNameProvider reportName, String tagType) throws IOException {
+
         TestOutcomes testOutcomesForTagType = testOutcomes.withTagType(tagType);
 
         Map<String, Object> context = buildContext(testOutcomesForTagType, reportName);

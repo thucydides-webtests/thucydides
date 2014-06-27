@@ -199,11 +199,45 @@ public class TestOutcomes {
         return sort(ImmutableList.copyOf(tags), on(String.class));
     }
 
+
+    /**
+     * @return The list of all the tags associated with a given tag type.
+     */
+    public List<String> getMostSpecificTagsOfType(String tagType) {
+        Set<String> tags = Sets.newHashSet();
+        for (TestOutcome outcome : outcomes) {
+            List<String> mostSpecificOutcomeTags = removeGeneralTagsFrom(tagsOfType(tagType).in(outcome));
+            tags.addAll(mostSpecificOutcomeTags);
+        }
+        return sort(ImmutableList.copyOf(tags), on(String.class));
+    }
+
+    private List<String> removeGeneralTagsFrom(List<String> tags) {
+        List<String> specificTags = Lists.newArrayList();
+
+        for(String tag : tags) {
+            if (!moreSpecificTagExists(tag, tags)) {
+                specificTags.add(tag);
+            }
+        }
+        return specificTags;
+    }
+
+    private boolean moreSpecificTagExists(String generalTag, List<String> tags) {
+        for(String tag : tags) {
+            if (tag.endsWith("/" + generalTag)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public List<String> getTagsOfTypeExcluding(String tagType, String excludedTags) {
         Set<String> tags = Sets.newHashSet();
 
         for (TestOutcome outcome : outcomes) {
-            List<String> allTagsOfType = tagsOfType(tagType).in(outcome);
+            List<String> allTagsOfType = removeGeneralTagsFrom(tagsOfType(tagType).in(outcome));
             allTagsOfType.remove(excludedTags.toLowerCase());
             tags.addAll(allTagsOfType);
         }
@@ -219,7 +253,7 @@ public class TestOutcomes {
     }
 
     public TestOutcomes forRequirement(Requirement requirement) {
-        return withTag(requirement.getName());
+        return withTag(requirement.asTag());
     }
 
     public boolean containsTag(TestTag testTag) {
