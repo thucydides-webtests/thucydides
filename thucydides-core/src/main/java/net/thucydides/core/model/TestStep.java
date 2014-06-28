@@ -121,7 +121,9 @@ public class TestStep {
         return newTestStep;
     }
 
-    protected TestStep copyOfThisTestStep() {
+
+    @Override
+    public TestStep clone() {
         TestStep newTestStep = new TestStep();
         newTestStep.description = description;
         newTestStep.startTime = startTime;
@@ -132,6 +134,10 @@ public class TestStep {
         newTestStep.number = number;
         newTestStep.children = Lists.newArrayList(children);
         return newTestStep;
+    }
+
+    protected TestStep copyOfThisTestStep() {
+        return this.clone();
     }
 
 
