@@ -13,6 +13,7 @@ import net.thucydides.core.requirements.model.Requirement
 import net.thucydides.core.requirements.reports.RequirementsOutcomes
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory
 import org.joda.time.DateTime
+import org.junit.Ignore
 import spock.lang.Specification
 import net.thucydides.core.requirements.reportpages.RequirementsReport
 import net.thucydides.core.requirements.reportpages.ProgressReport
@@ -127,6 +128,7 @@ class WhenGeneratingRequirementsReports extends Specification {
             // TODO
     }
 
+    @Ignore
     def "Should display a progress graph showing the number of specified requirements"() {
         given: "there are some associated tests"
             issueTracking.getIssueTrackerUrl() >> "http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}"

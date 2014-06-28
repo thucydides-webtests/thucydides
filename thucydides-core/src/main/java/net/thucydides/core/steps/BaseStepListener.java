@@ -122,6 +122,10 @@ public class BaseStepListener implements StepListener, StepPublisher {
         return eventBus;
     }
 
+    public Optional<TestStep> cloneCurrentStep() {
+        return (Optional<TestStep>) ((currentStepExists()) ? getCurrentStep().clone() : Optional.absent());
+    }
+
     protected enum ScreenshotType {
         OPTIONAL_SCREENSHOT,
         MANDATORY_SCREENSHOT

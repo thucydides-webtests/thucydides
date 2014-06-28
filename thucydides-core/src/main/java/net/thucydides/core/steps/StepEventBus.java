@@ -1,14 +1,12 @@
 package net.thucydides.core.steps;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.model.DataTable;
-import net.thucydides.core.model.Story;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestTag;
+import net.thucydides.core.model.*;
 import net.thucydides.core.screenshots.ScreenshotProcessor;
 import net.thucydides.core.webdriver.ThucydidesWebDriverSupport;
 import org.slf4j.Logger;
@@ -495,4 +493,6 @@ public class StepEventBus {
     public String getAssumptionViolatedMessage() {
         return assumptionViolatedMessage;
     }
+
+    public Optional<TestStep> getCurrentStep() {return getBaseStepListener().cloneCurrentStep(); }
 }

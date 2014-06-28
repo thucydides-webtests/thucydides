@@ -166,31 +166,31 @@ class WhenGeneratingRequirementsReportData extends Specification {
             def noTestOutcomes = TestOutcomes.of(someVariedTestResults())
         and: "we have configured 5 tests per unimplemented requirement"
             def environmentVariables = new MockEnvironmentVariables()
-            environmentVariables.setProperty("thucydides.estimated.tests.per.requirement", "5")
+            environmentVariables.setProperty("thucydides.estimated.tests.per.requirement", "2")
         and: "we read the requirements from the directory structure"
             RequirmentsOutcomeFactory requirmentsOutcomeFactory = new RequirmentsOutcomeFactory(requirementsProviders,issueTracking, environmentVariables)
         when: "we generate the capability outcomes"
             RequirementsOutcomes outcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(noTestOutcomes)
         then: "the proportionOf of failing, passing and total steps should include estimations for requirements with no tests"
-            outcomes.proportion.withResult(TestResult.SUCCESS) == 0.075
-            outcomes.proportion.withResult(TestResult.FAILURE) == 0.025
-            outcomes.proportion.withIndeterminateResult() == 0.9
+            outcomes.proportion.withResult(TestResult.SUCCESS) == 0.15
+            outcomes.proportion.withResult(TestResult.FAILURE) == 0.05
+            outcomes.proportion.withIndeterminateResult() == 0.8
         and: "the number of requirements should be available"
             outcomes.flattenedRequirementCount == 19
-            outcomes.requirementsWithoutTestsCount == 14
+            outcomes.requirementsWithoutTestsCount == 15
         and: "the number of tests should be available"
             outcomes.total.total == 10
             outcomes.total.withResult(TestResult.SUCCESS) == 6
             outcomes.total.withResult(TestResult.FAILURE) == 2
             outcomes.total.withResult(TestResult.PENDING) == 1
-            outcomes.estimatedUnimplementedTests == 70
+            outcomes.estimatedUnimplementedTests == 30
         and: "the results should be available as formatted values"
-            outcomes.formattedPercentage.withResult(TestResult.SUCCESS) == "7.5%"
-            outcomes.formattedPercentage.withResult(TestResult.FAILURE) == "2.5%"
-            outcomes.formattedPercentage.withIndeterminateResult() == "90%"
+            outcomes.formattedPercentage.withResult(TestResult.SUCCESS) == "15%"
+            outcomes.formattedPercentage.withResult(TestResult.FAILURE) == "5%"
+            outcomes.formattedPercentage.withIndeterminateResult() == "80%"
         and: "we can also display the test results by type"
-            outcomes.getFormattedPercentage(TestType.ANY).withResult(TestResult.SUCCESS) == "7.5%"
-            outcomes.getFormattedPercentage("ANY").withResult(TestResult.SUCCESS) == "7.5%"
+            outcomes.getFormattedPercentage(TestType.ANY).withResult(TestResult.SUCCESS) == "15%"
+            outcomes.getFormattedPercentage("ANY").withResult(TestResult.SUCCESS) == "15%"
     }
 
     def "functional coverage should cater for requirements with no tests at the requirement outcome level"() {

@@ -2,8 +2,11 @@ package net.thucydides.core.reflection;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import net.thucydides.core.steps.StepEventBus;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -93,7 +96,8 @@ public class ClassFinder {
             List<String> dirs = Lists.newArrayList();
             while (resources.hasMoreElements()) {
                 URL resource = (URL) resources.nextElement();
-                dirs.add(resource.getFile());
+                String resourcePath = resource.getFile().replaceAll("%20"," ");
+                dirs.add(resourcePath);
             }
             Set<String> classes = Sets.newTreeSet();
             for (String directory : dirs) {

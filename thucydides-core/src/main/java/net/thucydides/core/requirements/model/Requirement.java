@@ -230,7 +230,17 @@ public class Requirement implements Comparable {
     }
 
     public String qualifiedName() {
-        return (getParent() != null) ? getParent() + "/" + getName() : getName();
+        return (qualifier() != null) ? qualifier() + "/" + getName() : getName();
+    }
+
+    public String qualifier() {
+        if (getCardNumber() != null) {
+            return getCardNumber();
+        } else if (getParent() != null) {
+            return getParent();
+        } else {
+            return null;
+        }
     }
 
     public class CustomFieldSetter {
