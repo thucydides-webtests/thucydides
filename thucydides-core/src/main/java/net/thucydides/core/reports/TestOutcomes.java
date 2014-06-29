@@ -191,8 +191,8 @@ public class TestOutcomes {
     /**
      * @return The list of all the tags associated with a given tag type.
      */
-    public List<String> getTagsOfType(String tagType) {
-        Set<String> tags = Sets.newHashSet();
+    public List<TestTag> getTagsOfType(String tagType) {
+        Set<TestTag> tags = Sets.newHashSet();
         for (TestOutcome outcome : outcomes) {
             tags.addAll(tagsOfType(tagType).in(outcome));
         }
@@ -203,19 +203,19 @@ public class TestOutcomes {
     /**
      * @return The list of all the tags associated with a given tag type.
      */
-    public List<String> getMostSpecificTagsOfType(String tagType) {
-        Set<String> tags = Sets.newHashSet();
+    public List<TestTag> getMostSpecificTagsOfType(String tagType) {
+        Set<TestTag> tags = Sets.newHashSet();
         for (TestOutcome outcome : outcomes) {
-            List<String> mostSpecificOutcomeTags = removeGeneralTagsFrom(tagsOfType(tagType).in(outcome));
+            List<TestTag> mostSpecificOutcomeTags = removeGeneralTagsFrom(tagsOfType(tagType).in(outcome));
             tags.addAll(mostSpecificOutcomeTags);
         }
         return sort(ImmutableList.copyOf(tags), on(String.class));
     }
 
-    private List<String> removeGeneralTagsFrom(List<String> tags) {
-        List<String> specificTags = Lists.newArrayList();
+    private List<TestTag> removeGeneralTagsFrom(List<TestTag> tags) {
+        List<TestTag> specificTags = Lists.newArrayList();
 
-        for(String tag : tags) {
+        for(TestTag tag : tags) {
             if (!moreSpecificTagExists(tag, tags)) {
                 specificTags.add(tag);
             }
@@ -223,9 +223,9 @@ public class TestOutcomes {
         return specificTags;
     }
 
-    private boolean moreSpecificTagExists(String generalTag, List<String> tags) {
-        for(String tag : tags) {
-            if (tag.endsWith("/" + generalTag)) {
+    private boolean moreSpecificTagExists(TestTag generalTag, List<TestTag> tags) {
+        for(TestTag tag : tags) {
+            if (tag.getName().endsWith("/" + generalTag.getName())) {
                 return true;
             }
         }
@@ -233,15 +233,25 @@ public class TestOutcomes {
     }
 
 
-    public List<String> getTagsOfTypeExcluding(String tagType, String excludedTags) {
-        Set<String> tags = Sets.newHashSet();
+    public List<TestTag> getTagsOfTypeExcluding(String tagType, String excludedTag) {
+        Set<TestTag> tags = Sets.newHashSet();
 
         for (TestOutcome outcome : outcomes) {
-            List<String> allTagsOfType = removeGeneralTagsFrom(tagsOfType(tagType).in(outcome));
-            allTagsOfType.remove(excludedTags.toLowerCase());
+            List<TestTag> allTagsOfType = removeGeneralTagsFrom(tagsOfType(tagType).in(outcome));
+            allTagsOfType = removeExcluded(allTagsOfType, excludedTag);
             tags.addAll(allTagsOfType);
         }
         return sort(ImmutableList.copyOf(tags), on(String.class));
+    }
+
+    private List<TestTag> removeExcluded(List<TestTag> allTagsOfType, String excludedTag) {
+        List<TestTag> tags = Lists.newArrayList();
+        for (TestTag tag: allTagsOfType) {
+            if (!tag.getName().equalsIgnoreCase(excludedTag)) {
+                tags.add(tag);
+            }
+        }
+        return tags;
     }
 
     private TagFinder tagsOfType(String tagType) {
@@ -274,6 +284,20 @@ public class TestOutcomes {
         return TestOutcomes.of(filteredOutcomes);
     }
 
+    public TestOutcomes withRequirementsTags() {
+        List<TestOutcome> testOutcomesWithRequirements = Lists.newArrayList();
+        for (TestOutcome outcome : outcomes) {
+            Set<TestTag> outcomeTags = Sets.newHashSet(outcome.getTags());
+            List<Requirement> parentRequirements = requirementsService.getAncestorRequirementsFor(outcome);
+            for(Requirement requirement : parentRequirements) {
+                outcomeTags.add(requirement.asTag());
+            }
+            testOutcomesWithRequirements.add(outcome.withTags(outcomeTags));
+        }
+
+        return new TestOutcomes(testOutcomesWithRequirements, estimatedAverageStepCount, label, rootOutcomes.orNull(), environmentVariables);
+    }
+
     private class TagFinder {
         private final String tagType;
 
@@ -281,11 +305,11 @@ public class TestOutcomes {
             this.tagType = tagType;
         }
 
-        List<String> in(TestOutcome testOutcome) {
-            List<String> matchingTags = Lists.newArrayList();
+        List<TestTag> in(TestOutcome testOutcome) {
+            List<TestTag> matchingTags = Lists.newArrayList();
             for (TestTag tag : testOutcome.getTags()) {
                 if (tag.getType().compareToIgnoreCase(tagType) == 0) {
-                    matchingTags.add(tag.getName().toLowerCase());
+                    matchingTags.add(tag);
                 }
             }
             return matchingTags;

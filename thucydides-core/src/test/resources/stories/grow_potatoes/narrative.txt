@@ -1,8 +1,5 @@
 Grow lots of potatoes
 
-Meta:
-@Issue #CAP-123
-
 Narrative:
 In order to let my country eat chips
 As a farmer

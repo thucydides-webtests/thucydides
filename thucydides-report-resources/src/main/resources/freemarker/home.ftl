@@ -469,8 +469,8 @@
     <#foreach tagType in tagTypes>
         <#assign tagTypeTitle = inflection.of(tagType).inPluralForm().asATitle() >
         <#assign outcomesForType = testOutcomes.withTagType(tagType) >
-        <#assign tagNames = testOutcomes.getTagsOfTypeExcluding(tagType, testOutcomes.label) >
-        <#if tagNames?has_content >
+        <#assign tags = testOutcomes.getTagsOfTypeExcluding(tagType, testOutcomes.label) >
+        <#if tags?has_content >
         <table class="test-summary-table">
             <tr>
                 <td colspan="3">
@@ -478,10 +478,10 @@
                     </div>
                 </td>
             </tr>
-            <#foreach tagName in tagNames>
-                <#assign tagTitle = inflection.of(tagName).asATitle() >
-                <#assign tagReport = absoluteReportName.forTag(tagName) >
-                <#assign outcomesForTag = testOutcomes.withTag(tagName) >  <!-- outcomesForType.withTag(tagName)-->
+            <#foreach tag in tags>
+                <#assign tagTitle = inflection.of(tag.shortName).asATitle() >
+                <#assign tagReport = absoluteReportName.forTag(tag) >
+                <#assign outcomesForTag = testOutcomes.withTag(tag) >  <!-- outcomesForType.withTag(tagName)-->
                 <#if outcomesForTag.result == "FAILURE">
                     <#assign outcome_icon = "fail.png">
                     <#assign outcome_text = "failure-color">
@@ -501,7 +501,7 @@
                 <tr>
                     <td class="bluetext" class="tag-title">
                         <span class="${outcomesForTag.result}-text">
-                            <#if testOutcomes.label == tagName>
+                            <#if testOutcomes.label == tag.name>
                                 <a href="${tagReport}" class="currentTag">${tagTitle}</a>
                             <#else>
                                 <a href="${tagReport}">${tagTitle}</a>

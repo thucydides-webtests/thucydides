@@ -72,9 +72,9 @@ class WhenProcessingTestOutcomes extends Specification {
         given:
         TestOutcomes testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes"));
         when:
-        def tags = testOutcomes.getTagsOfType 'story'
+        def tags = testOutcomes.getTagsOfType('story')
         then:
-        tags == ["a story", "another different story", "another story"]
+        tags.collect({it.shortName}) as Set == ["another story", "a story", "another different story"] as Set
     }
 
     def "should list all the tags of a given type for the test outcomes except for specified tags"() {
@@ -83,7 +83,7 @@ class WhenProcessingTestOutcomes extends Specification {
         when:
         def tags = testOutcomes.getTagsOfTypeExcluding 'story', 'a story'
         then:
-        tags == ["another different story", "another story"]
+        tags.collect({it.shortName}) as Set  == ["another different story", "another story"] as Set
     }
 
     def "should list all the tags of a given type for the test outcomes except for specified tags for different cases"() {
@@ -92,7 +92,7 @@ class WhenProcessingTestOutcomes extends Specification {
         when:
         def tags = testOutcomes.getTagsOfTypeExcluding 'story', 'A Story'
         then:
-        tags == ["another different story", "another story"]
+        tags.collect({it.shortName}) as Set  == ["another different story", "another story"] as Set
     }
 
     def "should list all the tags of a single type for the test outcomes"() {
@@ -101,7 +101,7 @@ class WhenProcessingTestOutcomes extends Specification {
         when:
             def tags = testOutcomes.getTagsOfType 'feature'
         then:
-            tags == ["a feature"]
+            tags.collect({it.shortName}) == ["A Feature"]
     }
 
     def "should list all the tags for a given type"() {

@@ -339,7 +339,7 @@ public class PackageAnnotationBasedTagProvider extends AbstractRequirementsTagPr
     public Optional<Requirement> getRequirementFor(TestTag testTag) {
         Optional<Requirement> result = Optional.absent();
         for (Requirement requirement : getRequirements()) {
-            if (requirement.asTag().equals(testTag)) {
+            if (requirement.matchesTag(testTag)) {
                 return Optional.of(requirement);
             }
         }

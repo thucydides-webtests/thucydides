@@ -133,29 +133,6 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
     }
 
     @Test
-    public void should_generate_an_aggregate_report_for_each_tag() throws Exception {
-        assertThat(new File(outputDirectory, digest("tag_a_feature") + ".html"), exists());
-        assertThat(new File(outputDirectory, digest("tag_a_story") + ".html"), exists());
-        assertThat(new File(outputDirectory, digest("tag_another_story") + ".html"), exists());
-        assertThat(new File(outputDirectory, digest("tag_another_different_story") + ".html"), exists());
-        assertThat(new File(outputDirectory, digest("tag_an_epic") + ".html"), exists());
-    }
-
-    @Test
-    public void should_generate_an_aggregate_report_for_tags_in_each_tag_type() throws Exception {
-        assertThat(new File(outputDirectory, digest("context_a_feature_tag_a_story") + ".html"), exists());
-        assertThat(new File(outputDirectory, digest("context_a_feature_tag_another_story") + ".html"), exists());
-        assertThat(new File(outputDirectory, digest("context_an_epic_tag_another_different_story") + ".html"), exists());
-    }
-
-    @Test
-    public void should_generate_a_summary_report_for_each_tag_type() throws Exception {
-        assertThat(new File(outputDirectory, digest("tagtype_feature") +".html"), exists());
-        assertThat(new File(outputDirectory, digest("tagtype_story") + ".html"), exists());
-        assertThat(new File(outputDirectory, digest("tagtype_epic") + ".html"), exists());
-    }
-
-    @Test
     public void aggregate_dashboard_should_contain_a_list_of_all_tag_types() throws Exception {
 
         File report = new File(outputDirectory,"index.html");

@@ -73,8 +73,6 @@ class WhenGeneratingRequirementsReports extends Specification {
             report.title == 'Requirements'
         and: "the table title should reflect the requirements type"
             report.tableTitle.startsWith('Capabilities (')
-        and: "card numbers should be displayed for requirement entries"
-            rows[1].id == '#CAP-123'
     }
 
     def "Should know the type of child requirements"() {
@@ -126,36 +124,6 @@ class WhenGeneratingRequirementsReports extends Specification {
         then: "there should be test results for each capability"
             def rows = report.requirements;
             // TODO
-    }
-
-    @Ignore
-    def "Should display a progress graph showing the number of specified requirements"() {
-        given: "there are some associated tests"
-            issueTracking.getIssueTrackerUrl() >> "http://my.issue.tracker/MY-PROJECT/browse/ISSUE-{0}"
-            def someTestOutcomes = TestOutcomes.of(someTestResults())
-            def someMoreTestOutcomes = TestOutcomes.of(someMoreTestResults())
-        and: "we read the requirements from the directory structure"
-            def requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([requirementsProvider], issueTracking)
-        when: "we store the requirements progress data"
-            RequirementsOutcomes initialOutcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(someTestOutcomes)
-            RequirementsOutcomes latestOutcomes = requirmentsOutcomeFactory.buildRequirementsOutcomesFrom(someMoreTestOutcomes)
-
-            dateProvider.time = firstOfJanuary
-            testHistory.updateData(initialOutcomes);
-
-            dateProvider.time = firstOfFebruary
-            testHistory.updateData(latestOutcomes);
-
-        and: "we generate the progress reports"
-            aggregateReporter.setOutputDirectory(outputDirectory);
-            aggregateReporter.generateRequirementsReportsFor(latestOutcomes)
-            progressReport = ProgressReport.inDirectory(outputDirectory)
-        then: "the progress report should show how many requirements have been specified"
-            progressReport.progressGraph.isCurrentlyVisible()
-            progressReport.getYAxes().contains("0")
-            progressReport.getYAxes().contains("1")
-            progressReport.getYAxes().contains("2")
-            progressReport.getYAxes().contains("3")
     }
 
     def someTestResults() {

@@ -26,6 +26,9 @@ public class TestTag implements Comparable<TestTag> {
         return type;
     }
 
+    public String getShortName() {
+        return name.contains("/") ? name.substring(name.indexOf("/") + 1) : name;
+    }
     public static TestTagBuilder withName(final String tagName) {
         return new TestTagBuilder(tagName);
     }
@@ -51,6 +54,16 @@ public class TestTag implements Comparable<TestTag> {
         }
     }
 
+    public boolean isAsOrMoreSpecificThan(TestTag testTag) {
+        if (this.equals(testTag)) {
+            return true;
+        }
+        if ((this.getName().endsWith("/" + testTag.getName())) && (this.getType().equals(testTag.getType()))) {
+            return true;
+        }
+        return false;
+    }
+
     public static class TestTagBuilder {
         private final String name;
 
@@ -70,16 +83,16 @@ public class TestTag implements Comparable<TestTag> {
 
         TestTag testTag = (TestTag) o;
 
-        if (!name.equals(testTag.name)) return false;
-        if (!type.equals(testTag.type)) return false;
+        if (!name.equalsIgnoreCase(testTag.name)) return false;
+        if (!type.equalsIgnoreCase(testTag.type)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + type.hashCode();
+        int result = name.toLowerCase().hashCode();
+        result = 31 * result + type.toLowerCase().hashCode();
         return result;
     }
 

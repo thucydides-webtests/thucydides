@@ -51,7 +51,7 @@ class WhenLoadingRequirementsFromAPackageStructure extends Specification {
             zucchiniCapability.name == "Nice zucchinis"
     }
 
-    def "Should find the requirement for a given tag"() {
+    def "Should find general requirement for a given tag"() {
         given: "We are using the default requirements provider"
             EnvironmentVariables vars = new MockEnvironmentVariables();
             vars.setProperty(ThucydidesSystemProperty.THUCYDIDES_ANNOTATED_REQUIREMENTS_DIR.propertyName, ROOT_DIRECTORY)
@@ -64,6 +64,35 @@ class WhenLoadingRequirementsFromAPackageStructure extends Specification {
             Optional<Requirement> requirement = capabilityProvider.getRequirementFor(growApplesTag)
             requirement.get().getName() == "Apples"
             requirement.get().getType() == "capability"
+    }
+
+
+    def "Should find specific requirement for a given tag"() {
+        given: "We are using the default requirements provider"
+        EnvironmentVariables vars = new MockEnvironmentVariables();
+        vars.setProperty(ThucydidesSystemProperty.THUCYDIDES_ANNOTATED_REQUIREMENTS_DIR.propertyName, ROOT_DIRECTORY)
+        RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
+        and: "We define the root package in the 'thucydides.test.root' property"
+        vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
+        when: "We load requirements with nested capability directories and no .narrative files"
+        def growApplesTag = TestTag.withName("Apples").andType("capability")
+        then:
+        Optional<Requirement> requirement = capabilityProvider.getRequirementFor(growApplesTag)
+        requirement.get().getName() == "Apples"
+        requirement.get().getType() == "capability"
+    }
+
+    def "Should not find requirement for a given tag with a different type"() {
+        given: "We are using the default requirements provider"
+        EnvironmentVariables vars = new MockEnvironmentVariables();
+        vars.setProperty(ThucydidesSystemProperty.THUCYDIDES_ANNOTATED_REQUIREMENTS_DIR.propertyName, ROOT_DIRECTORY)
+        RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
+        and: "We define the root package in the 'thucydides.test.root' property"
+        vars.setProperty("thucydides.test.root","net.thucydides.core.requirements.stories")
+        when: "We load requirements with nested capability directories and no .narrative files"
+        def growApplesTag = TestTag.withName("Apples").andType("epic")
+        then:
+        !capabilityProvider.getRequirementFor(growApplesTag).isPresent()
     }
 
     def "capabilities can be nested"(){

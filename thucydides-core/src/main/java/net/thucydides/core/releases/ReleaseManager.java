@@ -16,6 +16,7 @@ import net.thucydides.core.reports.html.ReportNameProvider;
 import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.reports.RequirementOutcome;
+import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.hamcrest.Matcher;
 import org.slf4j.Logger;
@@ -88,6 +89,7 @@ public class ReleaseManager {
             releases = extractReleasesFromTestOutcomeAnnotations(testOutcomes);
         }
         return ImmutableList.copyOf(releases);
+        StepEventBus.getEventBus().getCurrentStep().get().getScreenshots().get(0).getHtmlSource()
     }
 
     private List<Release> extractReleasesFromTestOutcomeAnnotations(TestOutcomes testOutcomes) {

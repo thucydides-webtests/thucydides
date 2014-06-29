@@ -58,7 +58,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
             def anotherDifferentFeatureLink = driver.findElement(By.linkText("Grow New Potatoes"))
             anotherDifferentFeatureLink.click()
             def breadcrumbText = driver.findElement(By.cssSelector(".bluetext")).getText()
-            breadcrumbText == "Home > Grow new potatoes"
+            breadcrumbText == "Home > Grow potatoes/Grow new potatoes"
         when: "we click on the Features link"
             def featuresLink = driver.findElement(By.linkText("Requirements"))
             featuresLink.click()

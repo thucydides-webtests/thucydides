@@ -102,11 +102,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <#foreach tagName in testOutcomes.getMostSpecificTagsOfType(tagType)>
-                                    <tr><td><h3>${tagName}</h3></td></tr>
-                                    <#assign tagTitle = inflection.of(tagName).asATitle() >
-                                    <#assign outcomesForTag = testOutcomes.withTag(tagName) >
-                                    <#assign tagReport = reportName.forTag(tagName) >
+                                <#foreach tag in testOutcomes.getMostSpecificTagsOfType(tagType)>
+                                    <tr><td><h3>${tag.shortName}</h3></td></tr>
+                                    <#assign tagTitle = inflection.of(tag.shortName).asATitle() >
+                                    <#assign outcomesForTag = testOutcomes.withTag(tag) >
+                                    <#assign tagReport = reportName.forTag(tag) >
                                     <#if outcomesForTag.result == "FAILURE">
                                         <#assign outcome_icon = "fail.png">
                                         <#assign outcome_text = "failing-color">

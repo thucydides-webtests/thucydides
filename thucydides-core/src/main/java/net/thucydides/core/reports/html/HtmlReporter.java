@@ -16,6 +16,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.nio.file.*;
 import java.util.Map;
 
 /**
@@ -120,7 +121,6 @@ public abstract class HtmlReporter extends ThucydidesReporter {
     }
 
     protected String timestampFrom(TestOutcomes rootOutcomes) {
-        //return timestampFrom(rootOutcomes.getRootOutcomes().getStartTime());
         return timestampFrom(currentTime());
     }
 

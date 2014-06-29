@@ -162,7 +162,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     public void generateReportsForTestResultsIn(TestOutcomes testOutcomes) throws IOException {
-        RequirementsOutcomes requirementsOutcomes = requirementsFactory.buildRequirementsOutcomesFrom(testOutcomes);
+        RequirementsOutcomes requirementsOutcomes = requirementsFactory.buildRequirementsOutcomesFrom(testOutcomes.withRequirementsTags());
 
         updateHistoryFor(requirementsOutcomes);
 
@@ -256,7 +256,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     private TestOutcomes loadTestOutcomesFrom(File sourceDirectory) throws IOException {
-        return TestOutcomeLoader.loadTestOutcomes().inFormat(getFormat()).from(sourceDirectory).withHistory();
+        return TestOutcomeLoader.loadTestOutcomes().inFormat(getFormat()).from(sourceDirectory).withHistory().withRequirementsTags();
     }
 
     private void generateAggregateReportFor(TestOutcomes testOutcomes) throws IOException {
@@ -347,7 +347,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
         for (TestTag tag : testOutcomes.getTags()) {
             generateTagReport(testOutcomes, reportNameProvider, tag);
-            generateAssociatedTagReportsForTag(testOutcomes.withTag(tag.getName()), tag.getName());
+            generateAssociatedTagReportsForTag(testOutcomes.withTag(tag), tag.getName());
         }
     }
 
@@ -366,7 +366,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         generateResultReports(testOutcomes, reportNameProvider);
 
         for (TestTag tag : testOutcomes.getTags()) {
-            generateResultReports(testOutcomes.withTag(tag.getName()), new ReportNameProvider(tag.getName()), tag);
+            generateResultReports(testOutcomes.withTag(tag), new ReportNameProvider(tag.getName()), tag);
         }
     }
 
@@ -415,16 +415,16 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     }
 
     private void generateTagReport(TestOutcomes testOutcomes, ReportNameProvider reportName, TestTag tag) throws IOException {
-        TestOutcomes testOutcomesForTag = testOutcomes.withTag(tag.getName());
+        TestOutcomes testOutcomesForTag = testOutcomes.withTag(tag);
         Map<String, Object> context = buildContext(testOutcomesForTag, reportName);
         context.put("report", ReportProperties.forTagResultsReport());
         context.put("currentTagType", tag.getType());
         context.put("currentTag", tag);
 
-        String csvReport = reportName.forCSVFiles().forTag(tag.getName());
+        String csvReport = reportName.forCSVFiles().forTag(tag);
         context.put("csvReport", csvReport);
 
-        String report = reportName.forTag(tag.getName());
+        String report = reportName.forTag(tag);
         generateReportPage(context, TEST_OUTCOME_TEMPLATE_PATH, report);
         generateCSVReportFor(testOutcomesForTag, csvReport);
     }

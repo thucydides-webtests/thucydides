@@ -2,6 +2,7 @@ package net.thucydides.core.requirements;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.thucydides.core.ThucydidesSystemProperty;
@@ -37,6 +38,8 @@ public class RequirementsServiceImplementation implements RequirementsService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequirementsTagProvider.class);
 
+    private static final List<Requirement> NO_REQUIREMENTS = Lists.newArrayList();
+
     private static final List<String> LOW_PRIORITY_PROVIDERS =
             ImmutableList.of(PackageAnnotationBasedTagProvider.class.getCanonicalName(),
                     FeatureStoryTagProvider.class.getCanonicalName(),
@@ -57,11 +60,27 @@ public class RequirementsServiceImplementation implements RequirementsService {
                     break;
                 }
             }
+            requirements = addParentsTo(requirements);
             indexRequirements();
             LOGGER.info("Requirements found:" + requirements);
         }
         return requirements;
     }
+
+    private List<Requirement> addParentsTo(List<Requirement> requirements) {
+        return addParentsTo(requirements, null);
+    }
+
+    private List<Requirement> addParentsTo(List<Requirement> requirements, String parent) {
+        List<Requirement> augmentedRequirements = Lists.newArrayList();
+        for(Requirement requirement : requirements) {
+            List<Requirement> children = requirement.hasChildren()
+                    ? addParentsTo(requirement.getChildren(),requirement.getName()) : NO_REQUIREMENTS;
+            augmentedRequirements.add(requirement.withParent(parent).withChildren(children));
+        }
+        return augmentedRequirements;
+    }
+
 
     private void indexRequirements() {
         requirementAncestors = Maps.newHashMap();
@@ -139,8 +158,7 @@ public class RequirementsServiceImplementation implements RequirementsService {
         for (RequirementsTagProvider tagProvider : getRequirementsTagProviders()) {
             Optional<Requirement> requirement = getParentRequirementOf(testOutcome, tagProvider);
             if (requirement.isPresent()) {
-                LOGGER.info("Requirement found for test outcome " + testOutcome.getTitle() + "-" + testOutcome.getIssueKeys() + ":");
-                LOGGER.info("Requirement:" + requirement);
+                LOGGER.info("Requirement found for test outcome " + testOutcome.getTitle() + "-" + testOutcome.getIssueKeys() + ": " + requirement);
                 if (getRequirementAncestors().containsKey(requirement.get())) {
                     return getRequirementAncestors().get(requirement.get());
                 } else {
@@ -157,10 +175,22 @@ public class RequirementsServiceImplementation implements RequirementsService {
         if (requirementCache.containsKey(testOutcome)) {
             return requirementCache.get(testOutcome);
         } else {
-            Optional<Requirement> parentRequirement = tagProvider.getParentRequirementOf(testOutcome);
+            Optional<Requirement> parentRequirement = findMatchingIndexedRequirement(tagProvider.getParentRequirementOf(testOutcome));
             requirementCache.put(testOutcome, parentRequirement);
             return parentRequirement;
         }
+    }
+
+    private Optional<Requirement> findMatchingIndexedRequirement(Optional<Requirement> requirement) {
+        if (!requirement.isPresent()) {
+            return requirement;
+        }
+        for(Requirement indexedRequirement : getAllRequirements()) {
+            if (requirement.get().matches(indexedRequirement)) {
+                return Optional.of(indexedRequirement);
+            }
+        }
+        return Optional.absent();
     }
 
     @Override

@@ -397,6 +397,27 @@ public class TestOutcome {
                 this.manual);
     }
 
+    public TestOutcome withTags(Set<TestTag> tags) {
+        return new TestOutcome(this.startTime,
+                this.duration,
+                this.title,
+                this.description,
+                this.methodName,
+                this.testCase,
+                this.testSteps,
+                issues,
+                this.additionalIssues,
+                ImmutableSet.copyOf(tags),
+                this.userStory,
+                this.originalTestFailureCause,
+                this.testFailureClassname,
+                this.testFailureMessage,
+                this.annotatedResult,
+                this.dataTable,
+                this.qualifier,
+                this.manual);
+    }
+
     public TestOutcome withMethodName(String methodName) {
         if (methodName != null) {
             return new TestOutcome(this.startTime,
@@ -1201,8 +1222,9 @@ public class TestOutcome {
 
 
     public void addTags(List<TestTag> tags) {
-        getTags();
-        this.tags.addAll(tags);
+        Set<TestTag> updatedTags = Sets.newHashSet(getTags());
+        updatedTags.addAll(tags);
+        this.tags = ImmutableSet.copyOf(updatedTags);
     }
 
     public List<String> getIssueKeys() {

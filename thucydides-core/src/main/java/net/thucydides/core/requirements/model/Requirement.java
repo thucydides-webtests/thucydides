@@ -181,6 +181,14 @@ public class Requirement implements Comparable {
         return true;
     }
 
+    public boolean matches(Requirement that) {
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        if (cardNumber != null ? !cardNumber.equals(that.cardNumber) : that.cardNumber != null) return false;
+
+        return true;
+    }
+
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
@@ -234,13 +242,20 @@ public class Requirement implements Comparable {
     }
 
     public String qualifier() {
-        if (getCardNumber() != null) {
-            return getCardNumber();
-        } else if (getParent() != null) {
-            return getParent();
-        } else {
-            return null;
-        }
+        return (getParent() != null) ? getParent() : null;
+//        if (getCardNumber() != null) {
+//            return getCardNumber();
+//        } else
+//        if (getParent() != null) {
+//            return getParent();
+//        } else {
+//            return null;
+//        }
+    }
+
+    public boolean matchesTag(TestTag testTag) {
+        TestTag requirementTag = asTag();
+        return requirementTag.isAsOrMoreSpecificThan(testTag);
     }
 
     public class CustomFieldSetter {

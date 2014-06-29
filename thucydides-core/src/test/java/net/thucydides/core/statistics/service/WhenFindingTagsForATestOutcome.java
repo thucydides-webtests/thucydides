@@ -293,11 +293,11 @@ public class WhenFindingTagsForATestOutcome {
     public void should_ignore_dot_story_suffix_in_path() {
         FileSystemRequirementsTagProvider tagProvider = new FileSystemRequirementsTagProvider();
 
-        when(testOutcome.getPath()).thenReturn("stories/grow_potatoes/grow_new_potatoes/PlantNewPotatoes.story");
+        when(testOutcome.getPath()).thenReturn("stories/grow_potatoes/grow_new_potatoes/PlantPotatoes.story");
         Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
         assertThat(tags, hasItem(TestTag.withName("Grow potatoes").andType("capability")));
         assertThat(tags, hasItem(TestTag.withName("Grow potatoes/Grow new potatoes").andType("feature")));
-        assertThat(tags, hasItem(TestTag.withName("Grow new potatoes/Plant new potatoes").andType("story")));
+        assertThat(tags, hasItem(TestTag.withName("Grow new potatoes/Plant potatoes").andType("story")));
     }
 
     @Test
