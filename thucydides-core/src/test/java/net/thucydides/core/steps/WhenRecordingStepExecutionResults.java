@@ -54,6 +54,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
+import net.thucydides.core.util.FileSystemUtils;
 /**
  * We record step execution results using a StepListener.
  * The BaseStepListener implementation provides most of the basic functionality
@@ -111,8 +112,8 @@ public class WhenRecordingStepExecutionResults {
     public void createStepListenerAndFactory() throws IOException {
         MockitoAnnotations.initMocks(this);
         outputDirectory = temporaryFolder.newFolder("thucydides");
-        File screenshot1File = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots/google_page_1.png").getFile());
-        File screenshot2File = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots/google_page_2.png").getFile());
+        File screenshot1File = FileSystemUtils.getResourceAsFile("screenshots/google_page_1.png");
+        File screenshot2File = FileSystemUtils.getResourceAsFile("screenshots/google_page_2.png");
 
         screenshot1 = FileUtils.readFileToByteArray(screenshot1File);
         screenshot2 = FileUtils.readFileToByteArray(screenshot2File);

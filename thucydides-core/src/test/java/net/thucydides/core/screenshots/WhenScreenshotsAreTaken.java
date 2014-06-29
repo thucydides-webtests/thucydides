@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
+import net.thucydides.core.util.FileSystemUtils;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -85,8 +86,8 @@ public class WhenScreenshotsAreTaken {
 
     public void prepareTemporaryFilesAndDirectories() throws IOException {
         screenshotDirectory = temporaryDirectory.newFolder("screenshots");
-        originalScreenshot = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots/google_page_1.png").getFile());
-        expectedResizedScreenshot = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots/resized_google_page_1.png").getFile());
+        originalScreenshot = FileSystemUtils.getResourceAsFile("screenshots/google_page_1.png");
+        expectedResizedScreenshot = FileSystemUtils.getResourceAsFile("screenshots/resized_google_page_1.png");
         screenshotTaken = temporaryDirectory.newFile("google_page_1.png");
         FileUtils.copyFile(originalScreenshot, screenshotTaken);
     }

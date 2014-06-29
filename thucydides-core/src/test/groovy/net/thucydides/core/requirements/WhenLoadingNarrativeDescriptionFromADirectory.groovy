@@ -3,6 +3,7 @@ package net.thucydides.core.requirements
 import com.google.common.base.Optional
 import net.thucydides.core.requirements.model.Narrative
 import net.thucydides.core.requirements.model.NarrativeReader
+import net.thucydides.core.util.FileSystemUtils
 import spock.lang.Specification
 
 class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {
@@ -96,6 +97,6 @@ class WhenLoadingNarrativeDescriptionFromADirectory extends Specification {
     }
 
     File directoryInClasspathAt(String path) {
-        new File(getClass().getClassLoader().getResources(path).nextElement().getPath())
+        return FileSystemUtils.getResourceAsFile(path);
     }
 }

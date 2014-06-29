@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import net.thucydides.core.util.EnvironmentVariables;
+import net.thucydides.core.util.FileSystemUtils;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.openqa.selenium.WebDriver;
 
@@ -63,6 +64,6 @@ public class StaticTestSite {
     }
 
     public static File fileInClasspathCalled(final String resourceName) {
-        return new File(Thread.currentThread().getContextClassLoader().getResource(resourceName).getPath());
+        return FileSystemUtils.getResourceAsFile(resourceName);
     }
 }

@@ -10,6 +10,7 @@ import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.html.HtmlAcceptanceTestReporter;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
+import net.thucydides.core.util.FileSystemUtils;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -46,8 +47,7 @@ public class AbstractReportGenerationTest {
                                             final String stepName,
                                             final String screenshot) throws IOException {
         String screenshotResource = "/screenshots/" + screenshot;
-        URL sourcePath = this.getClass().getResource(screenshotResource);
-        File sourceFile = new File(sourcePath.getPath());
+        File sourceFile = FileSystemUtils.getResourceAsFile(screenshotResource);// new File(sourcePath.getPath());
         FileUtils.copyFileToDirectory(sourceFile, outputDirectory);
 
         TestStep step = TestStepFactory.successfulTestStepCalled(stepName);

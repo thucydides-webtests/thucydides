@@ -7,6 +7,7 @@ import net.thucydides.core.model.TestStep;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
+import net.thucydides.core.util.FileSystemUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -37,7 +38,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
         
         MockitoAnnotations.initMocks(this);
         
-        File screenshotsSourceDirectory = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots").getPath());
+        File screenshotsSourceDirectory = FileSystemUtils.getResourceAsFile("screenshots");
         File[] screenshots = screenshotsSourceDirectory.listFiles();
 
         for(File screenshot : screenshots) {

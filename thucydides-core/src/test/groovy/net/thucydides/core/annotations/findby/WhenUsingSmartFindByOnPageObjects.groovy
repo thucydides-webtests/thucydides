@@ -8,6 +8,7 @@ import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebDriverFactory
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
+import org.openqa.selenium.phantomjs.PhantomJSDriver
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -31,7 +32,7 @@ class WhenUsingSmartFindByOnPageObjects extends Specification {
 	}
 
 	@Shared
-	def driver =  new WebDriverFacade(HtmlUnitDriver, new WebDriverFactory());
+	def driver =  new WebDriverFacade(PhantomJSDriver, new WebDriverFactory());
 
 	@Shared
 	StaticSitePageWithFindBy page =  new StaticSitePageWithFindBy(driver);

@@ -3,6 +3,7 @@ package net.thucydides.core.reports.html.screenshots;
 import net.thucydides.core.images.SimpleImageInfo;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
+import net.thucydides.core.util.FileSystemUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -24,7 +25,7 @@ public class WhenReformattingScreenshots {
     @Before
     public void setupWorkingDirectory() throws IOException {
         screenshotDirectory = folder.newFolder("screenshots");
-        File screenshotsSourceDirectory = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots").getPath());
+        File screenshotsSourceDirectory = FileSystemUtils.getResourceAsFile("screenshots");
         File[] screenshots = screenshotsSourceDirectory.listFiles();
         for(File screenshot : screenshots) {
             FileUtils.copyFileToDirectory(screenshot, screenshotDirectory);

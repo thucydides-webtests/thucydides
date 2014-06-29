@@ -2,6 +2,7 @@ package net.thucydides.core.model;
 
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
+import net.thucydides.core.util.FileSystemUtils;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -288,7 +289,8 @@ public class WhenWeCreateATestStep {
     }
 
     private File screenshotFileFrom(final String screenshot) {
-        URL sourcePath = getClass().getResource(screenshot);
-        return new File(sourcePath.getPath());
+        return FileSystemUtils.getResourceAsFile(screenshot);
+//        URL sourcePath = getClass().getResource(screenshot);
+//        return new File(sourcePath.getPath());
     }
 }

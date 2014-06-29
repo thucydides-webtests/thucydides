@@ -89,7 +89,6 @@ public class ReleaseManager {
             releases = extractReleasesFromTestOutcomeAnnotations(testOutcomes);
         }
         return ImmutableList.copyOf(releases);
-        StepEventBus.getEventBus().getCurrentStep().get().getScreenshots().get(0).getHtmlSource()
     }
 
     private List<Release> extractReleasesFromTestOutcomeAnnotations(TestOutcomes testOutcomes) {

@@ -7,20 +7,20 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import static org.fest.assertions.Assertions.assertThat;
 
 
 public class UsingTheWebElementFacade extends FluentElementAPITestsBaseClass {
 
-    static WebDriver htmlUnitDriver;
+    static WebDriver localDirver;
     static StaticSitePageWithFacades page;
 
     @BeforeClass
     public static void openStaticPage() {
-        htmlUnitDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
-        page = new StaticSitePageWithFacades(htmlUnitDriver, 1);
+        localDirver = new WebDriverFacade(PhantomJSDriver.class, new WebDriverFactory());
+        page = new StaticSitePageWithFacades(localDirver, 1);
         page.setWaitForTimeout(750);
         page.open();
     }

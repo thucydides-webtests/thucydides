@@ -12,6 +12,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
@@ -19,13 +20,13 @@ import static org.hamcrest.Matchers.is;
 
 public class CheckingFieldContentWithTheFluentElementAPI extends FluentElementAPITestsBaseClass {
 
-    static WebDriver htmlUnitDriver;
+    static WebDriver localDriver;
     static StaticSitePage page;
 
     @BeforeClass
     public static void openStaticPage() {
-        htmlUnitDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
-        page = new StaticSitePage(htmlUnitDriver, 1);
+        localDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
+        page = new StaticSitePage(localDriver, 1);
         page.open();
     }
 

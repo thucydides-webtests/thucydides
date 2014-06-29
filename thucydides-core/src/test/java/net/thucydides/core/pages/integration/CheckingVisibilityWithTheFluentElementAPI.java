@@ -1,36 +1,34 @@
 package net.thucydides.core.pages.integration;
 
 
-import net.thucydides.core.pages.WebElementFacade;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
-import org.junit.Assert;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 
 public class CheckingVisibilityWithTheFluentElementAPI extends FluentElementAPITestsBaseClass {
 
-    static WebDriver htmlUnitDriver;
+    static WebDriver localDriver;
     static StaticSitePage page;
 
     @BeforeClass
     public static void openStaticPage() {
-        htmlUnitDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
-        page = new StaticSitePage(htmlUnitDriver, 1);
+        localDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
+        page = new StaticSitePage(localDriver, 1);
         page.setWaitForTimeout(750);
         page.open();
     }
@@ -38,6 +36,12 @@ public class CheckingVisibilityWithTheFluentElementAPI extends FluentElementAPIT
     @Test
     public void should_report_if_element_is_visible() {
         assertThat(page.element(page.firstName).isVisible(), is(true));
+    }
+
+
+    @AfterClass
+    public static void closeDriver() {
+        localDriver.quit();
     }
 
     @Test
@@ -377,7 +381,7 @@ public class CheckingVisibilityWithTheFluentElementAPI extends FluentElementAPIT
 
     @Test
     public void should_return_empty_string_from_other_element_using_getTextValue() {
-        assertThat(page.element(page.emptylist).getTextValue(), is(""));
+        assertThat(page.element(page.emptylist).getTextValue().trim(), is(""));
     }
 
     @Test

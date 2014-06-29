@@ -1,5 +1,6 @@
 package net.thucydides.core.screenshots;
 
+import net.thucydides.core.util.FileSystemUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -63,8 +64,7 @@ public class WhenUsingRecordedScreenshots {
     }
 
     private File screenshotFileFrom(final String screenshot) {
-        URL sourcePath = getClass().getResource(screenshot);
-        return new File(sourcePath.getPath());
+        return FileSystemUtils.getResourceAsFile(screenshot);
     }
 
 }

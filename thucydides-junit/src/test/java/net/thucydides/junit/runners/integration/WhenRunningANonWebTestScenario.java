@@ -1,4 +1,4 @@
-package net.thucydides.junit.runners;
+package net.thucydides.junit.runners.integration;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -10,13 +10,9 @@ import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.junit.rules.DisableThucydidesHistoryRule;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
-import net.thucydides.samples.NonWebTestScenarioWithParameterizedSteps;
-import net.thucydides.samples.SampleNonWebScenarioWithError;
-import net.thucydides.samples.SamplePassingNonWebScenario;
-import net.thucydides.samples.SamplePassingNonWebScenarioWithEmptyTests;
-import net.thucydides.samples.SamplePassingNonWebScenarioWithIgnoredTests;
-import net.thucydides.samples.SamplePassingNonWebScenarioWithPendingTests;
-import net.thucydides.samples.SingleNonWebTestScenario;
+import net.thucydides.junit.runners.AbstractTestStepRunnerTest;
+import net.thucydides.junit.runners.ThucydidesRunner;
+import net.thucydides.samples.*;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -148,7 +144,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
     @Test
     public void the_test_runner_skips_any_tests_after_a_failure() throws Exception {
 
-        ThucydidesRunner runner = new ThucydidesRunner(SingleNonWebTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SampleTestScenario.class);
 
         runner.run(new RunNotifier());
         List<TestOutcome> executedScenarios = runner.getTestOutcomes();
@@ -202,7 +198,7 @@ public class WhenRunningANonWebTestScenario extends AbstractTestStepRunnerTest {
 
     @Test
     public void the_test_runner_distinguishes_between_ignored_skipped_and_pending_steps() throws InitializationError {
-        ThucydidesRunner runner = new ThucydidesRunner(SingleNonWebTestScenario.class);
+        ThucydidesRunner runner = new ThucydidesRunner(SampleTestScenario.class);
 
         runner.run(new RunNotifier());
 

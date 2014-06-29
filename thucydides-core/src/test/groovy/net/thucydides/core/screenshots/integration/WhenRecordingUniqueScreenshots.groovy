@@ -3,6 +3,7 @@ package net.thucydides.core.screenshots.integration
 import net.thucydides.core.screenshots.BlurLevel
 import net.thucydides.core.screenshots.ScreenshotDigest
 import net.thucydides.core.util.EnvironmentVariables
+import net.thucydides.core.util.FileSystemUtils
 import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Specification
 
@@ -19,7 +20,7 @@ class WhenRecordingUniqueScreenshots extends Specification {
     EnvironmentVariables environmentVariables = new MockEnvironmentVariables()
 
     def setup() {
-        screenshotsSourceDirectory = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots").getPath());
+        screenshotsSourceDirectory = FileSystemUtils.getResourceAsFile("screenshots");
     }
 
     def "should calculate identical screenshot filename for identical files"() {

@@ -4,6 +4,7 @@ import com.google.common.io.Files
 import net.thucydides.core.screenshots.QueuedScreenshot
 import net.thucydides.core.screenshots.SingleThreadScreenshotProcessor
 import net.thucydides.core.util.EnvironmentVariables
+import net.thucydides.core.util.FileSystemUtils
 import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Specification
 import spock.lang.Timeout
@@ -28,7 +29,7 @@ class WhenProcessingScreenshots extends Specification {
     }
 
     private File copySourceScreenshot(File sourceDirectory) {
-        def screenshotsSourceDirectory = new File(Thread.currentThread().getContextClassLoader().getResource("screenshots").getPath());
+        def screenshotsSourceDirectory = FileSystemUtils.getResourceAsFile("screenshots");// new File(Thread.currentThread().getContextClassLoader().getResource("screenshots").getPath());
         def sampleScreenshot = new File(screenshotsSourceDirectory, "amazon.png")
         def timestamp = System.currentTimeMillis()
         def screenshot = new File(sourceDirectory, "amazon-${timestamp}.png")

@@ -3,28 +3,34 @@ package net.thucydides.core.pages.integration;
 
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 public class UsingFormsWithTheFluentElementAPI extends FluentElementAPITestsBaseClass {
 
-    WebDriver htmlUnitDriver;
+    WebDriver localDriver;
     StaticSitePage page;
 
     @Before
     public void openStaticPage() {
-        htmlUnitDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
-        page = new StaticSitePage(htmlUnitDriver, 1);
+        localDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
+        page = new StaticSitePage(localDriver, 1);
         page.setWaitForTimeout(750);
         page.open();
     }
 
+    @After
+    public void closeDriver() {
+        localDriver.quit();
+    }
 
     @Test
     public void should_detect_focus_on_input_fields() {
@@ -128,7 +134,7 @@ public class UsingFormsWithTheFluentElementAPI extends FluentElementAPITestsBase
 
     @Test
     public void should_return_empty_string_from_other_element_using_getTextValue() {
-        assertThat(page.element(page.emptylist).getTextValue(), is(""));
+        assertThat(page.element(page.emptylist).getTextValue().trim(), is(""));
     }
 
     @Test

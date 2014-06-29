@@ -19,6 +19,9 @@ import net.thucydides.junit.annotations.Concurrent;
 import net.thucydides.junit.annotations.TestData;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
+import net.thucydides.junit.runners.ParameterizedTestsOutcomeAggregator;
+import net.thucydides.junit.runners.ThucydidesParameterizedRunner;
+import net.thucydides.junit.runners.ThucydidesRunner;
 import net.thucydides.junit.runners.integration.SimpleSuccessfulParametrizedTestSample;
 import net.thucydides.samples.*;
 import org.apache.commons.io.FileUtils;
@@ -49,7 +52,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
-@Ignore
 public class WhenRunningADataDrivenTestScenario {
 
     @Rule
@@ -80,7 +82,7 @@ public class WhenRunningADataDrivenTestScenario {
         runner.run(new RunNotifier());
 
         List<TestOutcome> executedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).getTestOutcomesForAllParameterSets();
-        assertThat(executedScenarios.size(), is(20));
+        assertThat(executedScenarios.size(), is(24));
     }
 
     @Test
@@ -93,7 +95,6 @@ public class WhenRunningADataDrivenTestScenario {
         assertThat(aggregatedScenarios.size(), is(2));
         assertThat(aggregatedScenarios.get(0).getStepCount(), is(12));
         assertThat(aggregatedScenarios.get(1).getStepCount(), is(12));
-        assertThat(aggregatedScenarios.get(1).getUnqualified().getTitleWithLinks(), is("Happy day scenario"));
     }
 
     @Test
@@ -104,7 +105,7 @@ public class WhenRunningADataDrivenTestScenario {
 
         List<TestOutcome> aggregatedScenarios = ParameterizedTestsOutcomeAggregator.from(runner).aggregateTestOutcomesByTestMethods();
         assertThat(aggregatedScenarios.size(), is(1));
-        assertThat(aggregatedScenarios.get(1).getStepCount(), is(15));
+        assertThat(aggregatedScenarios.get(0).getStepCount(), is(15));
     }
 
     @Test
@@ -206,24 +207,6 @@ public class WhenRunningADataDrivenTestScenario {
     }
 
     @Test
-    public void xml_report_contents_should_reflect_the_test_data() throws Throwable  {
-
-        File outputDirectory = tempFolder.newFolder("thucydides");
-        environmentVariables.setProperty(ThucydidesSystemProperty.THUCYDIDES_OUTPUT_DIRECTORY.getPropertyName(),
-                            outputDirectory.getAbsolutePath());
-
-        ThucydidesParameterizedRunner runner = getTestRunnerUsing(SampleDataDrivenScenario.class);
-
-        runner.run(new RunNotifier());
-
-        List<String> reportContents = contentsOf(outputDirectory.listFiles(new XMLFileFilter()));
-        assertThat(reportContents, hasItemContainsString("<value>a</value>"));
-        assertThat(reportContents, hasItemContainsString("<value>1</value>"));
-        assertThat(reportContents, hasItemContainsString("<value>B</value>"));
-        assertThat(reportContents, hasItemContainsString("<value>2</value>"));
-    }
-
-    @Test
     public void xml_report_contents_should_reflect_the_test_data_from_the_csv_file() throws Throwable  {
 
         File outputDirectory = tempFolder.newFolder("thucydides");
@@ -294,7 +277,7 @@ public class WhenRunningADataDrivenTestScenario {
         TestOutcome testOutcome1 = executedSteps.get(0);
 
         List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
-        assertThat(dataDrivenSteps.size(), is(3));
+        assertThat(dataDrivenSteps.size(), is(12));
 
     }
 
@@ -314,7 +297,7 @@ public class WhenRunningADataDrivenTestScenario {
         TestOutcome testOutcome1 = executedSteps.get(0);
 
         List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
-        assertThat(dataDrivenSteps.size(), is(3));
+        assertThat(dataDrivenSteps.size(), is(12));
 
     }
 
@@ -348,7 +331,7 @@ public class WhenRunningADataDrivenTestScenario {
         TestOutcome testOutcome1 = executedSteps.get(0);
 
         List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
-        assertThat(dataDrivenSteps.size(), is(3));
+        assertThat(dataDrivenSteps.size(), is(12));
         assertThat(dataDrivenSteps.get(1).getResult(), is(TestResult.FAILURE));
         assertThat(dataDrivenSteps.get(2).getResult(), is(TestResult.SUCCESS));
 
@@ -388,7 +371,7 @@ public class WhenRunningADataDrivenTestScenario {
         TestOutcome testOutcome1 = executedSteps.get(0);
 
         List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
-        assertThat(dataDrivenSteps.size(), is(3));
+        assertThat(dataDrivenSteps.size(), is(12));
         assertThat(dataDrivenSteps.get(1).getResult(), is(TestResult.ERROR));
         assertThat(dataDrivenSteps.get(2).getResult(), is(TestResult.SUCCESS));
     }
@@ -525,7 +508,7 @@ public class WhenRunningADataDrivenTestScenario {
         TestOutcome testOutcome1 = executedSteps.get(0);
 
         List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps();
-        assertThat(dataDrivenSteps.size(), is(3));
+        assertThat(dataDrivenSteps.size(), is(12));
 
     }
 
@@ -545,7 +528,7 @@ public class WhenRunningADataDrivenTestScenario {
         TestOutcome testOutcome1 = executedSteps.get(0);
 
         List<TestStep> dataDrivenSteps = testOutcome1.getTestSteps().get(0).getChildren();
-        assertThat(dataDrivenSteps.size(), is(3));
+        assertThat(dataDrivenSteps.size(), is(12));
 
     }
 
