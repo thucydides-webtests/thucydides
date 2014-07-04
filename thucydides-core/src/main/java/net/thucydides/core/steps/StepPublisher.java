@@ -1,6 +1,7 @@
 package net.thucydides.core.steps;
 
 
+import net.thucydides.core.model.FailureCause;
 import net.thucydides.core.model.TestOutcome;
 import org.openqa.selenium.WebDriver;
 
@@ -35,5 +36,5 @@ public interface StepPublisher {
     /**
      * If a test failed, what was the error.
      */
-    Throwable getTestFailureCause();
+    FailureCause getTestFailureCause();
 }

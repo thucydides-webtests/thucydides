@@ -1,5 +1,6 @@
 package net.thucydides.junit.listeners;
 
+import net.thucydides.core.model.FailureCause;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.steps.BaseStepListener;
 import net.thucydides.core.steps.StepEventBus;
@@ -115,7 +116,7 @@ public class JUnitStepListener extends RunListener {
         return baseStepListener.getTestOutcomes();
     }
 
-    public Throwable getError() {
+    public FailureCause getError() {
         return baseStepListener.getTestFailureCause();
     }
 

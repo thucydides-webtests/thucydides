@@ -17,9 +17,11 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.*;
 
 import static ch.lambdaj.Lambda.convert;
@@ -46,7 +48,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     private final NarrativeReader narrativeReader;
     private final int level;
 
-//    @Transient
+    //    @Transient
     private List<Requirement> requirements;
 
     public FileSystemRequirementsTagProvider() {
@@ -73,7 +75,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
      */
     private static String filePathFormOf(String rootDirectory) {
         if (rootDirectory.contains(".")) {
-            return rootDirectory.replace(".","/");
+            return rootDirectory.replace(".", "/");
         } else {
             return rootDirectory;
         }
@@ -129,17 +131,20 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
 
     private List<Requirement> addParentsTo(List<Requirement> requirements, String parent) {
         List<Requirement> augmentedRequirements = Lists.newArrayList();
-        for(Requirement requirement : requirements) {
+        for (Requirement requirement : requirements) {
             List<Requirement> children = requirement.hasChildren()
-                    ? addParentsTo(requirement.getChildren(),requirement.getName()) : NO_REQUIREMENTS;
+                    ? addParentsTo(requirement.getChildren(), requirement.getName()) : NO_REQUIREMENTS;
             augmentedRequirements.add(requirement.withParent(parent).withChildren(children));
         }
         return augmentedRequirements;
     }
 
-    private Optional<String> getRootDirectoryPath() throws IOException {
+    /**
+     * Find the root directory in the classpath or on the file system from which the requirements will be read.
+     */
+    protected Optional<String> getRootDirectoryPath() throws IOException {
 
-        if (ThucydidesSystemProperty.THUCYDIDES_TEST_REQUIREMENTS_BASEDIR.isDefinedIn(environmentVariables)){
+        if (ThucydidesSystemProperty.THUCYDIDES_TEST_REQUIREMENTS_BASEDIR.isDefinedIn(environmentVariables)) {
             return getRootDirectoryFromRequirementsBaseDir();
         } else {
             Optional<String> rootDirectoryOnClasspath = getRootDirectoryFromClasspath();
@@ -153,11 +158,11 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     }
 
     private Optional<String> getRootDirectoryFromClasspath() throws IOException {
-        Enumeration<URL> requirementResources = null;
+        Enumeration<URL> requirementResources;
         try {
             requirementResources = getDirectoriesFrom(rootDirectoryPath);
         } catch (URISyntaxException e) {
-            throw new  IOException(e);
+            throw new IOException(e);
         }
         if (requirementResources.hasMoreElements()) {
             return Optional.of(withRestoredSpaces(requirementResources.nextElement().getPath()));
@@ -167,7 +172,11 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     }
 
     private String withRestoredSpaces(String path) {
-        return StringUtils.replace(path,"%20"," ");
+        try {
+            return URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return StringUtils.replace(path, "%20", " ");
+        }
     }
 
     private Optional<String> getRootDirectoryFromWorkingDirectory() throws IOException {
@@ -175,11 +184,12 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     }
 
     private Optional<String> configuredRelativeRootDirectory;
+
     private Optional<String> getRootDirectoryFromRequirementsBaseDir() {
         if (configuredRelativeRootDirectory == null) {
             configuredRelativeRootDirectory
                     = getRootDirectoryFromParentDir(ThucydidesSystemProperty.THUCYDIDES_TEST_REQUIREMENTS_BASEDIR
-                                                                             .from(environmentVariables,""));
+                    .from(environmentVariables, ""));
         }
         return configuredRelativeRootDirectory;
     }
@@ -200,7 +210,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
 
 
     private Enumeration<URL> getDirectoriesFrom(String root) throws IOException, URISyntaxException {
-        String rootWithEscapedSpaces = root.replaceAll(" ","%20");
+        String rootWithEscapedSpaces = root.replaceAll(" ", "%20");
         URI rootUri = new URI(rootWithEscapedSpaces);
         return getClass().getClassLoader().getResources(rootUri.getPath());
     }
@@ -273,7 +283,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
         Optional<Requirement> mostSpecificRequirement = Optional.absent();
         int currentSpecificity = -1;
 
-        for(TestTag tag : testOutcome.getTags()) {
+        for (TestTag tag : testOutcome.getTags()) {
             Optional<Requirement> matchingRequirement = getRequirementFor(tag);
             if (matchingRequirement.isPresent()) {
                 int specificity = requirementsConfiguration.getRequirementTypes().indexOf(matchingRequirement.get().getType());
@@ -288,7 +298,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     }
 
     public Optional<Requirement> getRequirementFor(TestTag testTag) {
-        for(Requirement requirement : getFlattenedRequirements()) {
+        for (Requirement requirement : getFlattenedRequirements()) {
             if (requirement.getName().equalsIgnoreCase(testTag.getName()) && requirement.getType().equalsIgnoreCase(testTag.getType())) {
                 return Optional.of(requirement);
             }
@@ -298,7 +308,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
 
     private List<Requirement> getFlattenedRequirements() {
         List<Requirement> allRequirements = Lists.newArrayList();
-        for(Requirement requirement : getRequirements()) {
+        for (Requirement requirement : getRequirements()) {
             allRequirements.add(requirement);
             allRequirements.addAll(childRequirementsOf(requirement));
         }
@@ -307,7 +317,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
 
     private Collection<Requirement> childRequirementsOf(Requirement requirement) {
         List<Requirement> childRequirements = Lists.newArrayList();
-        for(Requirement childRequirement : requirement.getChildren()) {
+        for (Requirement childRequirement : requirement.getChildren()) {
             childRequirements.add(childRequirement);
             childRequirements.addAll(childRequirementsOf(childRequirement));
         }
@@ -422,8 +432,8 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
 
         if (requirementNarrative.isPresent()) {
             return requirementWithNarrative(requirementDirectory,
-                                            humanReadableVersionOf(requirementDirectory.getName()),
-                                            requirementNarrative.get());
+                    humanReadableVersionOf(requirementDirectory.getName()),
+                    requirementNarrative.get());
         } else {
             return requirementFromDirectoryName(requirementDirectory);
         }
@@ -431,7 +441,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
 
     private Requirement readRequirementsFromStoryFile(File storyFile) {
         Optional<Narrative> optionalNarrative = narrativeReader.loadFromStoryFile(storyFile);
-        String storyName = storyFile.getName().replace(".story","");
+        String storyName = storyFile.getName().replace(".story", "");
         if (optionalNarrative.isPresent()) {
             return requirementWithNarrative(storyFile, humanReadableVersionOf(storyName), optionalNarrative.get());
         } else {

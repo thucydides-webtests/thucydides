@@ -8,15 +8,7 @@ import com.google.inject.Injector;
 import net.thucydides.core.PendingStepException;
 import net.thucydides.core.annotations.TestAnnotations;
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.model.DataTable;
-import net.thucydides.core.model.FailureAnalysis;
-import net.thucydides.core.model.ScreenshotPermission;
-import net.thucydides.core.model.Story;
-import net.thucydides.core.model.TakeScreenshots;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
-import net.thucydides.core.model.TestTag;
+import net.thucydides.core.model.*;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.SystemClock;
 import net.thucydides.core.screenshots.Photographer;
@@ -28,7 +20,6 @@ import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverManager;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.SessionId;
@@ -38,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -476,7 +466,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     public void stepFailed(StepFailure failure) {
         takeEndOfStepScreenshotFor(FAILURE);
-        getCurrentTestOutcome().setTestFailureCause(failure.getException());
+        getCurrentTestOutcome().determineTestFailureCause(failure.getException());
 //        markCurrentStepAs(failureAnalysis.resultFor(failure));
         recordFailureDetailsInFailingTestStep(failure);
         currentStepDone(failureAnalysis.resultFor(failure));
@@ -711,12 +701,12 @@ public class BaseStepListener implements StepListener, StepPublisher {
                 (getCurrentTestOutcome().getResult() == TestResult.FAILURE || getCurrentTestOutcome().getResult() == TestResult.ERROR));
     }
 
-    public Throwable getTestFailureCause() {
+    public FailureCause getTestFailureCause() {
         return getCurrentTestOutcome().getTestFailureCause();
     }
 
     public void testFailed(TestOutcome testOutcome, final Throwable cause) {
-        getCurrentTestOutcome().setTestFailureCause(cause);
+        getCurrentTestOutcome().determineTestFailureCause(cause);
     }
 
     public void testIgnored() {

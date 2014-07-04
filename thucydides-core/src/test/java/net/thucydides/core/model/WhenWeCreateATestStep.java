@@ -144,7 +144,7 @@ public class WhenWeCreateATestStep {
         step.setResult(TestResult.FAILURE);
         Throwable e = new IllegalStateException();
         step.failedWith(new Exception("Oh nose", e));
-        assertThat(step.getException().getCause(), is(e));
+        assertThat(step.getException().getStackTrace(), is(notNullValue()));
     }
 
     @Test

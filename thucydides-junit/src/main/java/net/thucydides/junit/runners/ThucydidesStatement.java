@@ -31,7 +31,8 @@ public class ThucydidesStatement extends Statement {
 
     private void checkForStepFailures() throws Throwable {
         if (publisher.aStepHasFailed()) {
-            throw publisher.getTestFailureCause();
+            System.out.println( publisher.getTestFailureCause().toException());
+            throw publisher.getTestFailureCause().toException();
         }
     }
 

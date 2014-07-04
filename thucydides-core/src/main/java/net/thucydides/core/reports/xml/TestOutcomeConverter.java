@@ -8,13 +8,7 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import net.thucydides.core.model.DataTable;
-import net.thucydides.core.model.DataTableRow;
-import net.thucydides.core.model.Story;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
-import net.thucydides.core.model.TestTag;
+import net.thucydides.core.model.*;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 import org.apache.commons.collections.CollectionUtils;
@@ -24,10 +18,7 @@ import org.joda.time.DateTime;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static ch.lambdaj.Lambda.sort;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -325,15 +316,13 @@ public class TestOutcomeConverter implements Converter {
         String errorMessage = StringUtils.isEmpty(step.getErrorMessage()) ? DEFAULT_ERROR_MESSAGE : step.getErrorMessage();
         writeErrorMessageNode(writer, errorMessage);
         if (step.getException() != null) {
-            writeExceptionNode(writer, step.getException());
+            writeFailureCauseNode(writer, step.getException());
         }
     }
 
-    private void writeExceptionNode(final HierarchicalStreamWriter writer, final Throwable cause) {
+    private void writeFailureCauseNode(final HierarchicalStreamWriter writer, final FailureCause cause) {
         writer.startNode(EXCEPTION);
-        StringWriter stringWriter = new StringWriter();
-        cause.printStackTrace(new PrintWriter(stringWriter));
-        writer.setValue(stringWriter.toString());
+        writer.setValue(cause.getErrorType() + ":" + cause.getMessage() + System.lineSeparator() + Arrays.toString(cause.getStackTrace()));
         writer.endNode();
 
     }

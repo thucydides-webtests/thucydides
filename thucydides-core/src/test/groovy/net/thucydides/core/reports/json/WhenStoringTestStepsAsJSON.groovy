@@ -63,7 +63,7 @@ class WhenStoringTestStepsAsJSON extends Specification {
         given:
             TestStep stepWithError = TestStep.forStepCalled("some step").withResult(TestResult.ERROR)
                                            .startingAt(FIRST_OF_JANUARY);
-            stepWithError.failedWith(new Throwable("Oh crap!"))
+            stepWithError.failedWith(new IllegalStateException("Oh crap!"))
 
         when:
             StringWriter writer = new StringWriter();

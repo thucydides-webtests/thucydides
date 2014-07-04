@@ -32,7 +32,7 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
     @Inject
     public SingleThreadScreenshotProcessor(EnvironmentVariables environmentVariables) {
         this.environmentVariables = environmentVariables;
-        this.queue = new ConcurrentLinkedQueue<QueuedScreenshot>();
+        this.queue = new ConcurrentLinkedQueue<>();
         start();
     }
 

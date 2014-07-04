@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import sample.steps.FailingStep;
 
 import java.io.File;
 import java.io.IOException;
@@ -889,14 +890,14 @@ public class WhenGeneratingAnXMLReport {
         TestOutcome testOutcome = TestOutcome.forTest("a_simple_test_case", SomeTestScenario.class);
 
         TestStep step = TestStepFactory.failingTestStepCalled("step 1");
-        step.failedWith(new IllegalArgumentException("Oh nose!"));
+        step.failedWith(new FailingStep().failsWithMessage("Oh nose!"));
 
         testOutcome.recordStep(step);
 
         File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
         String generatedReportText = getStringFrom(xmlReport);
 
-        assertThat(generatedReportText, containsString("<exception>java.lang.IllegalArgumentException"));
+        assertThat(generatedReportText, containsString("sample.steps.FailingStep"));
     }
 
     private String getStringFrom(File reportFile) throws IOException {

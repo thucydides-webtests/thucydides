@@ -1,5 +1,6 @@
 package net.thucydides.core.model;
 
+import junit.framework.TestFailure;
 import net.thucydides.core.PendingStepException;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepFailureException;

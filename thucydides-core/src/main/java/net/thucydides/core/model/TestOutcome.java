@@ -26,7 +26,6 @@ import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
-import net.thucydides.core.webdriver.WebdriverAssertionError;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -143,7 +142,7 @@ public class TestOutcome {
      */
     private String project;
 
-    private Throwable originalTestFailureCause;
+    private FailureCause testFailureCause;
     private String testFailureClassname;
     private String testFailureMessage;
 
@@ -290,7 +289,7 @@ public class TestOutcome {
                           final List<String> additionalIssues,
                           final Set<TestTag> tags,
                           final Story userStory,
-                          final Throwable testFailureCause,
+                          final FailureCause testFailureCause,
                           final String testFailureClassname,
                           final String testFailureMessage,
                           final TestResult annotatedResult,
@@ -310,7 +309,7 @@ public class TestOutcome {
         this.additionalIssues = additionalIssues;
         this.tags = tags;
         this.userStory = userStory;
-        this.originalTestFailureCause = testFailureCause;
+        this.testFailureCause = testFailureCause;
         this.testFailureClassname = testFailureClassname;
         this.testFailureMessage = testFailureMessage;
         this.qualifier = qualifier;
@@ -319,14 +318,6 @@ public class TestOutcome {
         this.issueTracking = Injectors.getInjector().getInstance(IssueTracking.class);
         this.linkGenerator = Injectors.getInjector().getInstance(LinkGenerator.class);
         this.manual = manualTest;
-    }
-
-    private String classnameFrom(Throwable testFailureCause) {
-        if (testFailureCause == null) {
-            return null;
-        } else {
-            return testFailureCause.getClass().getCanonicalName();
-        }
     }
 
     private List<String> removeDuplicates(List<String> issues) {
@@ -364,7 +355,7 @@ public class TestOutcome {
                     this.additionalIssues,
                     this.tags,
                     this.userStory,
-                    this.originalTestFailureCause,
+                    this.testFailureCause,
                     this.testFailureClassname,
                     this.testFailureMessage,
                     this.annotatedResult,
@@ -388,7 +379,7 @@ public class TestOutcome {
                 this.additionalIssues,
                 this.tags,
                 this.userStory,
-                this.originalTestFailureCause,
+                this.testFailureCause,
                 this.testFailureClassname,
                 this.testFailureMessage,
                 this.annotatedResult,
@@ -409,7 +400,7 @@ public class TestOutcome {
                 this.additionalIssues,
                 ImmutableSet.copyOf(tags),
                 this.userStory,
-                this.originalTestFailureCause,
+                this.testFailureCause,
                 this.testFailureClassname,
                 this.testFailureMessage,
                 this.annotatedResult,
@@ -431,7 +422,7 @@ public class TestOutcome {
                     this.additionalIssues,
                     this.tags,
                     this.userStory,
-                    this.originalTestFailureCause,
+                    this.testFailureCause,
                     this.testFailureClassname,
                     this.testFailureMessage,
                     this.annotatedResult,
@@ -905,69 +896,31 @@ public class TestOutcome {
         this.userStory = story;
     }
 
-    public void setTestFailureCause(Throwable cause) {
-        this.originalTestFailureCause = cause;
+    public void determineTestFailureCause(Throwable cause) {
         if (cause != null) {
-            Throwable rootCause = rootCauseOf(cause);
-            this.testFailureClassname = classnameFrom(rootCause);
-            this.testFailureMessage = rootCause.getMessage();
-            this.setAnnotatedResult(new FailureAnalysis().resultFor(rootCause));
+            RootCauseAnalyzer rootCauseAnalyser = new RootCauseAnalyzer(cause);
+            FailureCause rootCause = rootCauseAnalyser.getRootCause();
+            this.testFailureClassname = rootCauseAnalyser.getRootCause().getErrorType();
+            this.testFailureMessage = rootCauseAnalyser.getMessage();
+            this.setAnnotatedResult(new FailureAnalysis().resultFor(rootCause.exceptionClass()));
+            this.testFailureCause = rootCause;
         } else {
+            this.testFailureCause = null;
             this.testFailureClassname = "";
             this.testFailureMessage = "";
         }
     }
 
-    private Throwable rootCauseOf(Throwable cause) {
-        if (StepFailureException.class.isAssignableFrom(cause.getClass())) {
-            return cause.getCause();
-        } else if (WebdriverAssertionError.class.isAssignableFrom(cause.getClass())){
-            return (cause.getCause() != null) ? cause.getCause() : cause;
-        } else {
-            return cause;
-        }
+    public void setTestFailureCause(FailureCause testFailureCause) {
+        this.testFailureCause = testFailureCause;
     }
 
-    public Throwable getTestFailureCause() {
-        if (testFailureClassname == null) {
-            return null;
-        }
-        if (originalTestFailureCause != null) {
-            return originalTestFailureCause;
-        }
-        return restoredTestFailureCause();
+    public void setTestFailureClassname(String testFailureClassname) {
+        this.testFailureClassname = testFailureClassname;
     }
 
-    private Throwable restoredTestFailureCause() {
-        Optional<Throwable> restoredException = restoreExceptionFrom(testFailureClassname, testFailureMessage);
-        if (restoredException.isPresent()) {
-            return restoredException.get();
-        }
-
-        if (isFailureClass(testFailureClassname)) {
-            return new AssertionError(testFailureMessage);
-        } else {
-            return new RuntimeException(testFailureMessage);
-        }
-    }
-
-    private Optional<Throwable> restoreExceptionFrom(String testFailureClassname, String testFailureMessage) {
-        try {
-            Class failureClass = Class.forName(testFailureClassname);
-            Constructor constructorWithMessage = getExceptionConstructor(failureClass);
-            return Optional.of( (Throwable) constructorWithMessage.newInstance(testFailureMessage));
-        } catch (Exception e) {
-            return Optional.absent();
-        }
-
-    }
-
-    private Constructor getExceptionConstructor(Class failureClass) throws NoSuchMethodException {
-        try {
-            return failureClass.getConstructor(String.class);
-        } catch (NoSuchMethodException e) {
-            return failureClass.getConstructor(Object.class);
-        }
+    public FailureCause getTestFailureCause() {
+        return testFailureCause;
     }
 
     private boolean isFailureClass(String testFailureClassname) {
@@ -1158,7 +1111,7 @@ public class TestOutcome {
     }
 
     public void lastStepFailedWith(Throwable testFailureCause) {
-        setTestFailureCause(testFailureCause);
+        determineTestFailureCause(testFailureCause);
         TestStep lastTestStep = testSteps.get(testSteps.size() - 1);
         lastTestStep.failedWith(new StepFailureException(testFailureCause.getMessage(), testFailureCause));
     }

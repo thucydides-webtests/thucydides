@@ -55,10 +55,10 @@ public class DefaultXUnitAdaptor extends FilebasedOutcomeAdaptor {
 
                 if (from.getError().isPresent()) {
                     TestException failure = from.getError().get();
-                    outcome.setTestFailureCause(failure.asException());
+                    outcome.determineTestFailureCause(failure.asException());
                 } else if (from.getFailure().isPresent()) {
                     TestException failure = from.getFailure().get();
-                    outcome.setTestFailureCause(failure.asAssertionFailure());
+                    outcome.determineTestFailureCause(failure.asAssertionFailure());
                 } else if (from.getSkipped().isPresent()) {
                     //although it is logged by junit as 'skipped', Thucydides
                     //makes a distinction between skipped and ignored.

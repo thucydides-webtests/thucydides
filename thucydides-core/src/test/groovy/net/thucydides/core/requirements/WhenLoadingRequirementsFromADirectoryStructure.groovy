@@ -2,6 +2,7 @@ package net.thucydides.core.requirements
 
 import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
+import org.junit.Test
 import spock.lang.Specification
 
 class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
@@ -28,13 +29,24 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
 
     def "Should be able to load capabilities from a directory structure containing spaces"() {
         given: "We are using the default requirements provider"
-            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features_with_spaces");
+            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features with spaces");
         when: "We load the available requirements"
             def capabilities = capabilityProvider.getRequirements()
             def capabilityNames = capabilities.collect {it.name}
         then: "the requirements should be loaded from the first-level sub-directories"
-           capabilityNames == ["Grow apples", "Grow potatoes", "Grow zuchinnis"]
+        capabilityNames == ["Grow apples", "Grow potatoes", "Grow zuchinnis"]
     }
+
+    def "Should be able to load capabilities from a directory structure containing foreign characters"() {
+        given: "We are using the default requirements provider"
+        RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features_with_foreign_chars");
+        when: "We load the available requirements"
+        def capabilities = capabilityProvider.getRequirements()
+        def capabilityNames = capabilities.collect {it.name}
+        then: "the requirements should be loaded from the first-level sub-directories"
+        capabilityNames == ["Grow potatoes", "Grow zuchinnis","Русский алфавит"]
+    }
+
 
     def "Should be able to load capabilities from a directory structure containing spaces in the path"() {
         given: "We are using the default requirements provider"
@@ -106,6 +118,21 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
     }
 
     def "default nested requirement types can be overriden using an environment variable"() {
+        given: "We are using the default requirements provider"
+            EnvironmentVariables vars = new MockEnvironmentVariables();
+        and: "We define the requirement type hierarchy in the environment variables"
+            vars.setProperty("thucydides.requirement.types","theme, epic, feature")
+            FileSystemRequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features", 0, vars);
+        when: "We load requirements with nested requirement directories and no .narrative files"
+            def capabilities = capabilityProvider.getRequirements()
+        then: "the second-level requirement are of type 'epic'"
+            capabilities.get(0).getType() == "theme"
+            capabilities.get(0).getChildren().get(0).getType() == "epic"
+            capabilities.get(0).getChildren().get(0).getChildren().get(0).getType() == "feature"
+            capabilities.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getType() == "feature"
+    }
+
+    def "foo"() {
         given: "We are using the default requirements provider"
             EnvironmentVariables vars = new MockEnvironmentVariables();
         and: "We define the requirement type hierarchy in the environment variables"

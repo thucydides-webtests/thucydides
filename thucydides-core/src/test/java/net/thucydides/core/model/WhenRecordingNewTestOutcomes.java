@@ -192,7 +192,7 @@ public class WhenRecordingNewTestOutcomes {
         outcome.recordStep(forASuccessfulTestStepCalled("The user opens the Google search page"));
 
         assertThat(outcome.hasNonStepFailure(), is(false));
-        outcome.setTestFailureCause(new AssertionError("test failed"));
+        outcome.determineTestFailureCause(new AssertionError("test failed"));
         assertThat(outcome.hasNonStepFailure(), is(true));
     }
 
@@ -612,7 +612,7 @@ public class WhenRecordingNewTestOutcomes {
 
     @Test
     public void a_failing_screenshot_records_the_error_message() {
-        Screenshot screenshot = new Screenshot("step_1.png", "Step 1", 800, new AssertionError("Element not found"));
+        Screenshot screenshot = new Screenshot("step_1.png", "Step 1", 800, new FailureCause(new AssertionError("Element not found")));
         assertThat(screenshot.getErrorMessage(), is("Element not found"));
     }
 

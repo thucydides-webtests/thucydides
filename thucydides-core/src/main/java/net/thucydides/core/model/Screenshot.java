@@ -9,12 +9,12 @@ public class Screenshot {
     private final String filename;
     private final String description;
     private final int width;
-    private final Throwable error;
+    private final FailureCause error;
 
     public Screenshot(final String filename,
                       final String description,
                       final int width,
-                      final Throwable error) {
+                      final FailureCause error) {
         this.filename = filename;
         this.description = description;
         this.width = width;
@@ -27,16 +27,12 @@ public class Screenshot {
         this(filename, description, width, null);
     }
 
-    public Throwable getError() {
+    public FailureCause getError() {
         return error;
     }
 
     public String getErrorMessage() {
-        return (error != null) ? errorMessageFrom(error) : "";
-    }
-
-    private String errorMessageFrom(final Throwable error) {
-        return (error.getCause() != null) ? error.getCause().getMessage() : error.getMessage();
+        return (error != null) ? error.getMessage(): "";
     }
 
     /**

@@ -65,7 +65,7 @@ public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 
         TestOutcome testOutcome = new TestOutcome("a_simple_test_case");
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
-        testOutcome.setTestFailureCause(new AssertionError("test failed"));
+        testOutcome.determineTestFailureCause(new AssertionError("test failed"));
         File htmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
 
         assertThat(htmlReport.exists(), is(true));

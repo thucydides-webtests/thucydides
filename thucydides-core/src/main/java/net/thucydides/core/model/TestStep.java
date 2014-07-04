@@ -33,7 +33,7 @@ public class TestStep {
     private long duration;
     private long startTime;
     private List<ScreenshotAndHtmlSource> screenshots = new ArrayList<>();
-    private Throwable exception;
+    private FailureCause exception;
     private TestResult result;
 
     private List<TestStep> children = new ArrayList<>();
@@ -258,22 +258,22 @@ public class TestStep {
 
     /**
      * Indicate that this step failed with a given error.
-     * @param exception why the test failed.
+     * @param cause why the test failed.
      */
-    public void failedWith(final Throwable exception) {
-        setResult(new FailureAnalysis().resultFor(exception));
-        this.exception = exception;
+    public void failedWith(final Throwable cause) {
+        this.exception = new RootCauseAnalyzer(cause).getRootCause();
+        setResult(new FailureAnalysis().resultFor(this.exception.toException()));
     }
 
     public String getErrorMessage() {
-        return (exception != null) ? errorMessageFrom(exception) : "";
+        return (exception != null) ? exception.getMessage() : "";
     }
 
     /**
      * The test has been aborted (marked as pending or ignored) for a reason described in the exception.
      */
     public void testAborted(final Throwable exception) {
-        this.exception = exception;
+        new RootCauseAnalyzer(exception).getRootCause();
     }
 
     private String errorMessageFrom(final Throwable error) {
@@ -284,7 +284,7 @@ public class TestStep {
         return new ErrorMessageFormatter(getErrorMessage()).getShortErrorMessage();
     }
 
-    public Throwable getException() {
+    public FailureCause getException() {
         return exception;
     }
 
@@ -362,7 +362,8 @@ public class TestStep {
         if (duration != testStep.duration) return false;
         if (number != testStep.number) return false;
         if (startTime != testStep.startTime) return false;
-        if (exception != null ? !exceptionsAreEqual(exception, testStep.exception) : testStep.exception != null) return false;
+        // TODO
+//        if (exception != null ? !exceptionsAreEqual(exception, testStep.exception) : testStep.exception != null) return false;
         if (!children.equals(testStep.children)) return false;
         if (!description.equals(testStep.description)) return false;
         if (result != testStep.result) return false;

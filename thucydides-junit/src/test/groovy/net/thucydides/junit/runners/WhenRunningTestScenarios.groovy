@@ -99,6 +99,7 @@ class WhenRunningTestScenarios extends Specification {
         and:
         results["happy_day_scenario"].result == ERROR
         results["happy_day_scenario"].testSteps[2].result == ERROR
+        println results["happy_day_scenario"].testFailureCause.stackTrace
     }
 
     def "a failure in a nested step method should cause the test to fail"() {
@@ -270,9 +271,12 @@ class WhenRunningTestScenarios extends Specification {
         def steps = runner.testOutcomes[0].getTestSteps()
         def failingStep = steps[4]
         then:
+        println failingStep.errorMessage
+        println failingStep.exception.class
+        println failingStep.exception.errorType
         failingStep.errorMessage.contains "Expected: is <2>"
         and:
-        failingStep.exception.class == StepFailureException
+        failingStep.exception.errorType == "java.lang.AssertionError"
     }
 
     def "when a test throws a webdrriver exception is should be recorded in the step"() {
@@ -283,7 +287,7 @@ class WhenRunningTestScenarios extends Specification {
         def steps = runner.testOutcomes[0].getTestSteps()
         def failingStep = steps[3]
         then:
-        failingStep.exception.class == StepFailureException
+        failingStep.exception.errorType == "org.openqa.selenium.NoSuchElementException"
     }
 
     def "when a test throws a runtime exception is should be recorded in the step"() {
@@ -294,7 +298,7 @@ class WhenRunningTestScenarios extends Specification {
         def steps = runner.testOutcomes[0].getTestSteps()
         def failingStep = steps[3]
         then:
-        failingStep.exception.class == StepFailureException
+        failingStep.exception.errorType == "java.lang.IllegalArgumentException"
     }
 
     def "should record the name of the test scenario"() {

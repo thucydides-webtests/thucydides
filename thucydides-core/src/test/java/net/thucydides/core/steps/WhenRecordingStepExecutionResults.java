@@ -850,7 +850,7 @@ public class WhenRecordingStepExecutionResults {
         TestOutcome testOutcome = results.get(0);
 
         assertThat(testOutcome.getTestSteps().get(1).getResult(), is(TestResult.FAILURE));
-        assertThat(testOutcome.getTestSteps().get(1).getException(), instanceOf(StepFailureException.class));
+        assertThat(testOutcome.getTestSteps().get(1).getException().getErrorType(), is("java.lang.AssertionError"));
         assertThat(testOutcome.getTestSteps().get(1).getErrorMessage(), is("Step failed"));
     }
 

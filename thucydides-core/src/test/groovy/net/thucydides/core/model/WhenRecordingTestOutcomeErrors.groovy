@@ -14,9 +14,10 @@ class WhenRecordingTestOutcomeErrors extends Specification {
         def testOutcome = TestOutcome.forTestInStory("aTest", Story.called("a story"))
 
         when:
-        testOutcome.setTestFailureCause(new AssertionError("oh crap!"))
+        testOutcome.determineTestFailureCause(new AssertionError("oh crap!"))
 
         then:
+        testOutcome.testFailureCause.errorType == "java.lang.AssertionError"
         testOutcome.testFailureClassname == "java.lang.AssertionError"
         testOutcome.testFailureMessage == "oh crap!"
 
@@ -46,7 +47,7 @@ class WhenRecordingTestOutcomeErrors extends Specification {
         def testOutcome = TestOutcome.forTestInStory("aTest", Story.called("a story"))
 
         when:
-        testOutcome.setTestFailureCause(new RuntimeException("oh crap!"))
+        testOutcome.determineTestFailureCause(new RuntimeException("oh crap!"))
 
         then:
         testOutcome.testFailureClassname == "java.lang.RuntimeException"

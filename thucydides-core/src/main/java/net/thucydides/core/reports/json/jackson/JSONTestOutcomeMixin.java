@@ -15,7 +15,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
         "screenshots", "screenshotAndHtmlSources","qualifiedMethodName","testCase", "qualified","unqualified",
         "environmentVariables", "overallStability", "statistics",
         "recentStability", "recentTestRunCount", "recentPassCount", "recentFailCount", "recentPendingCount", "originalTestFailureCause",
-        "dataDriven", "stepCount", "nestedStepCount", "successCount", "failureCount", "errorCount", "errorMessage", "testFailureCause",
+        "dataDriven", "stepCount", "nestedStepCount", "successCount", "failureCount", "errorCount", "errorMessage",
         "ignoredCount", "skippedOrIgnoredCount", "skippedCount", "pendingCount",
         "titleWithLinks", "testCount", "startTimeNotDefined", "completeName",
         "flattenedTestSteps", "leafTestSteps", "formattedIssues", "issueKeys",

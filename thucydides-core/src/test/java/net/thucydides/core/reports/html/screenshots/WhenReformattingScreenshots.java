@@ -1,6 +1,7 @@
 package net.thucydides.core.reports.html.screenshots;
 
 import net.thucydides.core.images.SimpleImageInfo;
+import net.thucydides.core.model.FailureCause;
 import net.thucydides.core.model.Screenshot;
 import net.thucydides.core.util.ExtendedTemporaryFolder;
 import net.thucydides.core.util.FileSystemUtils;
@@ -110,7 +111,7 @@ public class WhenReformattingScreenshots {
                 "System info: os.name: 'Mac OS X', os.arch: 'x86_64', os.version: '10.7.1', java.version: '1.6.0_26'\n" +
                 "Driver info: driver.version: unknown>";
 
-        Screenshot screenshot = new Screenshot("wikipedia.png", "Wikipedia", 805, new AssertionError(errorMessage));
+        Screenshot screenshot = new Screenshot("wikipedia.png", "Wikipedia", 805, new FailureCause(new AssertionError(errorMessage)));
 
         assertThat(screenshot.getShortErrorMessage(), is("Unable to locate element: {'method':'name','selector':'fieldDoesNotExist'}; duration or timeout: 8 milliseconds"));
     }
@@ -119,7 +120,7 @@ public class WhenReformattingScreenshots {
     public void should_only_display_the_first_line_of_a_simple_error_message_in_the_UI() {
         String errorMessage = "Something broke";
 
-        Screenshot screenshot = new Screenshot("wikipedia.png", "Wikipedia", 805, new AssertionError(errorMessage));
+        Screenshot screenshot = new Screenshot("wikipedia.png", "Wikipedia", 805, new FailureCause(new AssertionError(errorMessage)));
 
         assertThat(screenshot.getShortErrorMessage(), is("Something broke"));
     }
@@ -128,16 +129,8 @@ public class WhenReformattingScreenshots {
     public void should_make_error_message_javascript_safe() {
         String errorMessage = "Expected: \"red\" but: was red's color(\"reddish\")";
 
-        Screenshot screenshot = new Screenshot("wikipedia.png", "Wikipedia", 805, new AssertionError(errorMessage));
+        Screenshot screenshot = new Screenshot("wikipedia.png", "Wikipedia", 805, new FailureCause(new AssertionError(errorMessage)));
 
         assertThat(screenshot.getShortErrorMessage(), is("Expected: &quot;red&quot; but: was red's color(&quot;reddish&quot;)"));
-    }
-
-    @Test
-    public void should_display_message_from_original_cause_if_present() {
-        Exception exception = new Exception("Oops", new Exception("Something went wrong"));
-        Screenshot screenshot = new Screenshot("wikipedia.png", "Wikipedia", 805, exception);
-
-        assertThat(screenshot.getShortErrorMessage(), is("Something went wrong"));
     }
 }
