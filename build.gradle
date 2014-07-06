@@ -91,7 +91,7 @@ def deployFiles(pomFilePath, artifactFilePath, sourceFile, javadocFile) {
     executeOnShell "cp ${pomFilePath.trim()} ${tempDirectory.path}"
     executeOnShell "cp ${artifactFilePath.trim()} ${tempDirectory.path}"
 
-    deployCmd = "mvn gpg:sign-and-deploy-file $toSonatypeStagingRepo -DpomFile=${tempPom.path} -Dfile=${tempArtifact.path}"
+    def deployCmd = "mvn gpg:sign-and-deploy-file $toSonatypeStagingRepo -DpomFile=${tempPom.path} -Dfile=${tempArtifact.path}"
     if (sourceFile) {
         deployCmd += " -Dsources=$sourceFile"
     }
