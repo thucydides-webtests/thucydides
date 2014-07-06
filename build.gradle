@@ -168,7 +168,7 @@ def executeOnShell(String command, boolean failOnError) {
 }
 
 private def addShellPrefix(String command) {
-    commandArray = new String[3]
+    def commandArray = new String[3]
     commandArray[0] = "sh"
     commandArray[1] = "-c"
     commandArray[2] = command
