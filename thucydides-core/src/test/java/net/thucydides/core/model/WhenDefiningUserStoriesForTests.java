@@ -95,8 +95,9 @@ public class WhenDefiningUserStoriesForTests {
     public void stories_with_the_same_story_class_are_identical_even_if_the_class_is_no_longer_available() {
         net.thucydides.core.model.Story story1 = net.thucydides.core.model.Story.from(MyUserStories.PurchaseNewWidget.class);
         net.thucydides.core.model.Story story2
-          = net.thucydides.core.model.Story.withId("net.thucydides.core.model.WhenDefiningUserStoriesForTests.MyUserStories.PurchaseNewWidget",
-                "Purchase new widget");
+          = net.thucydides.core.model.Story
+                .withId("net.thucydides.core.model.WhenDefiningUserStoriesForTests.MyUserStories.PurchaseNewWidget", "Purchase new widget")
+                .withPath("net.thucydides.core.model.WhenDefiningUserStoriesForTests.MyUserStories");
         assertThat(story1, is(story2));
     }
 

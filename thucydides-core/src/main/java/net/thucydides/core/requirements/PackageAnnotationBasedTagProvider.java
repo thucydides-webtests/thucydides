@@ -132,7 +132,7 @@ public class PackageAnnotationBasedTagProvider extends AbstractRequirementsTagPr
             return persister.read();
         } catch (IOException e) {
             e.printStackTrace();
-            return new TreeMap<String, Requirement>();
+            return new TreeMap<>();
         }
     }
 

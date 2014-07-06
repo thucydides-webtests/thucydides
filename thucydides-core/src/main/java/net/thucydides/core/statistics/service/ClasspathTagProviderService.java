@@ -3,6 +3,7 @@ package net.thucydides.core.statistics.service;
 import com.google.common.collect.Lists;
 import net.thucydides.core.requirements.CoreTagProvider;
 import net.thucydides.core.requirements.OverridableTagProvider;
+import net.thucydides.core.requirements.PackageAnnotationBasedTagProvider;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +27,8 @@ public class ClasspathTagProviderService implements TagProviderService {
 
             Iterable<TagProvider> tagProviderServiceLoader = loadTagProvidersFromPath();
 
-            for (TagProvider aServiceLoader : tagProviderServiceLoader) {
-                newTagProviders.add(aServiceLoader);
+            for (TagProvider tagProvider : tagProviderServiceLoader) {
+                newTagProviders.add(tagProvider);
             }
             if (additionalTagProvidersArePresentIn(newTagProviders)) {
                 newTagProviders = removeOverridableProvidersFrom(newTagProviders);

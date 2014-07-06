@@ -146,33 +146,24 @@ public class Story {
         return new Story(storyId, storyName, new ApplicationFeature(featureClassName, featureName), storyPath);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Story)) return false;
+
+        Story story = (Story) o;
+
+        if (!id.equals(story.id)) return false;
+        if (path != null ? !path.equals(story.path) : story.path != null) return false;
+
+        return true;
+    }
 
     @Override
     public int hashCode() {
-        return nullSafeHashCodeOf(id);
-    }
-
-    private int nullSafeHashCodeOf(final String value) {
-        if (value == null) {
-            return 0;
-        }
-        return value.hashCode();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Story that = (Story) obj;
-
-        return EqualsUtils.areEqual(this.id, that.id);
+        int result = id.hashCode();
+        result = 31 * result + (path != null ? path.hashCode() : 0);
+        return result;
     }
 
     /**

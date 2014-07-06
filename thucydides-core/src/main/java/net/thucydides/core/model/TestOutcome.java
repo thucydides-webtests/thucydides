@@ -1129,6 +1129,7 @@ public class TestOutcome {
         Set<TestTag> tags  = Sets.newHashSet();
         for (TagProvider tagProvider : tagProviders) {
             try {
+                // TODO
                 //addTagsWithOverride(tags, tagProvider.getTagsFor(this));
                 tags.addAll(tagProvider.getTagsFor(this));
             } catch(Throwable theTagProviderFailedBueThereIsntMuchWeCanDoAboutIt) {
@@ -1145,7 +1146,9 @@ public class TestOutcome {
                 if (isAStory(tag)) {
                     removeAnyLessSpecificMatchingStoryTags(tags, tag.getName());
                 }
-                tags.add(tag);
+                if (!existsMoreSpecificTag(tags, tag.getName())) {
+                    tags.add(tag);
+                }
             }
         }
     }
@@ -1158,6 +1161,15 @@ public class TestOutcome {
             }
         }
         tags.removeAll(duplicatedTags);
+    }
+
+    private boolean existsMoreSpecificTag(Set<TestTag> tags, String storyName) {
+        for(TestTag tag : tags) {
+            if (tag.getType().equalsIgnoreCase("story") && (!isLessSpecific(tag, storyName))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isLessSpecific(TestTag tag, String storyName) {
