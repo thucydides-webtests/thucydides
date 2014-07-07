@@ -1,6 +1,5 @@
 package net.thucydides.core;
 
-import com.google.common.collect.ImmutableList;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Step;
@@ -13,15 +12,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.WebDriver;
-import spock.lang.Ignore;
-
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertTrue;
 
 public class WhenRunningTestsInIsolation {
 
@@ -75,7 +70,7 @@ public class WhenRunningTestsInIsolation {
         assertThat(sampleTestClass.driver, is(not(nullValue())));
 
     }
-          /*
+
     @Test
     public void any_class_can_host_an_annotated_step_library() {
         SampleTestClass sampleTestClass = new SampleTestClass();
@@ -190,5 +185,4 @@ public class WhenRunningTestsInIsolation {
         assertThat(Thucydides.getStepListener(), is(not(nullValue())));
 
     }
-    */
 }

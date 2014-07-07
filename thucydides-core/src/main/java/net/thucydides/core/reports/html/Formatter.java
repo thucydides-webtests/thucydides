@@ -180,6 +180,7 @@ public class Formatter {
     }
 
     private String convertNonStandardNLChars(String text) {
+        text = StringUtils.replace(text, "\r␤", NEW_LINE);
         return StringUtils.replace(text, "␤", NEW_LINE);
     }
 

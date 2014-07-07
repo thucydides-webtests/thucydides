@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static ch.lambdaj.Lambda.convert;
 import static net.thucydides.core.requirements.RequirementsPath.pathElements;
@@ -211,8 +212,14 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
 
     private Enumeration<URL> getDirectoriesFrom(String root) throws IOException, URISyntaxException {
         String rootWithEscapedSpaces = root.replaceAll(" ", "%20");
-        URI rootUri = new URI(rootWithEscapedSpaces);
+        URI rootUri = (isWindowsPath(rootWithEscapedSpaces)) ? new File(root).toPath().toUri() : new URI(rootWithEscapedSpaces);
         return getClass().getClassLoader().getResources(rootUri.getPath());
+    }
+
+    private final Pattern WINDOWS_PATH = Pattern.compile("([a-zA-Z]:)?(\\\\[a-zA-Z0-9_-]+)+\\\\?");
+
+    private boolean isWindowsPath(String rootWithEscapedSpaces) {
+        return WINDOWS_PATH.matcher(rootWithEscapedSpaces).find();
     }
 
     public Set<TestTag> getTagsFor(final TestOutcome testOutcome) {
