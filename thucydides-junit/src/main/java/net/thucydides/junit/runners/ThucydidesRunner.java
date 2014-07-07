@@ -6,6 +6,7 @@ import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.annotations.Pending;
+import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.TestCaseAnnotations;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.BatchManagerProvider;
@@ -220,11 +221,15 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(final RunNotifier notifier) {
+        RunNotifier localNotifier = null;
         if (!skipThisTest()) {
             try {
                 setupFixtureServices();
-                RunNotifier newNotifier = initializeRunNotifier(notifier);
-                super.run(newNotifier);
+                localNotifier = initializeRunNotifier(notifier);
+                super.run(localNotifier);
+            } catch (Throwable someFailure) {
+                someFailure.printStackTrace();
+                throw someFailure;
             } finally {
                 notifyTestSuiteFinished();
                 generateReports();
@@ -300,7 +305,11 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     private RunNotifier initializeRunNotifier(RunNotifier notifier) {
         RunNotifier notifierForSteps = new RunNotifier();
         notifierForSteps.addListener(getStepListener());
-        return new RetryFilteringRunNotifier(notifier, notifierForSteps);
+        return (shouldRetryTest() ? notifier : new RetryFilteringRunNotifier(notifier, notifierForSteps));
+    }
+
+    private boolean shouldRetryTest() {
+        return configuration.getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.JUNIT_RETRY_TESTS, false);
     }
 
     protected void initStepEventBus() {

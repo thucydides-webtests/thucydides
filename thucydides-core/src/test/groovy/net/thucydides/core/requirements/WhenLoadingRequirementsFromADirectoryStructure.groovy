@@ -37,17 +37,6 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
         capabilityNames == ["Grow apples", "Grow potatoes", "Grow zuchinnis"]
     }
 
-    def "Should be able to load capabilities from a directory structure containing foreign characters"() {
-        given: "We are using the default requirements provider"
-        RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features_with_foreign_chars");
-        when: "We load the available requirements"
-        def capabilities = capabilityProvider.getRequirements()
-        def capabilityNames = capabilities.collect {it.name}
-        then: "the requirements should be loaded from the first-level sub-directories"
-        capabilityNames == ["Grow potatoes", "Grow zuchinnis","Русский алфавит"]
-    }
-
-
     def "Should be able to load capabilities from a directory structure containing spaces in the path"() {
         given: "We are using the default requirements provider"
             RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("stories");
