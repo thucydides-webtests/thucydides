@@ -572,6 +572,11 @@ public enum ThucydidesSystemProperty {
     JSON_CHARSET,
 
     /**
+     * If set to true, the RetryFilteringRunNotifier will be used to attempt to rerun failing tests.
+     */
+    JUNIT_RETRY_TESTS,
+
+    /**
      * Keep the Thucydides session data between tests.
      * Normally, the session data is cleared between tests.
      */
