@@ -48,6 +48,7 @@ class WhenProcessingScreenshots extends Specification {
                 screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile,targetFile))
             }
             screenshotProcessor.waitUntilDone()
+            screenshotProcessor.terminate();
         then:
             assert (screenshotProcessor.isEmpty())
             assert targetDirectory.list().size() == 10
@@ -65,12 +66,13 @@ class WhenProcessingScreenshots extends Specification {
                         def screenshotFile = copySourceScreenshot(sourceDirectory)
                         def targetFile = new File(targetDirectory,"screenshot-${i}-${it}.png")
                         screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile,targetFile))
-                        screenshotProcessor.waitUntilDone()
                     }
                 }
             }
             thread.join()
-            
+            screenshotProcessor.waitUntilDone()
+            screenshotProcessor.terminate()
+
 
         then:
             assert (screenshotProcessor.isEmpty())

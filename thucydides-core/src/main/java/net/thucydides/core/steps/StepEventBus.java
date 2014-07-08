@@ -441,6 +441,13 @@ public class StepEventBus {
         storyUnderTest = null;
     }
 
+    public void testRunFinished() {
+        System.out.println("TEST RUN FINISHED");
+        screenshotProcessor.waitUntilDone();
+        screenshotProcessor.terminate();
+
+    }
+
     public void updateCurrentStepTitle(String stepTitle) {
         getBaseStepListener().updateCurrentStepTitle(stepTitle);
     }

@@ -56,7 +56,7 @@ public class JUnitStepListener extends RunListener {
 
     @Override
     public void testRunFinished(Result result) throws Exception {
-        StepEventBus.getEventBus().testSuiteFinished();
+        StepEventBus.getEventBus().testRunFinished();
         super.testRunFinished(result);
     }
 

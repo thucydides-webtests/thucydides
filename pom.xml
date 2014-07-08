@@ -398,6 +398,7 @@
                         <version>${surefire.version}</version>
                         <configuration>
                             <skip>true</skip>
+                            <forkCount>2</forkCount>
                             <argLine>-Xmx512m -XX:MaxPermSize=512m -XX:PermSize=128m</argLine>
                         </configuration>
                         <executions>

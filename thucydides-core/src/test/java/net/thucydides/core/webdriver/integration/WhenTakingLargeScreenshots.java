@@ -79,6 +79,8 @@ public class WhenTakingLargeScreenshots {
 
         ResizableImage image = ResizableImage.loadFrom(screenshotFile);
 
+        screenshotProcessor.terminate();
+        waitUntilFileIsWritten(screenshotFile);
         assertThat(image.getWitdh(), is(greaterThan(350))); // In Windows the actual dimensions may be are slightly less
     }
 
@@ -92,6 +94,9 @@ public class WhenTakingLargeScreenshots {
         File screenshot1File = photographer.takeScreenshot().get();
         File screenshot2File = photographer.takeScreenshot().get();
 
+        screenshotProcessor.terminate();
+        waitUntilFileIsWritten(screenshot1File);
+        waitUntilFileIsWritten(screenshot2File);
         assertThat(screenshot1File.getName(), equalTo(screenshot2File.getName()));
 
     }
@@ -112,6 +117,7 @@ public class WhenTakingLargeScreenshots {
         File screenshotFile = photographer.takeScreenshot().get();
 
         waitUntilFileIsWritten(screenshotFile);
+        screenshotProcessor.terminate();
 
         ResizableImage image = ResizableImage.loadFrom(screenshotFile);
 

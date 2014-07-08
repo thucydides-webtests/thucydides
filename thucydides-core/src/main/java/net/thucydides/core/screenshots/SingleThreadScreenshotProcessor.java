@@ -52,6 +52,13 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
         }
     }
 
+
+    boolean done = false;
+
+    public void terminate() {
+        done = true;
+    }
+
     class Processor implements Runnable {
 
         private final Queue<QueuedScreenshot> queue;
@@ -60,14 +67,14 @@ public class SingleThreadScreenshotProcessor implements ScreenshotProcessor {
             this.queue = queue;
         }
 
-        boolean done = false;
-
         public void run() {
             while (!done) {
                 synchronized (queue) {
                     saveQueuedScreenshot();
                     try {
-                        queue.wait();
+                        if (!done) {
+                            queue.wait();
+                        }
                     } catch (InterruptedException ignore) {
                     }
                 }
