@@ -15,6 +15,6 @@ public class WhenPreparingResourcePaths {
 
     @Test
     public void shouldConvertClasspathResourceToRealPath() {
-        assertThat(pathProcessor.normalize("classpath:test-outcomes")).endsWith("target/test-classes/test-outcomes");
+        assertThat(pathProcessor.normalize("classpath:test-outcomes")).matches(".*target[/\\\\]test-classes[/\\\\]test-outcomes");
     }
 }
