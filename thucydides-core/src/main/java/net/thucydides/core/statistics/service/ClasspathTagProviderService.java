@@ -3,8 +3,6 @@ package net.thucydides.core.statistics.service;
 import com.google.common.collect.Lists;
 import net.thucydides.core.requirements.CoreTagProvider;
 import net.thucydides.core.requirements.OverridableTagProvider;
-import net.thucydides.core.requirements.PackageAnnotationBasedTagProvider;
-import net.thucydides.core.requirements.RequirementsTagProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +15,10 @@ public class ClasspathTagProviderService implements TagProviderService {
 
     private List<TagProvider> tagProviders;
 
+    private TagProviderFilter<TagProvider> filter = new TagProviderFilter<>();
+
     public ClasspathTagProviderService() {
     }
-
-    private TagProviderFilter<TagProvider> filter = new TagProviderFilter<>();
 
     @Override
     public List<TagProvider> getTagProviders() {
@@ -32,39 +30,12 @@ public class ClasspathTagProviderService implements TagProviderService {
             for (TagProvider tagProvider : tagProviderServiceLoader) {
                 newTagProviders.add(tagProvider);
             }
-            if (additionalTagProvidersArePresentIn(newTagProviders)) {
-                newTagProviders = filter.removeOverriddenProviders(newTagProviders);// removeOverridableProvidersFrom(newTagProviders);
-            }
-            tagProviders =  newTagProviders;
+            tagProviders = filter.removeOverriddenProviders(newTagProviders);
         }
         return tagProviders;
     }
 
     protected Iterable<TagProvider> loadTagProvidersFromPath() {
         return ServiceLoader.load(TagProvider.class);
-    }
-
-
-    private boolean additionalTagProvidersArePresentIn(List<TagProvider> providers) {
-        for(TagProvider provider : providers) {
-            if (!isKnownProvider(provider)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isKnownProvider(TagProvider provider) {
-        return (CoreTagProvider.class.isAssignableFrom(provider.getClass()));
-    }
-
-    private List<TagProvider> removeOverridableProvidersFrom(List<TagProvider> providers) {
-        List<TagProvider> retainedProviders = Lists.newArrayList();
-        for(TagProvider provider : providers) {
-            if (!OverridableTagProvider.class.isAssignableFrom(provider.getClass())) {
-                retainedProviders.add(provider);
-            }
-        }
-        return retainedProviders;
     }
 }

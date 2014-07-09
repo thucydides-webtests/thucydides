@@ -1,13 +1,13 @@
 package net.thucydides.core.statistics.service;
- 
+
 import com.google.common.collect.Lists;
 import net.thucydides.core.requirements.CoreTagProvider;
 import net.thucydides.core.requirements.OverridableTagProvider;
- 
+
 import java.util.List;
- 
+
 public class TagProviderFilter<T extends TagProvider> {
- 
+
     public List<T> removeOverriddenProviders(List<T> providers) {
         if (additionalTagProvidersArePresentIn(providers)) {
             return removeOverridableProvidersFrom(providers);
@@ -15,7 +15,7 @@ public class TagProviderFilter<T extends TagProvider> {
             return providers;
         }
     }
- 
+
     private boolean additionalTagProvidersArePresentIn(List<T> providers) {
         for(TagProvider provider : providers) {
             if ((CoreTagProvider.class.isAssignableFrom(provider.getClass()))) {
@@ -24,7 +24,7 @@ public class TagProviderFilter<T extends TagProvider> {
         }
         return false;
     }
- 
+
     private List<T> removeOverridableProvidersFrom(List<T> providers) {
         List<T> retainedProviders = Lists.newArrayList();
         for(T provider : providers) {

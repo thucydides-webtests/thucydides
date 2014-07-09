@@ -1,6 +1,7 @@
 package net.thucydides.core.requirements;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import net.thucydides.core.statistics.service.ClasspathTagProviderService;
 import net.thucydides.core.statistics.service.TagProvider;
@@ -27,7 +28,9 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
 
     private List<RequirementsTagProvider> requirementsTagProviders;
 
+
     private TagProviderFilter<RequirementsTagProvider> filter = new TagProviderFilter<>();
+
     @Inject
     public ClasspathRequirementsProviderService(ClasspathTagProviderService tagProviderService) {
         this.tagProviderService = tagProviderService;
@@ -52,6 +55,8 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
                 providers.add((RequirementsTagProvider)tagProvider);
             }
         }
+
         return filter.removeOverriddenProviders(providers);
     }
+
 }

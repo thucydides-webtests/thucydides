@@ -480,8 +480,10 @@
             </tr>
             <#foreach tag in tags>
                 <#assign tagTitle = inflection.of(tag.shortName).asATitle() >
-                <#assign tagReport = absoluteReportName.forTag(tag) >
-                <#assign outcomesForTag = testOutcomes.withTag(tag) >  <!-- outcomesForType.withTag(tagName)-->
+                <#assign tagReport = reportName.forTag(tag) >
+                <#assign outcomesForTag = testOutcomes.withTag(tag) >
+                <#--outcomesForType.withTag(tag) >-->
+                <#--testOutcomes.withTag(tag) outcomesForType.withTag(tagName)-->
                 <#if outcomesForTag.result == "FAILURE">
                     <#assign outcome_icon = "fail.png">
                     <#assign outcome_text = "failure-color">

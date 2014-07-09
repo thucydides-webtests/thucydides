@@ -242,6 +242,9 @@ public class Requirement implements Comparable {
     }
 
     public String qualifier() {
+        if (getCardNumber() != null) {
+            return getCardNumber();
+        }
         return (getParent() != null) ? getParent() : null;
 //        if (getCardNumber() != null) {
 //            return getCardNumber();
