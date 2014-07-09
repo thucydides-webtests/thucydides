@@ -73,7 +73,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
     	this.webdriverClock = new SystemClock();
 		this.sleeper = Sleeper.SYSTEM_SLEEPER;
 		this.javascriptExecutorFacade = new JavascriptExecutorFacade(driver);
-		this.environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+		this.environmentVariables = Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ;
     }
 
     private WebElementFacadeImpl copy() {

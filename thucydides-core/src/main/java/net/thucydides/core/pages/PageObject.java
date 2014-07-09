@@ -95,7 +95,7 @@ public abstract class PageObject {
     protected PageObject() {
         this.webdriverClock = new SystemClock();
         this.clock = Injectors.getInjector().getInstance(net.thucydides.core.pages.SystemClock.class);
-        this.environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+        this.environmentVariables = Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ;
         this.sleeper = Sleeper.SYSTEM_SLEEPER;
         setupPageUrls();
     }

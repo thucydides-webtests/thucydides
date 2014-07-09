@@ -57,7 +57,7 @@ public class Formatter {
     }
 
     public Formatter(IssueTracking issueTracking) {
-        this(issueTracking, Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(issueTracking, Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public String renderAsciidoc(String text) {

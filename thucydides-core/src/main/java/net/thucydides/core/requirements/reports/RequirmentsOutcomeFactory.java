@@ -18,7 +18,7 @@ public class RequirmentsOutcomeFactory {
     private final EnvironmentVariables environmentVariables;
 
     public RequirmentsOutcomeFactory(List<RequirementsTagProvider> requirementsTagProviders, IssueTracking issueTracking) {
-        this(requirementsTagProviders, issueTracking, Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(requirementsTagProviders, issueTracking, Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public RequirmentsOutcomeFactory(List<RequirementsTagProvider> requirementsTagProviders,

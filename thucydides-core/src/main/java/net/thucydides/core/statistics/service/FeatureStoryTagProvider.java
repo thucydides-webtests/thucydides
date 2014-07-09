@@ -22,7 +22,7 @@ public class FeatureStoryTagProvider implements TagProvider, CoreTagProvider {
     private final EnvironmentVariables environmentVariables;
 
     public FeatureStoryTagProvider() {
-        this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public FeatureStoryTagProvider(EnvironmentVariables environmentVariables) {

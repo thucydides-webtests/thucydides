@@ -53,7 +53,7 @@ public class PackageAnnotationBasedTagProvider extends AbstractRequirementsTagPr
     Map<Requirement, String> requirementPaths = Maps.newHashMap();
 
     public PackageAnnotationBasedTagProvider() {
-        this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public PackageAnnotationBasedTagProvider(EnvironmentVariables vars) {

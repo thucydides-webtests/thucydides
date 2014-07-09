@@ -26,7 +26,7 @@ public class TestOutcomeLoader {
     private final FormatConfiguration formatConfiguration;
 
     public TestOutcomeLoader() {
-        this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     @Inject

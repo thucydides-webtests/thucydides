@@ -53,7 +53,7 @@ public class ThucydidesAdaptorMojo extends AbstractMojo {
     }
 
     public ThucydidesAdaptorMojo() {
-        this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     protected File getOutputDirectory() {

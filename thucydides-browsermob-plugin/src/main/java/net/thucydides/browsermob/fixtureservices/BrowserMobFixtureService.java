@@ -35,7 +35,7 @@ public class BrowserMobFixtureService implements FixtureService {
     private ThreadLocal<ProxyServer> threadLocalproxyServer = new  ThreadLocal<ProxyServer>();
 
     public BrowserMobFixtureService() {
-        this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public BrowserMobFixtureService(EnvironmentVariables environmentVariables) {

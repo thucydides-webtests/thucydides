@@ -116,7 +116,7 @@ public class WhenLoadingPreferencesFromALocalPropertiesFile {
 
     @Test
     public void local_preferences_should_be_loaded_with_the_environment_variables() {
-        EnvironmentVariables loadedEnvironmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+        EnvironmentVariables loadedEnvironmentVariables = Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ;
         assertThat(loadedEnvironmentVariables.getProperty("test.property"), is("set"));
     }
 

@@ -81,7 +81,7 @@ public class SpecflowScenarioTitleLine {
     }
 
     public SpecflowScenarioTitleLine(String titleLine) {
-        this(titleLine, Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(titleLine, Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     private String pathFrom(List<String> titleElements) {

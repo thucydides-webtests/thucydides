@@ -16,7 +16,7 @@ public class VersionProvider {
     private final EnvironmentVariables environmentVariables;
 
     public VersionProvider() {
-        this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public VersionProvider(EnvironmentVariables environmentVariables) {

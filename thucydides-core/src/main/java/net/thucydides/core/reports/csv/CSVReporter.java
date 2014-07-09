@@ -34,7 +34,7 @@ public class CSVReporter extends ThucydidesReporter {
     private final String encoding;
 
     public CSVReporter(File outputDirectory) {
-        this(outputDirectory, Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(outputDirectory, Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public CSVReporter(File outputDirectory, EnvironmentVariables environmentVariables) {

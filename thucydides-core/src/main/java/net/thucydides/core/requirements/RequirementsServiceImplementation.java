@@ -46,7 +46,7 @@ public class RequirementsServiceImplementation implements RequirementsService {
                     FileSystemRequirementsTagProvider.class.getCanonicalName());
 
     public RequirementsServiceImplementation() {
-        environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+        environmentVariables = Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ;
     }
 
     @Override

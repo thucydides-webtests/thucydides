@@ -24,7 +24,7 @@ public final class StepData {
 
     public StepData(final String testDataSource) {
         FilePathParser testDataSourcePath
-                = new FilePathParser(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+                = new FilePathParser(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
         this.testDataSource = testDataSourcePath.getInstanciatedPath(testDataSource);
     }
 

@@ -28,7 +28,7 @@ public class TestOutcomeAdaptorReporter extends ThucydidesReporter {
 
 
     public TestOutcomeAdaptorReporter() {
-        formatConfiguration = new FormatConfiguration(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        formatConfiguration = new FormatConfiguration(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     /**

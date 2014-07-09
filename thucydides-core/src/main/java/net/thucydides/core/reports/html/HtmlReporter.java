@@ -35,7 +35,7 @@ public abstract class HtmlReporter extends ThucydidesReporter {
     protected static final String TIMESTAMP_FORMAT = "dd-MM-YYYY HH:mm";
 
     public HtmlReporter() {
-        this(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public HtmlReporter(final EnvironmentVariables environmentVariables) {

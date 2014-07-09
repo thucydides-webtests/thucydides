@@ -21,7 +21,7 @@ public class ThucydidesJUnitModule extends AbstractModule {
     public static class TestCountListenerProvider implements Provider<StepListener> {
 
         public StepListener get() {
-            EnvironmentVariables environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+            EnvironmentVariables environmentVariables = Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ;
             TestCount testCount = Injectors.getInjector().getInstance(TestCount.class);
             return new TestCountListener(environmentVariables, testCount);
         }

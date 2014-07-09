@@ -254,7 +254,7 @@ public class TestOutcome {
 
     public EnvironmentVariables getEnvironmentVariables() {
         if (environmentVariables == null) {
-            environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+            environmentVariables = Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ;
         }
         return environmentVariables;
     }

@@ -48,7 +48,7 @@ public class DisableThucydidesHistoryRule implements MethodRule {
     private final String originalValue;
 
     public DisableThucydidesHistoryRule() {
-        environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+        environmentVariables = Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ;
         originalValue = environmentVariables.getProperty("thucydides.store.history");
         environmentVariables.setProperty("thucydides.store.history","false");
     }

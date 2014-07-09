@@ -75,7 +75,7 @@ public class TestOutcomes {
     protected TestOutcomes(List<? extends TestOutcome> outcomes,
                            double estimatedAverageStepCount,
                            String label) {
-        this(outcomes, estimatedAverageStepCount, label, null, Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(outcomes, estimatedAverageStepCount, label, null, Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     protected TestOutcomes(List<? extends TestOutcome> outcomes,

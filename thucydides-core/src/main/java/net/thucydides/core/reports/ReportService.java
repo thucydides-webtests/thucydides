@@ -162,7 +162,7 @@ public class ReportService {
         List<AcceptanceTestReporter> reporters = new ArrayList<AcceptanceTestReporter>();
 
         FormatConfiguration formatConfiguration
-                = new FormatConfiguration(Injectors.getInjector().getInstance(EnvironmentVariables.class));
+                = new FormatConfiguration(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
         Iterator<?> reporterImplementations = Service.providers(AcceptanceTestReporter.class);
 
         LOGGER.info("Reporting formats: " + formatConfiguration.getFormats());

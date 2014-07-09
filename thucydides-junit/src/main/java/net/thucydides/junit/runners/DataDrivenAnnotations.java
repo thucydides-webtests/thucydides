@@ -45,7 +45,7 @@ public class DataDrivenAnnotations {
     }
 
     DataDrivenAnnotations(final TestClass testClass) {
-        this(testClass, Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(testClass, Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     DataDrivenAnnotations(final TestClass testClass, EnvironmentVariables environmentVariables) {

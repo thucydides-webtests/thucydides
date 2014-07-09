@@ -48,7 +48,7 @@ public class QuietThucydidesLoggingRule implements MethodRule {
     private final String originalValue;
 
     public QuietThucydidesLoggingRule() {
-        environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+        environmentVariables = Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ;
         originalValue = environmentVariables.getProperty("thucydides.logging");
         environmentVariables.setProperty("thucydides.logging","QUIET");
     }

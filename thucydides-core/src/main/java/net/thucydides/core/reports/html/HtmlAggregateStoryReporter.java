@@ -77,14 +77,14 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         this(projectName, relativeLink,
              Injectors.getInjector().getInstance(IssueTracking.class), new TestHistory(projectName),
              Injectors.getInjector().getInstance(RequirementsService.class),
-             Injectors.getInjector().getInstance(EnvironmentVariables.class));
+             Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public HtmlAggregateStoryReporter(final String projectName,
                                       final IssueTracking issueTracking,
                                       final TestHistory testHistory) {
         this(projectName, "", issueTracking, testHistory, Injectors.getInjector().getInstance(RequirementsService.class),
-             Injectors.getInjector().getInstance(EnvironmentVariables.class));
+             Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public HtmlAggregateStoryReporter(final String projectName,

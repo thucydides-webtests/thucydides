@@ -68,7 +68,7 @@ public class Photographer {
                         final ScreenshotProcessor screenshotProcessor,
                         BlurLevel blurLevel) {
         this(driver, targetDirectory, screenshotProcessor, blurLevel,
-             Injectors.getInjector().getInstance(EnvironmentVariables.class));
+             Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public Photographer(final WebDriver driver,

@@ -53,7 +53,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     private List<Requirement> requirements;
 
     public FileSystemRequirementsTagProvider() {
-        this(getDefaultRootDirectoryPathFrom(Injectors.getInjector().getInstance(EnvironmentVariables.class)));
+        this(getDefaultRootDirectoryPathFrom(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ));
     }
 
     public static String getDefaultRootDirectoryPathFrom(EnvironmentVariables environmentVariables) {
@@ -68,7 +68,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     }
 
     public FileSystemRequirementsTagProvider(String rootDirectory, int level) {
-        this(filePathFormOf(rootDirectory), level, Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(filePathFormOf(rootDirectory), level, Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     /**

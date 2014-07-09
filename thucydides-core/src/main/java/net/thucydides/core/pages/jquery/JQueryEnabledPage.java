@@ -18,7 +18,7 @@ public class JQueryEnabledPage {
     private final EnvironmentVariables environmentVariables;
 
     protected JQueryEnabledPage(WebDriver driver) {
-        this(driver, Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(driver, Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     protected JQueryEnabledPage(WebDriver driver, EnvironmentVariables environmentVariables) {

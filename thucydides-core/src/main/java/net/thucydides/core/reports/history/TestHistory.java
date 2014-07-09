@@ -39,11 +39,11 @@ public class TestHistory {
     protected EnvironmentVariables environmentVariables;
 
     public TestHistory(final String projectName) {
-        this(projectName, Injectors.getInjector().getInstance(EnvironmentVariables.class), null);
+        this(projectName, Injectors.getInjector().getProvider(EnvironmentVariables.class).get() , null);
     }
 
     public TestHistory(final String projectName, File baseDirectory, DateProvider dateProvider) {
-        this(projectName, Injectors.getInjector().getInstance(EnvironmentVariables.class), baseDirectory, dateProvider);
+        this(projectName, Injectors.getInjector().getProvider(EnvironmentVariables.class).get() , baseDirectory, dateProvider);
     }
 
     public TestHistory(final String projectName, final EnvironmentVariables environmentVariables) {

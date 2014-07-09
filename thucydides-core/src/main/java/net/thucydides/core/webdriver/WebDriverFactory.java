@@ -81,7 +81,7 @@ public class WebDriverFactory {
     private final Integer EXTRA_TIME_TO_TAKE_SCREENSHOTS = 180;
 
     public WebDriverFactory() {
-        this(new WebdriverInstanceFactory(), Injectors.getInjector().getInstance(EnvironmentVariables.class));
+        this(new WebdriverInstanceFactory(), Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public WebDriverFactory(EnvironmentVariables environmentVariables) {

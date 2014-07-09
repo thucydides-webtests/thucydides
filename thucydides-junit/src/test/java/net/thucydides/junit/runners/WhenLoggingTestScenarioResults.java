@@ -56,7 +56,7 @@ public class WhenLoggingTestScenarioResults extends AbstractTestStepRunnerTest {
 
         };
 
-        environmentVariables = Injectors.getInjector().getInstance(EnvironmentVariables.class);
+        environmentVariables = Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ;
         webDriverFactory = new WebDriverFactory(webdriverInstanceFactory, environmentVariables);
         StepEventBus.getEventBus().clear();
 
