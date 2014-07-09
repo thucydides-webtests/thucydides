@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import net.thucydides.core.statistics.service.ClasspathTagProviderService;
 import net.thucydides.core.statistics.service.TagProvider;
+import net.thucydides.core.statistics.service.TagProviderFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,7 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
 
     private List<RequirementsTagProvider> requirementsTagProviders;
 
+    private TagProviderFilter<RequirementsTagProvider> filter = new TagProviderFilter<>();
     @Inject
     public ClasspathRequirementsProviderService(ClasspathTagProviderService tagProviderService) {
         this.tagProviderService = tagProviderService;
@@ -50,8 +52,6 @@ public class ClasspathRequirementsProviderService implements RequirementsProvide
                 providers.add((RequirementsTagProvider)tagProvider);
             }
         }
-
-        logger.info("Resolved requirements providers: {}", providers);
-        return providers;
+        return filter.removeOverriddenProviders(providers);
     }
 }

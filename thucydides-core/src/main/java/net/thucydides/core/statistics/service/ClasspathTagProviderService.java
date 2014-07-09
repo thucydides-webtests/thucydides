@@ -20,6 +20,8 @@ public class ClasspathTagProviderService implements TagProviderService {
     public ClasspathTagProviderService() {
     }
 
+    private TagProviderFilter<TagProvider> filter = new TagProviderFilter<>();
+
     @Override
     public List<TagProvider> getTagProviders() {
         if (tagProviders == null) {
@@ -31,9 +33,9 @@ public class ClasspathTagProviderService implements TagProviderService {
                 newTagProviders.add(tagProvider);
             }
             if (additionalTagProvidersArePresentIn(newTagProviders)) {
-                newTagProviders = removeOverridableProvidersFrom(newTagProviders);
+                newTagProviders = filter.removeOverriddenProviders(newTagProviders);// removeOverridableProvidersFrom(newTagProviders);
             }
-            tagProviders = newTagProviders;
+            tagProviders =  newTagProviders;
         }
         return tagProviders;
     }
