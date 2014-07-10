@@ -13,7 +13,6 @@ import net.thucydides.core.issues.SystemPropertiesIssueTracking;
 import net.thucydides.core.logging.ThucydidesLogging;
 import net.thucydides.core.pages.InternalSystemClock;
 import net.thucydides.core.pages.SystemClock;
-import net.thucydides.core.reports.FormatConfiguration;
 import net.thucydides.core.reports.json.JSONConverter;
 import net.thucydides.core.reports.json.jackson.JacksonJSONConverter;
 import net.thucydides.core.reports.renderer.Asciidoc;
@@ -38,22 +37,12 @@ import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.steps.di.ClasspathDependencyInjectorService;
 import net.thucydides.core.steps.di.DependencyInjectorService;
 import net.thucydides.core.util.EnvironmentVariables;
-import net.thucydides.core.util.LocalPreferences;
-import net.thucydides.core.util.PropertiesFileLocalPreferences;
 import net.thucydides.core.util.SystemEnvironmentVariables;
-import net.thucydides.core.webdriver.Configuration;
-import net.thucydides.core.webdriver.ElementProxyCreator;
-import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
-import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
-import net.thucydides.core.webdriver.WebdriverManager;
+import net.thucydides.core.webdriver.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
 public class ThucydidesModule extends AbstractModule {
-
-    private final Logger LOGGER = LoggerFactory.getLogger(ThucydidesModule.class);
 
     @Override
     protected void configure() {
@@ -84,17 +73,6 @@ public class ThucydidesModule extends AbstractModule {
     @Provides
     @Singleton
     public EnvironmentVariables provideEnvironmentVariables() {
-        return createEnvironmentVariables();
-    }
-
-    protected EnvironmentVariables createEnvironmentVariables() {
-        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
-        LocalPreferences localPreferences = new PropertiesFileLocalPreferences(environmentVariables);
-        try {
-            localPreferences.loadPreferences();
-        } catch (IOException e) {
-            LOGGER.error("Could not load local preferences", e);
-        }
-        return environmentVariables;
+        return SystemEnvironmentVariables.createEnvironmentVariables();
     }
 }

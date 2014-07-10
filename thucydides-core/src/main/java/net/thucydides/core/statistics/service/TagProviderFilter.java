@@ -18,7 +18,7 @@ public class TagProviderFilter<T extends TagProvider> {
 
     private boolean additionalTagProvidersArePresentIn(List<T> providers) {
         for(TagProvider provider : providers) {
-            if ((CoreTagProvider.class.isAssignableFrom(provider.getClass()))) {
+            if (!(CoreTagProvider.class.isAssignableFrom(provider.getClass()))) {
                 return true;
             }
         }

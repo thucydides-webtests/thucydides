@@ -2,6 +2,7 @@ package net.thucydides.core.util;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -105,5 +106,16 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
 
     public EnvironmentVariables copy() {
         return new SystemEnvironmentVariables(systemProperties, systemValues);
+    }
+
+    public static EnvironmentVariables createEnvironmentVariables() {
+        EnvironmentVariables environmentVariables = new SystemEnvironmentVariables();
+        LocalPreferences localPreferences = new PropertiesFileLocalPreferences(environmentVariables);
+        try {
+            localPreferences.loadPreferences();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return environmentVariables;
     }
 }
