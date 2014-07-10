@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 
+import static org.hamcrest.core.Is.is;
+
 @RunWith(ThucydidesRunner.class)
 public class SampleTestWithAssumption {
  
@@ -29,6 +31,6 @@ public class SampleTestWithAssumption {
 
     @Test
     public void failing_assumption_in_test() {
-        Assume.assumeTrue(false);
+        Assume.assumeThat(true, is(false));
     }
 }

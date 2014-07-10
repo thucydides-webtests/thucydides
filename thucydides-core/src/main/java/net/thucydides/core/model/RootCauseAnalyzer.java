@@ -67,6 +67,7 @@ public class RootCauseAnalyzer {
             "org.hamcrest",
             "org.openqa.selenium",
             "org.spockframework",
+            "org.apache.maven.surefire",
             "com.intellij",
             "net.sf.cglib",
             "org.codehaus.groovy",
