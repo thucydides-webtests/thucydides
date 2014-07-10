@@ -41,6 +41,7 @@ public class SampleFailingScenarioUsingHtmlUnit {
     public void edge_case_2() {
         steps.stepThatSucceeds();
         steps.anotherStepThatSucceeds();
+        steps.stepThatFails();
     }
 
     @Test

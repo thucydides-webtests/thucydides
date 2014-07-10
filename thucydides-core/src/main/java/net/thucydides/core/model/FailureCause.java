@@ -100,7 +100,9 @@ public class FailureCause {
         try {
             Class failureClass = Class.forName(testFailureClassname);
             Constructor constructorWithMessage = getExceptionConstructor(failureClass);
-            return Optional.of( (Throwable) constructorWithMessage.newInstance(testFailureMessage));
+            Throwable exception = (Throwable) constructorWithMessage.newInstance(testFailureMessage);
+            exception.setStackTrace(this.getStackTrace());
+            return Optional.of(exception);
         } catch (Exception e) {
             return Optional.absent();
         }

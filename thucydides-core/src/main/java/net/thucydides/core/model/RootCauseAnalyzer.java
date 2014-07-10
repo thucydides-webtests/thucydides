@@ -2,10 +2,12 @@ package net.thucydides.core.model;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import net.thucydides.core.steps.StepFailureException;
-import net.thucydides.core.webdriver.WebdriverAssertionError;
+import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.util.EnvironmentVariables;
 
 import java.util.List;
+
+import static net.thucydides.core.ThucydidesSystemProperty.SIMPLIFIED_STACK_TRACES;
 
 /**
  * Created by john on 3/07/2014.
@@ -14,8 +16,15 @@ public class RootCauseAnalyzer {
 
     private final Throwable thrownException;
 
+    private final EnvironmentVariables environmentVariables;
+
     public RootCauseAnalyzer(Throwable thrownException) {
+        this(thrownException, Injectors.getInjector().getProvider(EnvironmentVariables.class).get());
+    }
+
+    public RootCauseAnalyzer(Throwable thrownException, EnvironmentVariables environmentVariables) {
         this.thrownException = thrownException;
+        this.environmentVariables = environmentVariables;
     }
 
     public FailureCause getRootCause() {
@@ -31,11 +40,15 @@ public class RootCauseAnalyzer {
         return getRootCause().getMessage();
     }
 
-    private void sanitizeStackDump(FailureCause cause) {
-        cause.setStackTrace(sanitized(cause.getStackTrace()));
+    private StackTraceElement[] sanitized(StackTraceElement[] stackTrace) {
+        return useSimplifedStackTraces() ? simplifiedStackTrace(stackTrace) : stackTrace;
     }
 
-    private StackTraceElement[] sanitized(StackTraceElement[] stackTrace) {
+    private boolean useSimplifedStackTraces() {
+        return environmentVariables.getPropertyAsBoolean(SIMPLIFIED_STACK_TRACES,true);
+    }
+
+    private StackTraceElement[] simplifiedStackTrace(StackTraceElement[] stackTrace) {
         List<StackTraceElement> cleanStackTrace = Lists.newArrayList();
         for(StackTraceElement element : stackTrace) {
             if (shouldDisplayInStackTrace(element)) {

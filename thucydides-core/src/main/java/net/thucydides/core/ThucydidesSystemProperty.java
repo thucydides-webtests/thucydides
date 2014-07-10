@@ -577,6 +577,13 @@ public enum ThucydidesSystemProperty {
     JUNIT_RETRY_TESTS,
 
     /**
+     * Stack traces are by default decluttered for readability.
+     * For example, calls to instrumented code or internal test libraries is removed.
+     * This behaviour can be deactivated by setting this property to false.
+     */
+    SIMPLIFIED_STACK_TRACES,
+
+    /**
      * Keep the Thucydides session data between tests.
      * Normally, the session data is cleared between tests.
      */
