@@ -276,8 +276,7 @@ public class RequirementsOutcomes {
         for (RequirementOutcome requirementOutcome : outcomes) {
             flattenedOutcomes.add(requirementOutcome);
             for(Requirement requirement : requirementOutcome.getRequirement().getChildren()) {
-                TestTag requirementTag = TestTag.withName(requirement.getName()).andType(requirement.getType());
-                TestOutcomes testOutcomesForRequirement = requirementOutcome.getTestOutcomes().withTag(requirementTag);
+                TestOutcomes testOutcomesForRequirement = requirementOutcome.getTestOutcomes().withTag(requirement.asTag());
                 flattenedOutcomes.add(new RequirementOutcome(requirement, testOutcomesForRequirement, issueTracking));
 
                 List<Requirement> childRequirements = requirement.getChildren();
@@ -286,19 +285,6 @@ public class RequirementsOutcomes {
                                                  environmentVariables, requirementsTagProviders);
                 flattenedOutcomes.addAll(getFlattenedRequirementOutcomes(childOutcomes.getRequirementOutcomes()));
             }
-//
-//            Requirement requirement = requirementOutcome.getRequirement();
-//            if (requirement.hasChildren()) {
-//                for (Requirement childRequirement : requirement.getChildren()) {
-//                    TestOutcomes testOutcomesForChildRequirement = requirementOutcome.getTestOutcomes().withTag(childRequirement.getName());
-//                    List<Requirement> childRequirements = childRequirement.getChildren();
-//                    RequirementsOutcomes childOutcomes =
-//                            new RequirementsOutcomes(childRequirement, childRequirements,
-//                                                     testOutcomesForChildRequirement, issueTracking,
-//                                                     environmentVariables, requirementsTagProviders);
-//                    flattenedOutcomes.addAll(getFlattenedRequirementOutcomes(childOutcomes.getRequirementOutcomes()));
-//                }
-//            }
         }
 
         return ImmutableList.copyOf(flattenedOutcomes);
@@ -400,8 +386,7 @@ public class RequirementsOutcomes {
     }
 
     private boolean testsExistFor(Requirement requirement) {
-        TestTag requirementTag = TestTag.withName(requirement.getName()).andType(requirement.getType());
-        return !getTestOutcomes().withTag(requirementTag).getOutcomes().isEmpty();
+        return !getTestOutcomes().withTag(requirement.asTag()).getOutcomes().isEmpty();
     }
 
     private List<TestOutcome> outcomesForRelease(List<? extends TestOutcome> outcomes,
