@@ -5,7 +5,7 @@ ext {
     project = 'thucydides'
     artifacts = ['thucydides-report-resources','thucydides-core', 'thucydides-junit',
                  'maven-thucydides-plugin','thucydides-ant-task',
-                 'thuydides-browsermob-plugin']
+                 'thuydides-browsermob-plugin', 'thucydides-test-utils']
     mavenRepo = "~/.m2/repository"
 }
 
