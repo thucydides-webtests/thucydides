@@ -8,7 +8,11 @@
     </parent>
     <groupId>net.thucydides</groupId>
     <artifactId>thucydides-test-utils</artifactId>
+<<<<<<< HEAD
     <version>0.9.260</version>
+=======
+    <version>0.9.260-SNAPSHOT</version>
+>>>>>>> 166bf32d02b257bdeaf232e05009273f7ba959b8
     <name>thucydides-test-utils</name>
     <url>http://maven.apache.org</url>
     <build>
