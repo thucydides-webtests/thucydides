@@ -202,7 +202,6 @@
     <#assign pageTitle = 'Test Results: All Tests' >
 <#else>
     <#assign resultsContext = '> ' + testOutcomes.label>
-<#--<#assign reportName = reportName.withPrefix(testOutcomes.label)>-->
     <#if (currentTagType! != '')>
         <#assign pageTitle = inflection.of(currentTagType!"").asATitle() + ': ' +  inflection.of(testOutcomes.label).asATitle() >
     <#else>
