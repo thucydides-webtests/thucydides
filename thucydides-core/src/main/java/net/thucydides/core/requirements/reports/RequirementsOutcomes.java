@@ -234,7 +234,6 @@ public class RequirementsOutcomes {
 
     private boolean testsRecordedFor(List<RequirementOutcome> outcomes, Requirement requirement) {
         for (RequirementOutcome outcome : outcomes) {
-
             if (outcome.testsRequirement(requirement) && outcome.getTestCount() > 0) {
                 return true;
             }
@@ -276,7 +275,14 @@ public class RequirementsOutcomes {
         for (RequirementOutcome requirementOutcome : outcomes) {
             flattenedOutcomes.add(requirementOutcome);
             for(Requirement requirement : requirementOutcome.getRequirement().getChildren()) {
+
+//                TestTag requirementTag = TestTag.withName(requirement.getName()).andType(requirement.getType());
+//                TestOutcomes testOutcomesForRequirement = requirementOutcome.getTestOutcomes().withTag(requirementTag);
+
                 TestOutcomes testOutcomesForRequirement = requirementOutcome.getTestOutcomes().withTag(requirement.asTag());
+
+
+
                 flattenedOutcomes.add(new RequirementOutcome(requirement, testOutcomesForRequirement, issueTracking));
 
                 List<Requirement> childRequirements = requirement.getChildren();
@@ -386,7 +392,9 @@ public class RequirementsOutcomes {
     }
 
     private boolean testsExistFor(Requirement requirement) {
-        return !getTestOutcomes().withTag(requirement.asTag()).getOutcomes().isEmpty();
+        TestTag requirementTag = TestTag.withName(requirement.getName()).andType(requirement.getType());
+        return !getTestOutcomes().withTag(requirementTag).getOutcomes().isEmpty();
+        //return !getTestOutcomes().withTag(requirement.asTag()).getOutcomes().isEmpty();
     }
 
     private List<TestOutcome> outcomesForRelease(List<? extends TestOutcome> outcomes,

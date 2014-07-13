@@ -9,7 +9,7 @@ import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Specification
 
 class WhenLoadingRequirementsFromAPackageStructure extends Specification {
-    public static final String ROOT_DIRECTORY = "annotatedstories"
+    public static final String ROOT_DIRECTORY = "annotatedstorieswithcontents"
 
     def "Should be able to load capabilities from the default package structure"() {
         given: "We are using the Annotation provider"

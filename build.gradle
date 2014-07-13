@@ -61,7 +61,9 @@ task deployCurrentBuildArtifacts {
 
 task pushNewBranch {
     executeOnShell "git commit -a -m '[Release version ${versionNumber}]'"
+    executeOnShell "git tag -f release-${versionNumber}"
     executeOnShell "git push origin ${project.ext.releaseBranch}"
+    executeOnShell "git push origin --tags"
 }
 
 task checkoutOriginalBranch {

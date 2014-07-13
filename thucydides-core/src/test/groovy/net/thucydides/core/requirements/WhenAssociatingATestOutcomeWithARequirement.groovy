@@ -1,6 +1,6 @@
 package net.thucydides.core.requirements
 
-import annotatedstories.apples.Test1
+import annotatedstorieswithcontents.apples.Test1
 import com.google.common.base.Optional
 import net.thucydides.core.ThucydidesSystemProperty
 import net.thucydides.core.model.Story
@@ -82,7 +82,7 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
     def "Should find the direct parent requirement of a test outcome from an annotated story"(){
         given: "We are using the annotated provider"
             def vars = new MockEnvironmentVariables()
-            vars.setProperty(ThucydidesSystemProperty.THUCYDIDES_ANNOTATED_REQUIREMENTS_DIR.propertyName, "annotatedstories")
+            vars.setProperty(ThucydidesSystemProperty.THUCYDIDES_ANNOTATED_REQUIREMENTS_DIR.propertyName, "annotatedstorieswithcontents")
             RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
         when: "We load requirements we have an annotated test"
             def story = new Story(Test1.class)
