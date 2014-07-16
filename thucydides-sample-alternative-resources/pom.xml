@@ -10,6 +10,8 @@
     <artifactId>thucydides-sample-alternative-resources</artifactId>
     <name>thucydides-sample-alternative-resources</name>
     <build>
+        <finalName>${project.artifactId}-${project.version} with spaces in the name.${project.packaging}</finalName>
+        <outputDirectory>${project.build.directory}/test classes with whitespace in the path</outputDirectory>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
