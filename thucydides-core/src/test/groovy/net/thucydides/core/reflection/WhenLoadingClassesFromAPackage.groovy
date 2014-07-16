@@ -1,10 +1,13 @@
 package net.thucydides.core.reflection
 
+import junit.framework.Assert
 import net.thucydides.core.reflection.sampleclasses.SomeClass
 import net.thucydides.core.reflection.sampleclasses.SomeOtherClass
 import net.thucydides.core.reflection.sampleclasses.SomeTestClass
 import net.thucydides.sampletests.SomeTest
 import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
+import org.junit.runners.model.RunnerScheduler
 import spock.lang.Specification
 
 public class WhenLoadingClassesFromAPackage extends Specification {
@@ -69,6 +72,34 @@ public class WhenLoadingClassesFromAPackage extends Specification {
                                               fromPackage("net.thucydides.sampletests");
         then:
             classes == [SomeTest]
+
+    }
+
+    // enable testing from an IDE, where otherwise the classpath is setup to depend directly on .class files, without packaging to .jar
+    def "should load classes in a given package from a dependency jar"() {
+        when:
+            List<Class> classes = ClassFinder.loadClasses().fromPackage("org.junit.runners");
+        then:
+            classes.contains(JUnit4)
+
+    }
+
+    // enable testing from an IDE, where otherwise the classpath is setup to depend directly on .class files, without packaging to .jar
+    def "should load nested classes in a given package from a dependency jar"() {
+        when:
+             List<Class> classes = ClassFinder.loadClasses().fromPackage("org.junit.runners");
+        then:
+            classes.contains(RunnerScheduler)
+
+    }
+
+    // enable testing from an IDE, where otherwise the classpath is setup to depend directly on .class files, without packaging to .jar
+    def "should load annotated classes in a given package from a dependency jar"() {
+        when:
+            List<Class> classes = ClassFinder.loadClasses().annotatedWith(Deprecated.class).
+                                              fromPackage("junit.framework");
+        then:
+            classes == [Assert]
 
     }
 

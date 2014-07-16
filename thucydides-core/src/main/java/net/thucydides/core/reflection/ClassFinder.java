@@ -2,11 +2,9 @@ package net.thucydides.core.reflection;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import net.thucydides.core.steps.StepEventBus;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -93,14 +91,13 @@ public class ClassFinder {
             assert classLoader != null;
             String path = packageName.replace('.', '/');
             Enumeration resources = classLoader.getResources(path);
-            List<String> dirs = Lists.newArrayList();
+            List<URI> dirs = Lists.newArrayList();
             while (resources.hasMoreElements()) {
                 URL resource = (URL) resources.nextElement();
-                String resourcePath = resource.getFile().replaceAll("%20"," ");
-                dirs.add(resourcePath);
+                dirs.add(resource.toURI());
             }
             Set<String> classes = Sets.newTreeSet();
-            for (String directory : dirs) {
+            for (URI directory : dirs) {
                 classes.addAll(findClasses(directory, packageName));
             }
             List<Class<?>> classList = Lists.newArrayList();
@@ -123,34 +120,63 @@ public class ClassFinder {
     /**
      * Recursive method used to find all classes in a given directory and subdirs. * Adapted from http://snippets.dzone.com/posts/show/4831 and extended to support use of JAR files * @param directory The base directory * @param packageName The package name for classes found inside the base directory * @return The classes * @throws ClassNotFoundException
      */
-    private static TreeSet<String> findClasses(String directory, String packageName) throws Exception {
+    private static TreeSet<String> findClasses(URI directory, String packageName) throws Exception {
+        final String scheme = directory.getScheme();
+        final String schemeSpecificPart = directory.getSchemeSpecificPart();
+
+        if (scheme.equals("jar") && schemeSpecificPart.contains("!")) {
+            return findClassesInJar(directory);
+        } else if (scheme.equals("file")) {
+            return findClassesInFileSystemDirectory(directory, packageName);
+        }
+
+        throw new IllegalArgumentException(
+                "cannot handle URI with scheme [" + scheme + "]" +
+                "; received directory=[" + directory + "], packageName=[" + packageName + "]"
+        );
+    }
+
+    private static TreeSet<String> findClassesInJar(URI jarDirectory) throws Exception {
+        final String schemeSpecificPart = jarDirectory.getSchemeSpecificPart();
+
         TreeSet<String> classes = Sets.newTreeSet();
-        if (directory.startsWith("file:") && directory.contains("!")) {
-            String[] split = directory.split("!");
-            URL jar = new URL(split[0]);
-            ZipInputStream zip = new ZipInputStream(jar.openStream());
-            ZipEntry entry = null;
-            while ((entry = zip.getNextEntry()) != null) {
-                if (entry.getName().endsWith(".class")) {
-                    String className = classNameFor(entry);
-                    if (isNotAnInnerClass(className)) {
-                        classes.add(className);
-                    }
+
+        String[] split = schemeSpecificPart.split("!");
+        URL jar = new URL(split[0]);
+        ZipInputStream zip = new ZipInputStream(jar.openStream());
+        ZipEntry entry;
+        while ((entry = zip.getNextEntry()) != null) {
+            if (entry.getName().endsWith(".class")) {
+                String className = classNameFor(entry);
+                if (isNotAnInnerClass(className)) {
+                    classes.add(className);
                 }
             }
         }
-        File dir = new File(directory);
+
+        return classes;
+    }
+
+    private static TreeSet<String> findClassesInFileSystemDirectory(URI fileSystemDirectory, String packageName) throws Exception {
+        TreeSet<String> classes = Sets.newTreeSet();
+
+        File dir = new File(fileSystemDirectory);
         if (!dir.exists()) {
             return classes;
         }
         File[] files = dir.listFiles();
         for (File file : files) {
             if (file.isDirectory()) {
-                classes.addAll(findClasses(file.getAbsolutePath(), packageName + "." + file.getName()));
+                classes.addAll(
+                        findClassesInFileSystemDirectory(file.getAbsoluteFile().toURI(), packageName + "." + file.getName())
+                );
             } else if (file.getName().endsWith(".class")) {
-                classes.add(packageName + '.' + file.getName().substring(0, file.getName().length() - 6));
+                classes.add(
+                        packageName + '.' + file.getName().substring(0, file.getName().length() - 6)
+                );
             }
         }
+
         return classes;
     }
 
