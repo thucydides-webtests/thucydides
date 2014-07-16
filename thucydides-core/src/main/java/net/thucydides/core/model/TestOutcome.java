@@ -1129,48 +1129,33 @@ public class TestOutcome {
         Set<TestTag> tags  = Sets.newHashSet();
         for (TagProvider tagProvider : tagProviders) {
             try {
-                // TODO
-                //addTagsWithOverride(tags, tagProvider.getTagsFor(this));
                 tags.addAll(tagProvider.getTagsFor(this));
-            } catch(Throwable theTagProviderFailedBueThereIsntMuchWeCanDoAboutIt) {
+            } catch(Throwable theTagProviderFailedButThereIsntMuchWeCanDoAboutIt) {
                 logger.error("Tag provider " + tagProvider + " failure",
-                        theTagProviderFailedBueThereIsntMuchWeCanDoAboutIt);
+                        theTagProviderFailedButThereIsntMuchWeCanDoAboutIt);
             }
         }
         return tags;
     }
 
-    private void addTagsWithOverride(Set<TestTag> tags, Set<TestTag> newTags) {
-        if (newTags != null) {
-            for (TestTag tag : newTags) {
-                if (isAStory(tag)) {
-                    removeAnyLessSpecificMatchingStoryTags(tags, tag.getName());
-                }
-                if (!existsMoreSpecificTag(tags, tag.getName())) {
-                    tags.add(tag);
-                }
-            }
-        }
-    }
-
-    private void removeAnyLessSpecificMatchingStoryTags(Set<TestTag> tags, String storyName) {
-        Set<TestTag> duplicatedTags = Sets.newHashSet();
-        for(TestTag tag : tags) {
-            if (tag.getType().equalsIgnoreCase("story") && (isLessSpecific(tag, storyName))) {
-                duplicatedTags.add(tag);
-            }
-        }
-        tags.removeAll(duplicatedTags);
-    }
-
-    private boolean existsMoreSpecificTag(Set<TestTag> tags, String storyName) {
-        for(TestTag tag : tags) {
-            if (tag.getType().equalsIgnoreCase("story") && (!isLessSpecific(tag, storyName))) {
-                return true;
-            }
-        }
-        return false;
-    }
+//    private void removeAnyLessSpecificMatchingStoryTags(Set<TestTag> tags, String storyName) {
+//        Set<TestTag> duplicatedTags = Sets.newHashSet();
+//        for(TestTag tag : tags) {
+//            if (tag.getType().equalsIgnoreCase("story") && (isLessSpecific(tag, storyName))) {
+//                duplicatedTags.add(tag);
+//            }
+//        }
+//        tags.removeAll(duplicatedTags);
+//    }
+//
+//    private boolean existsMoreSpecificTag(Set<TestTag> tags, String storyName) {
+//        for(TestTag tag : tags) {
+//            if (tag.getType().equalsIgnoreCase("story") && (!isLessSpecific(tag, storyName))) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     private boolean isLessSpecific(TestTag tag, String storyName) {
         return storyName.toLowerCase().endsWith("/" + tag.getName().toLowerCase());

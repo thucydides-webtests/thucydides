@@ -301,6 +301,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     public void testFinished(final TestOutcome outcome) {
         recordTestDuration();
         getCurrentTestOutcome().addIssues(storywideIssues);
+        // TODO: Disable when run from an IDE
         getCurrentTestOutcome().addTags(storywideTags);
         currentStepStack.clear();
     }
