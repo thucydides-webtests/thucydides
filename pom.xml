@@ -170,9 +170,9 @@
                 <version>${surefire.version}</version>
                 <configuration>
                     <skip>true</skip>
-                    <forkCount>2</forkCount>
-                    <reuseForks>false</reuseForks>
-                    <argLine>-Xmx256m -XX:MaxPermSize=128m</argLine>
+                    <!--<forkCount>2</forkCount>-->
+                    <!--<reuseForks>false</reuseForks>-->
+                    <!--<argLine>-Xmx256m -XX:MaxPermSize=128m</argLine>-->
                     <threadCountClasses>4</threadCountClasses>
                 </configuration>
                 <executions>
