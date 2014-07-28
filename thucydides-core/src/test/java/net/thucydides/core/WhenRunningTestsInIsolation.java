@@ -6,6 +6,7 @@ import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.steps.StepEventBus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -177,12 +178,25 @@ public class WhenRunningTestsInIsolation {
     }
     @Test
     public void a_step_listener_should_be_created() {
+        Thucydides.dropStepListener();
+
         SampleChildTestClass sampleTestClass = new SampleChildTestClass();
 
         Thucydides.initialize(sampleTestClass);
 
         assertThat(Thucydides.getStepListener(), is(not(nullValue())));
 
+    }
+
+    @Test
+    public void no_step_listener_should_be_created() {
+        Thucydides.dropStepListener();
+
+        SampleChildTestClass sampleTestClass = new SampleChildTestClass();
+
+        Thucydides.initializeWithNoStepListener(sampleTestClass);
+
+        assertThat(Thucydides.getStepListener(), is(nullValue()));
     }
 
 }
