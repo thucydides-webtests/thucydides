@@ -58,8 +58,10 @@ class WhenInstanciatingStepLibraries extends Specification {
 
         @Step
         def aStep() {}
-    }
 
+        @Step
+        protected boolean aProtectedStep() { return true }
+    }
 
     static class MyExtraSimpleStepLibrary extends ScenarioSteps {
 

@@ -2,6 +2,7 @@ package net.thucydides.core.model;
 
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.Steps;
+import net.thucydides.core.model.samples.MyInheritedStepLibrary;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
 import net.thucydides.core.steps.StepFactory;
@@ -237,4 +238,9 @@ public class WhenInstanciatingStepLibraries {
         assertThat(steps.aRecursiveNestedStepLibrary, is(notNullValue()));
     }
 
+    @Test
+    public void should_support_calling_protected_steps_in_parent_classes() {
+        MyInheritedStepLibrary myStepLibrary = stepFactory.getStepLibraryFor(MyInheritedStepLibrary.class);
+        assertThat(myStepLibrary.anotherStep(), is(true));
+    }
 }

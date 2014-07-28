@@ -269,7 +269,7 @@
         <dependency>
             <groupId>org.fluentlenium</groupId>
             <artifactId>fluentlenium-core</artifactId>
-            <version>0.7.3</version>
+            <version>0.10.2</version>
             <exclusions>
                 <exclusion>
                     <artifactId>selenium-java</artifactId>
