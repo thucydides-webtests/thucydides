@@ -150,6 +150,10 @@ public class Thucydides {
         return stepListenerThreadLocal.get();
     }
 
+    static void dropStepListener() {
+        stepListenerThreadLocal.set(null);
+    }
+
 
     public static void initializeTestSession() {
         getCurrentSession().clear();
