@@ -48,6 +48,22 @@ public class Thucydides {
         injectScenarioStepsInto(testCase);
     }
 
+    /**
+     * Initialize Thucydides-related fields in the specified object.
+     * This includes managed WebDriver instances,
+     */
+    public static void initializeWithNoStepListener(final Object testCase) {
+        setupWebDriverFactory();
+        setupWebdriverManager();
+
+        initPagesObjectUsing(getDriver());
+        initStepFactoryUsing(getPages());
+
+        injectDriverInto(testCase);
+        injectAnnotatedPagesObjectInto(testCase);
+        injectScenarioStepsInto(testCase);
+    }
+
     private static void initStepListener() {
         Configuration configuration = Injectors.getInjector().getInstance(Configuration.class);
         File outputDirectory = configuration.getOutputDirectory();
@@ -134,6 +150,10 @@ public class Thucydides {
 
     public static StepListener getStepListener() {
         return stepListenerThreadLocal.get();
+    }
+
+    static void dropStepListener() {
+        stepListenerThreadLocal.set(null);
     }
 
 

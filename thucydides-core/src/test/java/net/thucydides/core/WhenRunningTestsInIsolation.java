@@ -6,6 +6,7 @@ import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.steps.StepEventBus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +61,6 @@ public class WhenRunningTestsInIsolation {
         Thucydides.stopUsingMockDriver();
     }
 
-    @org.junit.Ignore
     @Test
     public void any_class_can_host_an_annotated_webdriver_instance() {
         SampleTestClass sampleTestClass = new SampleTestClass();
@@ -70,6 +70,7 @@ public class WhenRunningTestsInIsolation {
         assertThat(sampleTestClass.driver, is(not(nullValue())));
 
     }
+
 
     @Test
     public void any_class_can_host_an_annotated_step_library() {
@@ -175,9 +176,10 @@ public class WhenRunningTestsInIsolation {
         assertThat(sampleTestClass.steps, is(not(nullValue())));
 
     }
-
     @Test
     public void a_step_listener_should_be_created() {
+        Thucydides.dropStepListener();
+
         SampleChildTestClass sampleTestClass = new SampleChildTestClass();
 
         Thucydides.initialize(sampleTestClass);
@@ -185,4 +187,16 @@ public class WhenRunningTestsInIsolation {
         assertThat(Thucydides.getStepListener(), is(not(nullValue())));
 
     }
+
+    @Test
+    public void no_step_listener_should_be_created() {
+        Thucydides.dropStepListener();
+
+        SampleChildTestClass sampleTestClass = new SampleChildTestClass();
+
+        Thucydides.initializeWithNoStepListener(sampleTestClass);
+
+        assertThat(Thucydides.getStepListener(), is(nullValue()));
+    }
+
 }
