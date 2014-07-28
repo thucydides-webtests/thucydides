@@ -1,5 +1,7 @@
 package net.thucydides.core.steps;
 
+import net.thucydides.core.reflection.MethodFinder;
+
 import java.lang.reflect.Method;
 
 import static net.thucydides.core.util.NameConverter.humanize;
@@ -84,13 +86,11 @@ public class ExecutedStepDescription implements Cloneable {
 
 
     private Method methodCalled(final String methodName, final Class<?> testClass) {
-        Method[] methods = testClass.getMethods();
-        for (Method method : methods) {
-            if (method.getName().equals(methodName)) {
-                return method;
-            }
+        Method method = MethodFinder.inClass(testClass).getMethodNamed(methodName);
+        if (method == null) {
+            throw new IllegalArgumentException("No test method called " + methodName + " was found in " + testClass);
         }
-        throw new IllegalArgumentException("No test method called " + methodName + " was found in " + testClass);
+        return method;
     }
 
 

@@ -11,8 +11,12 @@ public class MyInheritedStepLibrary extends MyBaseStepLibrary {
     }
 
     @Step
+    public boolean aStepWithAProtectedMethod() {
+        return aProtectedMethod();
+    }
+
+    @Step
     public boolean anotherStep() {
-        aProtectedMethod();
         return aProtectedStep();
     }
 }

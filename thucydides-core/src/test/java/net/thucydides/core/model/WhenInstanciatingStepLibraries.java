@@ -1,11 +1,14 @@
 package net.thucydides.core.model;
 
+import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.model.samples.MyInheritedStepLibrary;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
+import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -171,6 +174,19 @@ public class WhenInstanciatingStepLibraries {
         public void step2() {}
     }
 
+    @Before
+    public void startTest() {
+        Thucydides.initialize(this);
+        StepEventBus.getEventBus().testSuiteStarted(Story.called("sample story"));
+        StepEventBus.getEventBus().testStarted("sample test");
+    }
+
+    @After
+    public void finishTest() {
+        StepEventBus.getEventBus().testFinished();
+        StepEventBus.getEventBus().testSuiteFinished();
+    }
+
     @Test
     public void should_instanciate_step_library_instance() {
         AStepLibrary steps = stepFactory.getStepLibraryFor(AStepLibrary.class);
@@ -241,6 +257,14 @@ public class WhenInstanciatingStepLibraries {
     @Test
     public void should_support_calling_protected_steps_in_parent_classes() {
         MyInheritedStepLibrary myStepLibrary = stepFactory.getStepLibraryFor(MyInheritedStepLibrary.class);
+        assertThat(myStepLibrary.aStepWithAProtectedMethod(), is(true));
+        assertThat(StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed(), is(false));
+    }
+
+    @Test
+    public void should_support_calling_protected_methods_in_parent_classes() {
+        MyInheritedStepLibrary myStepLibrary = stepFactory.getStepLibraryFor(MyInheritedStepLibrary.class);
         assertThat(myStepLibrary.anotherStep(), is(true));
+        assertThat(StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed(), is(false));
     }
 }

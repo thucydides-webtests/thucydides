@@ -3,6 +3,7 @@ package net.thucydides.core.steps;
 import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.annotations.Title;
+import net.thucydides.core.reflection.MethodFinder;
 import net.thucydides.core.util.NameConverter;
 import org.slf4j.LoggerFactory;
 
@@ -59,15 +60,7 @@ public class TestDescription {
 
 
     private Method methodCalled(final String methodName, final Class<?> testClass) {
-        Method testMethod = null;
-        Method[] methods = testClass.getMethods();
-        for (Method method : methods) {
-            if (method.getName().equals(methodName)) {
-                testMethod = method;
-                break;
-            }
-        }
-        return testMethod;
+        return MethodFinder.inClass(testClass).getMethodNamed(methodName);
     }
 
     public String getAnnotatedTitle() {

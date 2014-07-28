@@ -147,7 +147,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         Object result = null;
         try {
             if (!TestAnnotations.shouldSkipNested(method)) {
-                result = invokeMethod(obj, method, args, proxy);
+                result = invokeMethod(obj, args, proxy);
             }
         } catch (Throwable anyException) {
             LOGGER.trace("Ignoring exception thrown during a skipped test", anyException);
@@ -197,7 +197,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private Object runBaseObjectMethod(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
             throws Throwable {
-        return invokeMethod(obj, method, args, proxy);
+        return invokeMethod(obj, args, proxy);
     }
 
     private Object runNormalMethod(final Object obj, final Method method, final Object[] args, final MethodProxy proxy)
@@ -213,7 +213,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private Object invokeMethodAndNotifyFailures(Object obj, Method method, Object[] args, MethodProxy proxy, Object result) throws Throwable {
         try {
-            result = invokeMethod(obj, method, args, proxy);
+            result = invokeMethod(obj, args, proxy);
         } catch (Throwable generalException) {
             error = generalException;
             Throwable assertionError = forError(error).convertToAssertion();
@@ -282,7 +282,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
 
     private Object executeTestStepMethod(Object obj, Method method, Object[] args, MethodProxy proxy, Object result) throws Throwable {
         try {
-            result = proxy.invokeSuper(obj, args);
+            result = invokeMethod(obj, args, proxy);
             notifyStepFinishedFor(method, args);
         } catch(PendingStepException pendingStep) {
             notifyStepPending(pendingStep.getMessage());
@@ -296,8 +296,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
         return result;
     }
 
-    private Object invokeMethod(final Object obj, final Method method,
-                                final Object[] args, final MethodProxy proxy) throws Throwable {
+    private Object invokeMethod(final Object obj, final Object[] args, final MethodProxy proxy) throws Throwable {
         return proxy.invokeSuper(obj, args);
     }
 

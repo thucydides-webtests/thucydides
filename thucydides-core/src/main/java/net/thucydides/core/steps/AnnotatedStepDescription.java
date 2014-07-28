@@ -9,6 +9,7 @@ import net.thucydides.core.annotations.TestsRequirement;
 import net.thucydides.core.annotations.TestsRequirements;
 import net.thucydides.core.annotations.Title;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.reflection.MethodFinder;
 import net.thucydides.core.reports.html.Formatter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -106,17 +107,7 @@ public final class AnnotatedStepDescription {
     }
 
     private Method findMethodCalled(final String methodName, final Class<?> testClass) {
-        Method methodFound = null;
-
-        if (testClass != null) {
-            Method[] methods = testClass.getMethods();
-            for (Method method : methods) {
-                if (method.getName().equals(methodName)) {
-                    methodFound = method;
-                }
-            }
-        }
-        return methodFound;
+        return MethodFinder.inClass(testClass).getMethodNamed(methodName);
     }
 
     public String getAnnotatedTitle() {
