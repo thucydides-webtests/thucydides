@@ -11,10 +11,7 @@ import net.thucydides.core.util.EnvironmentVariables;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Loads test outcomes from a given directory, and reports on their contents.
@@ -41,6 +38,7 @@ public class TestOutcomeLoader {
     }
 
     public TestOutcomeLoader forFormat(OutcomeFormat format) {
+
         return new TestOutcomeLoader(environmentVariables, new FormatConfiguration(format));
     }
     /**
@@ -59,7 +57,17 @@ public class TestOutcomeLoader {
         for(File reportFile : reportFiles) {
             testOutcomes.addAll(testOutcomeReporter.loadReportFrom(reportFile).asSet());
         }
+        Collections.sort(testOutcomes, byTitle());
         return ImmutableList.copyOf(testOutcomes);
+    }
+
+    private Comparator<? super TestOutcome> byTitle() {
+        return new Comparator<TestOutcome>() {
+            @Override
+            public int compare(TestOutcome a, TestOutcome b) {
+                return a.getTitle().compareTo(b.getTitle());
+            }
+        };
     }
 
     private List<File> getAllOutcomeFilesFrom(final File reportsDirectory) throws IOException{
