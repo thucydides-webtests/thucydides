@@ -177,7 +177,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         }
         generateRequirementTypeReports(requirementsOutcomes);
         generateResultReportsFor(testOutcomes);
-        generateHistoryReportFor(testOutcomes);
+//        generateHistoryReportFor(testOutcomes);
 //        generateCoverageReportsFor(testOutcomes);
 
         generateRequirementsReportsFor(requirementsOutcomes);

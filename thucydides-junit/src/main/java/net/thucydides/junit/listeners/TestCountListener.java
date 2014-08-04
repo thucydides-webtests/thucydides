@@ -65,7 +65,7 @@ public class TestCountListener implements StepListener {
     }
 
 
-    public void testSuiteStarted(Story story) {
+    public void testSuiteStarted(Story storyOrFeature) {
     }
 
 

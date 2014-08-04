@@ -4,11 +4,12 @@ import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.model.features.ApplicationFeature;
 import net.thucydides.core.util.EqualsUtils;
 import net.thucydides.core.util.NameConverter;
+import org.bouncycastle.cert.ocsp.Req;
 
 import static net.thucydides.core.model.ReportType.ROOT;
 
 /**
- * Represents a given user story.
+ * Represents a given user story or feature.
  * Used to record test results and so on.
  */
 public class Story {
@@ -19,6 +20,11 @@ public class Story {
     private  String path;
     private  String narrative;
     private  ApplicationFeature feature;
+    private  RequirementType type;
+
+    public enum RequirementType {
+        story, feature
+    }
 
     protected Story(final Class<?> userStoryClass) {
         this.id = userStoryClass.getCanonicalName();
@@ -26,6 +32,7 @@ public class Story {
         this.storyName = NameConverter.humanize(userStoryClass.getSimpleName());
         this.feature = findFeatureFrom(userStoryClass);
         this.path = pathOf(userStoryClass);
+        this.type = RequirementType.story;
     }
 
     private String pathOf(Class<?> userStoryClass) {
@@ -56,6 +63,7 @@ public class Story {
         this.feature = feature;
         this.path = path;
         this.narrative = null;
+        this.type = RequirementType.story;
     }
 
 
@@ -65,29 +73,25 @@ public class Story {
                  final String path,
                  final ApplicationFeature feature,
                  final String narrative) {
+        this(id, storyName,storyClassName, path, feature, narrative, RequirementType.story);
+    }
+
+
+    public Story(String id,
+                 final String storyName,
+                 final String storyClassName,
+                 final String path,
+                 final ApplicationFeature feature,
+                 final String narrative,
+                 final RequirementType type) {
         this.id = id;
         this.storyName = storyName;
         this.storyClassName = storyClassName;
         this.feature = feature;
         this.path = path;
         this.narrative = narrative;
+        this.type = type;
     }
-
-//    public Story(final String id,
-//                 final String storyName,
-//                 final String featureClassName,
-//                 final String featureName,
-//                 final String path) {
-//        this.id = id;
-//        this.storyName = storyName;
-//        this.storyClassName = null;
-//        if (featureClassName != null) {
-//            this.feature = new ApplicationFeature(featureClassName, featureName);
-//        } else {
-//            this.feature = null;
-//        }
-//        this.path = path;
-//    }
 
     protected Story(final String id,
                     final String storyName,
@@ -98,6 +102,7 @@ public class Story {
         this.storyClassName = null;
         this.feature = feature;
         this.path = path;
+        this.type = RequirementType.story;
     }
 
 
@@ -124,7 +129,7 @@ public class Story {
     }
 
     public Story withNarrative(String narrative)  {
-        return new Story(id, storyName, storyClassName, path, feature, narrative);
+        return new Story(id, storyName, storyClassName, path, feature, narrative, type);
     }
 
     public static Story withIdAndPath(final String storyId, final String storyName, final String storyPath) {
@@ -235,9 +240,19 @@ public class Story {
         return narrative;
     }
 
+    public RequirementType getType() {
+        return type;
+    }
+
     public Story withPath(String storyPath) {
         return new Story(this.id, this.storyName, this.feature, storyPath);
     }
 
+    public Story asFeature() {
+        return new Story(this.id, this.storyName, this.storyClassName, this.path,this.feature,this.narrative, RequirementType.feature);
+    }
 
+    public TestTag asTag() {
+        return TestTag.withName(storyName).andType(type.toString());
+    }
 }

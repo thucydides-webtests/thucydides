@@ -34,7 +34,7 @@ public class FailureDetectingStepListener implements StepListener {
     }
 
     
-    public void testSuiteStarted(Story story) {
+    public void testSuiteStarted(Story storyOrFeature) {
         
     }
 
