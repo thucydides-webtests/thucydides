@@ -559,6 +559,7 @@ public class WebDriverFactory {
 
     private ChromeOptions optionsFromSwitches(String chromeSwitches) {
         ChromeOptions options = new ChromeOptions();
+        options.addArguments("test-type");
         if (StringUtils.isNotEmpty(chromeSwitches)) {
             List<String> arguments = new OptionsSplitter().split(chromeSwitches);
             options.addArguments(arguments);
