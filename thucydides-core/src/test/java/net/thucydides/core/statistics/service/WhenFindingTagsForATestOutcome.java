@@ -186,7 +186,7 @@ public class WhenFindingTagsForATestOutcome {
     }
 
     class SomeTestCaseWithSeveralShortenedaTagOnAMethod {
-        @WithTagValuesOf({"pillar: car sales", "A feature"})
+        @WithTagValuesOf({"pillar: car sales", "A tag"})
         public void some_test_method() {}
     }
 
@@ -198,7 +198,7 @@ public class WhenFindingTagsForATestOutcome {
         AnnotationBasedTagProvider tagProvider = new AnnotationBasedTagProvider();
 
         Set<TestTag> tags = tagProvider.getTagsFor(testOutcome);
-        assertThat(tags, hasItem(TestTag.withName("A feature").andType("feature")));
+        assertThat(tags, hasItem(TestTag.withName("A tag").andType("tag")));
         assertThat(tags, hasItem(TestTag.withName("car sales").andType("pillar")));
     }
 

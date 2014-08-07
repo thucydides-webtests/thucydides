@@ -468,6 +468,10 @@ public class StepEventBus {
         getBaseStepListener().addTagsToCurrentStory(tags);
     }
 
+    public void addDescriptionToCurrentTest(String description) {
+        getBaseStepListener().getCurrentTestOutcome().setDescription(description);
+    }
+
     public void useExamplesFrom(DataTable table) {
         for (StepListener stepListener : getAllListeners()) {
             stepListener.useExamplesFrom(table);

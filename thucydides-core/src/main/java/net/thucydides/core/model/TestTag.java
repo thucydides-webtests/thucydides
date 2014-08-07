@@ -40,7 +40,7 @@ public class TestTag implements Comparable<TestTag> {
             String name = value.substring(separatorPosition + 1).trim();
             return TestTag.withName(name).andType(type);
         } else {
-            return TestTag.withName(value.trim()).andType("feature");
+            return TestTag.withName(value.trim()).andType("tag");
         }
     }
 

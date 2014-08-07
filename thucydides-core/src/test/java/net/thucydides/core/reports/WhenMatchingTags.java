@@ -148,9 +148,9 @@ public class WhenMatchingTags {
 
     @Test
     public void should_define_default_feature_tags_using_a_shorthand_notation() {
-        TestTag storyTag = TestTag.withValue("a feature");
-        assertThat(storyTag.getName(), is("a feature"));
-        assertThat(storyTag.getType(), is("feature"));
+        TestTag storyTag = TestTag.withValue("a tag");
+        assertThat(storyTag.getName(), is("a tag"));
+        assertThat(storyTag.getType(), is("tag"));
     }
 
 }
