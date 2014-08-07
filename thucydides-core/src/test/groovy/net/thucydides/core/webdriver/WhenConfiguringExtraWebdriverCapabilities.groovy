@@ -68,7 +68,6 @@ class WhenConfiguringExtraWebdriverCapabilities extends Specification {
         capabilitySet.capabilities == ["tags":["tag1","tag2","tag3"]]
     }
 
-
     def "should support windows paths in capability values"() {
 
         given:
@@ -89,4 +88,13 @@ class WhenConfiguringExtraWebdriverCapabilities extends Specification {
         capabilitySet.capabilities == ["numbers":[1,2,3]]
     }
 
+    def "should add capabilities with white spaces"() {
+
+        given:
+        environmentVariables.setProperty("thucydides.driver.capabilities","device:iPhone 5S")
+        when:
+        def capabilitySet = new CapabilitySet(environmentVariables)
+        then:
+        capabilitySet.capabilities == ["device":"iPhone 5S"]
+    }
 }
