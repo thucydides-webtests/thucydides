@@ -21,6 +21,7 @@ import java.io.StringWriter;
 import java.util.*;
 
 import static ch.lambdaj.Lambda.sort;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
@@ -260,6 +261,7 @@ public class TestOutcomeConverter implements Converter {
     private void addExamplesTo(HierarchicalStreamWriter writer, DataTable dataTable) {
         if ((dataTable != null) && (!dataTable.getRows().isEmpty())) {
             writer.startNode(EXAMPLES);
+            writeDatasetDescriptors(writer,dataTable);
             writeHeaders(writer, dataTable);
             writeRows(writer, dataTable);
             writer.endNode();
@@ -281,6 +283,29 @@ public class TestOutcomeConverter implements Converter {
         }
         writer.endNode();
     }
+
+
+    private void writeDatasetDescriptors(HierarchicalStreamWriter writer, DataTable dataTable) {
+        writer.startNode("datasets");
+        for(DataSetDescriptor descriptor : dataTable.getDataSetDescriptors()) {
+            writeDescriptor(writer, descriptor);
+        }
+        writer.endNode();
+    }
+
+    private void writeDescriptor(HierarchicalStreamWriter writer, DataSetDescriptor descriptor) {
+        writer.startNode("dataset");
+        writer.addAttribute("startRow", Integer.toString(descriptor.getStartRow()));
+        writer.addAttribute("rowCount", Integer.toString(descriptor.getRowCount()));
+        if (descriptor.getName() != null) {
+            writer.addAttribute("name", descriptor.getName());
+        }
+        if (descriptor.getDescription() != null) {
+            writer.addAttribute("description", descriptor.getDescription());
+        }
+        writer.endNode();
+    }
+
 
     private void writeRow(HierarchicalStreamWriter writer, DataTableRow rowData) {
         writer.startNode(ROW);
@@ -313,7 +338,7 @@ public class TestOutcomeConverter implements Converter {
 
     private void writeErrorMessageAndException(final HierarchicalStreamWriter writer,
                                                final TestStep step) {
-        String errorMessage = StringUtils.isEmpty(step.getErrorMessage()) ? DEFAULT_ERROR_MESSAGE : step.getErrorMessage();
+        String errorMessage = isEmpty(step.getErrorMessage()) ? DEFAULT_ERROR_MESSAGE : step.getErrorMessage();
         writeErrorMessageNode(writer, errorMessage);
         if (step.getException() != null) {
             writeFailureCauseNode(writer, step.getException());
@@ -500,6 +525,7 @@ public class TestOutcomeConverter implements Converter {
                               final TestOutcome testOutcome) {
         List<String> headers = Lists.newArrayList();
         List<DataTableRow> rows = Lists.newArrayList();
+        List<DataSetDescriptor> descriptors = Lists.newArrayList();
         while (reader.hasMoreChildren()) {
             reader.moveDown();
             String childNode = reader.getNodeName();
@@ -507,11 +533,13 @@ public class TestOutcomeConverter implements Converter {
                 headers = readHeaders(reader);
             } else if (childNode.equals(ROWS)) {
                 rows = readRows(reader);
+            } else if (childNode.equals("datasets")) {
+                descriptors = readDescriptors(reader);
             }
             reader.moveUp();
         }
 
-        DataTable table = DataTable.withHeaders(headers).andRowData(rows).build();
+        DataTable table = DataTable.withHeaders(headers).andRowData(rows).andDescriptors(descriptors).build();
         testOutcome.useExamplesFrom(table);
     }
 
@@ -540,6 +568,24 @@ public class TestOutcomeConverter implements Converter {
         }
         return rows;
     }
+
+    private List<DataSetDescriptor> readDescriptors(final HierarchicalStreamReader reader) {
+        List<DataSetDescriptor> descriptors = Lists.newArrayList();
+        while (reader.hasMoreChildren()) {
+            reader.moveDown();
+            String childNode = reader.getNodeName();
+            if (childNode.equals("dataset")) {
+                int startRow = Integer.parseInt(reader.getAttribute("startRow"));
+                int rowCount = Integer.parseInt(reader.getAttribute("rowCount"));
+                String name = reader.getAttribute("name");
+                String description = reader.getAttribute("description");
+                descriptors.add(new DataSetDescriptor(startRow,rowCount,name, description));
+            }
+            reader.moveUp();
+        }
+        return descriptors;
+    }
+
 
     private DataTableRow readRow(final HierarchicalStreamReader reader) {
         List<String> rowValues = Lists.newArrayList();

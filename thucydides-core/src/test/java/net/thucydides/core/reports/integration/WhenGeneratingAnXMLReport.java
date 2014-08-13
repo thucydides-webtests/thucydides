@@ -230,8 +230,11 @@ public class WhenGeneratingAnXMLReport {
                 "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0' timestamp='2013-01-01T00:00:00.000-05:00'>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
-                        + "  </tags>"
+                        + "  </tags>\n"
                         + "  <examples>\n"
+                        + "    <datasets>\n"
+                        + "      <dataset startRow='0' rowCount='0'/>\n"
+                        + "    </datasets>\n"
                         + "    <headers>\n"
                         + "      <header>firstName</header>\n"
                         + "      <header>lastName</header>\n"
@@ -263,6 +266,63 @@ public class WhenGeneratingAnXMLReport {
 
         assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
+
+    @Test
+    public void should_generate_an_XML_report_for_an_acceptance_test_run_with_a_table_with_a_title_and_description()
+            throws Exception {
+
+        List<Object> row1 = new ArrayList<Object>(); row1.addAll(Lists.newArrayList("Joe", "Smith", "20"));
+        List<Object> row2 = new ArrayList<Object>(); row2.addAll(Lists.newArrayList("Jack", "Jones", "21"));
+
+        TestOutcome testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class);
+        DateTime startTime = new DateTime(2013,1,1,0,0,0,0);
+        testOutcome.setStartTime(startTime);
+
+        DataTable table = DataTable.withHeaders(ImmutableList.of("firstName","lastName","age")).
+                andRows(ImmutableList.of(row1, row2)).andTitle("a title").andDescription("some description").build();
+        testOutcome.useExamplesFrom(table);
+        table.row(0).hasResult(TestResult.FAILURE);
+        String expectedReport =
+                "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0' timestamp='2013-01-01T00:00:00.000-05:00'>\n"
+                        + "  <tags>\n"
+                        + "    <tag name='A user story' type='story'/>\n"
+                        + "  </tags>\n"
+                        + "  <examples>\n"
+                        + "    <datasets>\n"
+                        + "      <dataset startRow='0' rowCount='0' name='a title' description='some description'/>\n"
+                        + "    </datasets>\n"
+                        + "    <headers>\n"
+                        + "      <header>firstName</header>\n"
+                        + "      <header>lastName</header>\n"
+                        + "      <header>age</header>\n"
+                        + "    </headers>\n"
+                        + "    <rows>\n"
+                        + "      <row result=\"FAILURE\">\n"
+                        + "        <value>Joe</value>\n"
+                        + "        <value>Smith</value>\n"
+                        + "        <value>20</value>\n"
+                        + "      </row>\n"
+                        + "      <row>\n"
+                        + "        <value>Jack</value>\n"
+                        + "        <value>Jones</value>\n"
+                        + "        <value>21</value>\n"
+                        + "      </row>\n"
+                        + "    </rows>\n"
+                        + "  </examples>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.AUserStory' name='A user story' path='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport'/>\n"
+                        + "  <test-step result='SUCCESS' duration='0'>\n"
+                        + "    <description>step 1</description>\n"
+                        + "  </test-step>\n"
+                        + "</acceptance-test-run>";
+
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1"));
+
+        File xmlReport = reporter.generateReportFor(testOutcome, allTestOutcomes);
+        String generatedReportText = getStringFrom(xmlReport);
+
+        assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
+    }
+
 
     @Test
     public void should_generate_an_XML_report_for_an_acceptance_test_run_with_a_qualifier()

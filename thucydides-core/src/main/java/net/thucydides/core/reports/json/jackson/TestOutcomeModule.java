@@ -26,6 +26,7 @@ public class TestOutcomeModule extends SimpleModule {
         context.setMixInAnnotations(TestTag.class, JSONTestTagMixin.class);
         context.setMixInAnnotations(ScreenshotAndHtmlSource.class, JSONScreenshotAndHtmlMixin.class);
         context.setMixInAnnotations(DataTable.class, JSONDataTableMixin.class);
+        context.setMixInAnnotations(DataSetDescriptor.class, JSONDataSetDescriptorMixin.class);
         context.setMixInAnnotations(DataTableRow.class, JSONDataTableRowMixin.class);
         context.setMixInAnnotations(StackTraceElement.class, JSONStackTraceElementMixin.class);
         context.setMixInAnnotations(Throwable.class, JSONThrowableMixin.class);

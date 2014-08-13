@@ -202,6 +202,53 @@ public class WhenReadingAnXMLReport {
         assertThat(table.getRows().get(1).getResult(), is(TestResult.SUCCESS));
     }
 
+
+    @Test
+    public void should_load_example_data_from_xml_file_with_a_title_and_description() throws Exception {
+        String storedReportXML =
+                "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0'>\n"
+                        + "  <user-story id='net.thucydides.core.reports.integration.WhenGeneratingAnXMLReport.SomeTestScenarioWithTags' name='Some test scenario with tags' />\n"
+                        + "  <tags>\n"
+                        + "    <tag name='important feature' type='feature' />\n"
+                        + "    <tag name='simple story' type='story' />\n"
+                        + "  </tags>\n"
+                        + "  <examples>\n"
+                        + "    <headers>\n"
+                        + "      <header>firstName</header>\n"
+                        + "      <header>lastName</header>\n"
+                        + "      <header>age</header>\n"
+                        + "    </headers>\n"
+                        + "    <rows>\n"
+                        + "      <row result='FAILURE'>\n"
+                        + "        <value>Joe</value>\n"
+                        + "        <value>Smith</value>\n"
+                        + "        <value>20</value>\n"
+                        + "      </row>\n"
+                        + "      <row>\n"
+                        + "        <value>Jack</value>\n"
+                        + "        <value>Jones</value>\n"
+                        + "        <value>21</value>\n"
+                        + "      </row>\n"
+                        + "    </rows>\n"
+                        + "  </examples>\n"
+                        + "  <test-step result='SUCCESS' duration='0'>\n"
+                        + "    <description>step 1</description>\n"
+                        + "  </test-step>\n"
+                        + "</acceptance-test-run>";
+
+        File report = temporaryDirectory.newFile("saved-report.xml");
+        FileUtils.writeStringToFile(report, storedReportXML);
+
+        Optional<TestOutcome> testOutcome = outcomeReporter.loadReportFrom(report);
+        DataTable table = testOutcome.get().getDataTable();
+        assertThat(table.getHeaders(), hasItems("firstName","lastName","age"));
+        assertThat(table.getRows().size(), is(2));
+        assertThat(table.getRows().get(0).getStringValues(), hasItems("Joe","Smith","20"));
+        assertThat(table.getRows().get(0).getResult(), is(TestResult.FAILURE));
+        assertThat(table.getRows().get(1).getStringValues(), hasItems("Jack","Jones","21"));
+        assertThat(table.getRows().get(1).getResult(), is(TestResult.SUCCESS));
+    }
+
     @Test
     public void should_load_acceptance_test_report_including_issues() throws Exception {
         String storedReportXML =

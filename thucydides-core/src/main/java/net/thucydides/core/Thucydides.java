@@ -1,21 +1,21 @@
 package net.thucydides.core;
 
+import com.google.common.collect.ImmutableList;
 import net.thucydides.core.annotations.TestCaseAnnotations;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.sessions.TestSessionVariables;
-import net.thucydides.core.steps.BaseStepListener;
-import net.thucydides.core.steps.StepAnnotations;
-import net.thucydides.core.steps.StepEventBus;
-import net.thucydides.core.steps.StepFactory;
-import net.thucydides.core.steps.StepListener;
+import net.thucydides.core.steps.*;
+import net.thucydides.core.steps.di.DependencyInjectorService;
 import net.thucydides.core.webdriver.Configuration;
+import net.thucydides.core.webdriver.ThucydidesWebDriverSupport;
 import net.thucydides.core.webdriver.WebDriverFactory;
 import net.thucydides.core.webdriver.WebdriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * A utility class that provides services to initialize web testing and reporting-related fields in arbitrary objects.
@@ -46,6 +46,25 @@ public class Thucydides {
         injectDriverInto(testCase);
         injectAnnotatedPagesObjectInto(testCase);
         injectScenarioStepsInto(testCase);
+        ThucydidesWebDriverSupport.initializeFieldsIn(testCase);
+        injectDependenciesInto(testCase);
+    }
+
+    private static void injectDependenciesInto(Object testCase) {
+        List<DependencyInjector> dependencyInjectors = getDependencyInjectorService().findDependencyInjectors();
+        dependencyInjectors.addAll(getDefaultDependencyInjectors());
+
+        for(DependencyInjector dependencyInjector : dependencyInjectors) {
+            dependencyInjector.injectDependenciesInto(testCase);
+        }
+    }
+
+    private static DependencyInjectorService getDependencyInjectorService() {
+        return Injectors.getInjector().getInstance(DependencyInjectorService.class);
+    }
+
+    private static List<DependencyInjector> getDefaultDependencyInjectors() {
+        return ImmutableList.of((DependencyInjector) new PageObjectDependencyInjector(getPages()));
     }
 
     /**
@@ -62,6 +81,7 @@ public class Thucydides {
         injectDriverInto(testCase);
         injectAnnotatedPagesObjectInto(testCase);
         injectScenarioStepsInto(testCase);
+        injectDependenciesInto(testCase);
     }
 
     private static void initStepListener() {
