@@ -352,7 +352,9 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         given:
         def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioWithTags.class);
         testOutcome.startTime = FIRST_OF_JANUARY
-        testOutcome.useExamplesFrom(DataTable.withHeaders(["a","b","c"]).build())
+        testOutcome.useExamplesFrom(DataTable.withHeaders(["a","b","c"])
+                                             .andTitle("a title")
+                                             .andDescription("some description").build())
         testOutcome.addRow(["a":"1", "b":"2", "c":"3"]);
         testOutcome.addRow(["a":"2", "b":"3", "c":"4"]);
         testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").startingAt(FIRST_OF_JANUARY))
@@ -360,6 +362,8 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
         TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
         then:
+        reloadedOutcome.dataTable.title == "a title"
+        reloadedOutcome.dataTable.description == "some description"
         reloadedOutcome.dataTable.headers == ["a","b","c"]
         reloadedOutcome.dataTable.rows[0].stringValues == ["1","2","3"]
         reloadedOutcome.dataTable.rows[1].stringValues == ["2","3","4"]

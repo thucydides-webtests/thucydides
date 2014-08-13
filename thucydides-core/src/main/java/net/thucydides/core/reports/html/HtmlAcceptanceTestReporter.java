@@ -118,6 +118,7 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         context.put("currentTag", TestTag.EMPTY_TAG);
         context.put("inflection", Inflector.getInstance());
         context.put("parentRequirement", requirementsService.getParentRequirementFor(testOutcome));
+        context.put("featureOrStory", Optional.fromNullable(testOutcome.getUserStory()));
         context.put("requirementTypes", requirementsService.getRequirementTypes());
         addTimestamp(testOutcome, context);
     }

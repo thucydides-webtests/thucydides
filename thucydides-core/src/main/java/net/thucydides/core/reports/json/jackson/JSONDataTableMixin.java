@@ -13,6 +13,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 @JsonInclude(NON_EMPTY)
 public abstract class JSONDataTableMixin {
     JSONDataTableMixin(@JsonProperty("headers") List<String> headers,
-                       @JsonProperty("rows")List<DataTableRow> rows) {};
+                       @JsonProperty("rows") List<DataTableRow> rows,
+                       @JsonProperty("title") String title,
+                       @JsonProperty("description") String description) {};
 
 }

@@ -150,7 +150,7 @@ public class Formatter {
     }
 
     private boolean isRenderedHtml(String text) {
-        return text.startsWith("<");
+        return (text != null) && (text.startsWith("<"));
     }
 
     public String addLineBreaks(final String text) {

@@ -21,6 +21,7 @@ import java.io.StringWriter;
 import java.util.*;
 
 import static ch.lambdaj.Lambda.sort;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
@@ -260,6 +261,12 @@ public class TestOutcomeConverter implements Converter {
     private void addExamplesTo(HierarchicalStreamWriter writer, DataTable dataTable) {
         if ((dataTable != null) && (!dataTable.getRows().isEmpty())) {
             writer.startNode(EXAMPLES);
+            if (!isEmpty(dataTable.getTitle())) {
+                writer.addAttribute("title", dataTable.getTitle());
+            }
+            if (!isEmpty(dataTable.getDescription())) {
+                writer.addAttribute("description", dataTable.getDescription());
+            }
             writeHeaders(writer, dataTable);
             writeRows(writer, dataTable);
             writer.endNode();
@@ -313,7 +320,7 @@ public class TestOutcomeConverter implements Converter {
 
     private void writeErrorMessageAndException(final HierarchicalStreamWriter writer,
                                                final TestStep step) {
-        String errorMessage = StringUtils.isEmpty(step.getErrorMessage()) ? DEFAULT_ERROR_MESSAGE : step.getErrorMessage();
+        String errorMessage = isEmpty(step.getErrorMessage()) ? DEFAULT_ERROR_MESSAGE : step.getErrorMessage();
         writeErrorMessageNode(writer, errorMessage);
         if (step.getException() != null) {
             writeFailureCauseNode(writer, step.getException());
@@ -500,6 +507,8 @@ public class TestOutcomeConverter implements Converter {
                               final TestOutcome testOutcome) {
         List<String> headers = Lists.newArrayList();
         List<DataTableRow> rows = Lists.newArrayList();
+        String title = reader.getAttribute("title");
+        String description = reader.getAttribute("description");
         while (reader.hasMoreChildren()) {
             reader.moveDown();
             String childNode = reader.getNodeName();
@@ -512,6 +521,13 @@ public class TestOutcomeConverter implements Converter {
         }
 
         DataTable table = DataTable.withHeaders(headers).andRowData(rows).build();
+
+        if (title != null) {
+            table = table.withTitle(title);
+        }
+        if (description != null) {
+            table = table.withDescription(description);
+        }
         testOutcome.useExamplesFrom(table);
     }
 

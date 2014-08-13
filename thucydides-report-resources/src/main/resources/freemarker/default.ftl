@@ -81,6 +81,15 @@
                             ${formatter.renderDescription(parentRequirement.get().narrative.renderedText)}
                             </div>
                         </div>
+                    <#elseif (featureOrStory.isPresent())>
+                        <div>
+                            <#assign parentTitle = inflection.of(featureOrStory.get().name).asATitle() >
+                            <#assign parentType = inflection.of(featureOrStory.get().type.toString()).asATitle() >
+                            <h3>${parentType}: ${parentTitle}</h3>
+                            <div class="requirementNarrativeTitle">
+                                ${formatter.renderDescription(featureOrStory.get().narrative)}
+                            </div>
+                        </div>
                     </#if>
                     </td>
                 </tr>
@@ -110,7 +119,7 @@
 
 <div id="beforetable"></div>
 
-<#if (testOutcome.descriptionText.isPresent())>
+<#if (testOutcome.descriptionText.get()?has_content)>
     <div class="story-title">
         <div class="requirementNarrativeTitle">
             ${formatter.renderDescription(testOutcome.descriptionText.get())}
@@ -119,7 +128,10 @@
 </#if>
 
 <#if (testOutcome.isDataDriven())>
-<h3>Examples:</h3>
+<h3>Examples:<#if testOutcome.dataTable.title??>&nbsp;${testOutcome.dataTable.title}</#if></h3>
+<#if testOutcome.dataTable.description??>
+    <div class="requirementNarrative">${testOutcome.dataTable.description}</div>
+</#if>
 <div class="example-table">
     <table>
         <thead>
