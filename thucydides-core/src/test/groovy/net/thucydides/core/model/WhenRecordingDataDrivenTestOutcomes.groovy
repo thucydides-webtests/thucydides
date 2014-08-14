@@ -51,6 +51,61 @@ class WhenRecordingDataDrivenTestOutcomes extends Specification {
 
     }
 
+
+    def "A data table should have a single data set by default"() {
+        when:
+        def table = DataTable.withHeaders(["firstName","lastName","age"]).
+                andRows([["Joe", "Smith",20],
+                         ["Jack", "Jones",21]]).build();
+        then:
+        table.dataSets.size() == 1
+        and:
+        table.dataSets[0].rows == table.rows
+    }
+
+    def "A data set can have a name and description"() {
+        when:
+        def table = DataTable.withHeaders(["firstName","lastName","age"]).
+                andRows([["Joe", "Smith",20],
+                         ["Jack", "Jones",21]])
+                .andTitle("a title")
+                .andDescription("a description")
+                .build();
+        then:
+        table.dataSets.size() == 1
+        and:
+        table.dataSets[0].name == "a title"
+        table.dataSets[0].description == "a description"
+    }
+
+    def "A data table can have several data sets"() {
+        when:
+        def table = DataTable.withHeaders(["firstName","lastName","age"]).
+                andRows([["Joe", "Smith",20],
+                         ["Jack", "Jones",21]])
+                .andTitle("a title")
+                .andDescription("a description")
+                .build();
+        and:
+        table.startNewDataSet("another title","another description")
+        table.addRows([new DataTableRow(["Jane", "Smith",20]),
+                       new DataTableRow(["Jill", "Jones",21]),
+                       new DataTableRow(["Jodie", "Jacobs",21])])
+        then:
+        table.dataSets.size() == 2
+        table.rows.size() == 5
+        and:
+        table.dataSets[0].name == "a title"
+        table.dataSets[0].description == "a description"
+        table.dataSets[0].startRow == 0
+        table.dataSets[0].rows.size() == 2
+        and:
+        table.dataSets[1].name == "another title"
+        table.dataSets[1].description == "another description"
+        table.dataSets[1].startRow == 2
+        table.dataSets[1].rows.size() == 3
+    }
+
     def "Should be able to build a data table with headings and mapped rows"() {
         when:
         def table = DataTable.withHeaders(["firstName","lastName","age"]).

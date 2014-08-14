@@ -362,13 +362,41 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
         TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
         then:
-        reloadedOutcome.dataTable.title == "a title"
-        reloadedOutcome.dataTable.description == "some description"
         reloadedOutcome.dataTable.headers == ["a","b","c"]
         reloadedOutcome.dataTable.rows[0].stringValues == ["1","2","3"]
         reloadedOutcome.dataTable.rows[1].stringValues == ["2","3","4"]
     }
 
+    def "should include a data table with multiple data sets if provided"() {
+        given:
+        def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioWithTags.class);
+        testOutcome.startTime = FIRST_OF_JANUARY
+        testOutcome.useExamplesFrom(DataTable.withHeaders(["a","b","c"])
+                .andTitle("a title")
+                .andDescription("a description").build())
+        testOutcome.addRow(["a":"1", "b":"2", "c":"3"]);
+        testOutcome.addRow(["a":"2", "b":"3", "c":"4"]);
+        testOutcome.dataTable.startNewDataSet("another title","another description")
+        testOutcome.addRow(["a":"3", "b":"2", "c":"3"]);
+        testOutcome.addRow(["a":"4", "b":"3", "c":"4"]);
+        testOutcome.addRow(["a":"5", "b":"3", "c":"4"]);
+
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").startingAt(FIRST_OF_JANUARY))
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
+        then:
+        def reloadedDataSets = reloadedOutcome.dataTable.dataSets
+
+        reloadedDataSets.size() == 2
+        reloadedDataSets[0].rows.size() == 2
+        reloadedDataSets[0].name == "a title"
+        reloadedDataSets[0].description == "a description"
+
+        reloadedDataSets[1].rows.size() == 3
+        reloadedDataSets[1].name == "another title"
+        reloadedDataSets[1].description == "another description"
+    }
 
     def "should contain the feature if provided"() {
         given:

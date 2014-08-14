@@ -230,8 +230,11 @@ public class WhenGeneratingAnXMLReport {
                 "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0' timestamp='2013-01-01T00:00:00.000-05:00'>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
-                        + "  </tags>"
+                        + "  </tags>\n"
                         + "  <examples>\n"
+                        + "    <datasets>\n"
+                        + "      <dataset startRow='0' rowCount='0'/>\n"
+                        + "    </datasets>\n"
                         + "    <headers>\n"
                         + "      <header>firstName</header>\n"
                         + "      <header>lastName</header>\n"
@@ -283,8 +286,11 @@ public class WhenGeneratingAnXMLReport {
                 "<acceptance-test-run title='Should do this' name='should_do_this' steps='1' successful='1' failures='0' skipped='0' ignored='0' pending='0' result='SUCCESS' duration='0' timestamp='2013-01-01T00:00:00.000-05:00'>\n"
                         + "  <tags>\n"
                         + "    <tag name='A user story' type='story'/>\n"
-                        + "  </tags>"
-                        + "  <examples title='a title' description='some description'>\n"
+                        + "  </tags>\n"
+                        + "  <examples>\n"
+                        + "    <datasets>\n"
+                        + "      <dataset startRow='0' rowCount='0' name='a title' description='some description'/>\n"
+                        + "    </datasets>\n"
                         + "    <headers>\n"
                         + "      <header>firstName</header>\n"
                         + "      <header>lastName</header>\n"
@@ -316,7 +322,6 @@ public class WhenGeneratingAnXMLReport {
 
         assertThat(generatedReportText, isSimilarTo(expectedReport,"timestamp"));
     }
-
 
     @Test
     public void should_generate_an_XML_report_for_an_acceptance_test_run_with_a_qualifier()

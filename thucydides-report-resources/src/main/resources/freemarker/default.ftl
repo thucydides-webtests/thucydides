@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>${testOutcome.unqualified.title}</title>
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="css/core.css"/>
@@ -11,7 +11,7 @@
     <script type="text/javascript" src="datatables/media/js/jquery.dataTables.min.js"></script>
     <script src="scripts/imgpreview.full.jquery.js" type="text/javascript"></script>
 
-    <link type="text/css" href="jqueryui/css/start/jquery-ui-1.8.18.custom.css" rel="Stylesheet" />
+    <link type="text/css" href="jqueryui/css/start/jquery-ui-1.8.18.custom.css" rel="Stylesheet"/>
     <script type="text/javascript" src="jqueryui/js/jquery-ui-1.8.18.custom.min.js"></script>
 
 </head>
@@ -31,7 +31,8 @@
 <div class="middlecontent">
 <div id="contenttop">
     <div class="middlebg">
-        <span class="bluetext"><a href="index.html" class="bluetext">Home</a> > ${formatter.truncatedHtmlCompatible(testOutcome.title,80)} </span>
+        <span class="bluetext"><a href="index.html"
+                                  class="bluetext">Home</a> > ${formatter.truncatedHtmlCompatible(testOutcome.title,80)} </span>
     </div>
     <div class="rightbg"></div>
 </div>
@@ -57,12 +58,17 @@
                 <td width="50"><img class="story-outcome-icon" src="images/${outcome_icon}" width="25" height="25"/>
                 </td>
             <#if (testOutcome.videoLink)??>
-                <td width="25"><a href="${relativeLink!}${testOutcome.videoLink}"><img class="story-outcome-icon" src="images/video.png" width="25" height="25" alt="Video"/></a></td>
+                <td width="25"><a href="${relativeLink!}${testOutcome.videoLink}"><img class="story-outcome-icon"
+                                                                                       src="images/video.png" width="25"
+                                                                                       height="25" alt="Video"/></a>
+                </td>
             </#if>
                 <td width="%"><span class="test-case-title"><span
-                        class="${outcome_text}">${testOutcome.unqualified.titleWithLinks}<span class="related-issue-title">${testOutcome.formattedIssues}</span></span></span>
+                        class="${outcome_text}">${testOutcome.unqualified.titleWithLinks}<span
+                        class="related-issue-title">${testOutcome.formattedIssues}</span></span></span>
                 </td>
-                <td width="100"><span class="test-case-duration"><span class="greentext">${testOutcome.durationInSeconds}s</span></span>
+                <td width="100"><span class="test-case-duration"><span
+                        class="greentext">${testOutcome.durationInSeconds}s</span></span>
                 </td>
                 </tr>
                 <tr>
@@ -77,6 +83,7 @@
                                 <#assign issueNumber = "">
                             </#if>
                             <h3>${parentType}: ${parentTitle} ${issueNumber}</h3>
+
                             <div class="requirementNarrativeTitle">
                             ${formatter.renderDescription(parentRequirement.get().narrative.renderedText)}
                             </div>
@@ -86,8 +93,9 @@
                             <#assign parentTitle = inflection.of(featureOrStory.get().name).asATitle() >
                             <#assign parentType = inflection.of(featureOrStory.get().type.toString()).asATitle() >
                             <h3>${parentType}: ${parentTitle}</h3>
+
                             <div class="requirementNarrativeTitle">
-                                ${formatter.renderDescription(featureOrStory.get().narrative)}
+                            ${formatter.renderDescription(featureOrStory.get().narrative)}
                             </div>
                         </div>
                     </#if>
@@ -112,6 +120,7 @@
 <#if (testOutcome.isDataDriven())>
 <div class="story-title">
     <h3>Scenario:</h3>
+
     <div class="scenario">${formatter.formatWithFields(testOutcome.dataDrivenSampleScenario, testOutcome.exampleFields)}</div>
 
 </div>
@@ -119,191 +128,205 @@
 
 <div id="beforetable"></div>
 
-<#if (testOutcome.descriptionText.get()?has_content)>
-    <div class="story-title">
-        <div class="requirementNarrativeTitle">
-            ${formatter.renderDescription(testOutcome.descriptionText.get())}
-        </div>
+<#if (testOutcome.descriptionText.isPresent() && testOutcome.descriptionText.get()?has_content)>
+<div class="story-title">
+    <div class="requirementNarrativeTitle">
+    ${formatter.renderDescription(testOutcome.descriptionText.get())}
     </div>
+</div>
 </#if>
 
 <#if (testOutcome.isDataDriven())>
-<h3>Examples:<#if testOutcome.dataTable.title??>&nbsp;${testOutcome.dataTable.title}</#if></h3>
-<#if testOutcome.dataTable.description??>
-    <div class="requirementNarrative">${testOutcome.dataTable.description}</div>
-</#if>
-<div class="example-table">
-    <table>
-        <thead>
-        <tr>
-            <#list testOutcome.dataTable.headers as header>
-                <th>${inflection.of(header).asATitle()}</th>
-            </#list>
-        </tr>
-        </thead>
-        <tbody>
-            <#list testOutcome.dataTable.rows as row>
-            <tr class="test-${row.result}">
-                <#list row.values as value>
-                    <td><a href="#${row_index}">${formatter.htmlCompatible(value)}</a></td>
+
+    <#list testOutcome.dataTable.dataSets as dataSet >
+    <h3>Examples:<#if dataSet.title??>&nbsp;${dataSet.title}</#if></h3>
+        <#if dataSet.description??>
+        <div class="requirementNarrative">${dataSet.description}</div>
+        </#if>
+    <div class="example-table">
+        <table>
+            <thead>
+            <tr>
+                <#list testOutcome.dataTable.headers as header>
+                    <th>${inflection.of(header).asATitle()}</th>
                 </#list>
             </tr>
-            </#list>
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                <#assign rowIndex = dataSet.startRow >
+                <#list dataSet.rows as row>
+                <tr class="test-${row.result}">
+                    <#list row.values as value>
+                        <td><a href="#${rowIndex}">${formatter.htmlCompatible(value)}</a></td>
+                    </#list>
+                </tr>
+                    <#assign rowIndex = rowIndex + 1 >
+                </#list>
+            </tbody>
+        </table>
+    </div>
+    </#list>
 </#if>
 
-<div id="tablecontents">
-<div>
-    <table class="step-table">
-        <tr class="step-titles">
-            <th width="65"><#if (testOutcome.manual)><img src="images/worker.png" title="Manual test"/></#if>&nbsp;</th>
-            <th width="755"  class="greentext"><#if (testOutcome.manual)>Manual </#if>Steps</th>
-        <#if testOutcome.hasScreenshots()>
-            <th width="120" class="greentext">Screenshot</th>
-        </#if>
-            <th width="100" class="greentext">Outcome</th>
-            <th width="75" class="greentext">Duration</th>
-        </tr>
-        <tr class="step-table-separator"><td colspan="5"></td></tr>
-        <#assign level = 1>
-        <#assign screenshotCount = 0>
-        <#macro write_step(step, step_number)>
-            <@step_details step=step step_number=step_number level=level/>
-            <#if step.isAGroup()>
-                <#if level == 1>
-                <tr>
-                <td colspan="5">
-                <table id="stepSection${step_number}" style="display:none; width:100%">
+    <div id="tablecontents">
+        <div>
+            <table class="step-table">
+                <tr class="step-titles">
+                    <th width="65"><#if (testOutcome.manual)><img src="images/worker.png" title="Manual test"/></#if>&nbsp;
+                    </th>
+                    <th width="755" class="greentext"><#if (testOutcome.manual)>Manual </#if>Steps</th>
+                    <#if testOutcome.hasScreenshots()>
+                        <th width="120" class="greentext">Screenshot</th>
+                    </#if>
+                    <th width="100" class="greentext">Outcome</th>
+                    <th width="75" class="greentext">Duration</th>
+                </tr>
+                <tr class="step-table-separator">
+                    <td colspan="5"></td>
+                </tr>
+                <#assign level = 1>
+                <#assign screenshotCount = 0>
+                <#macro write_step(step, step_number)>
+                    <@step_details step=step step_number=step_number level=level/>
+                    <#if step.isAGroup()>
+                        <#if level == 1>
+                        <tr>
+                        <td colspan="5">
+                        <table id="stepSection${step_number}" style="display:none; width:100%">
 
-                </#if>
-                <#assign level = level + 1>
-                <#list step.children as nestedStep>
-                    <@write_step step=nestedStep step_number=""/>
+                        </#if>
+                        <#assign level = level + 1>
+                        <#list step.children as nestedStep>
+                            <@write_step step=nestedStep step_number=""/>
+                        </#list>
+                        <#assign level = level-1>
+
+                        <#if level == 1>
+                        </table>
+                        </td>
+                        <tr>
+                        </#if>
+                    </#if>
+                </#macro>
+                <#macro step_details(step, step_number, level)>
+                    <#if step.result == "FAILURE">
+                        <#assign step_outcome_icon = "fail.png">
+                    <#elseif step.result == "ERROR">
+                        <#assign step_outcome_icon = "cross.png">
+                    <#elseif step.result == "SUCCESS">
+                        <#assign step_outcome_icon = "success.png">
+                    <#elseif step.result == "PENDING">
+                        <#assign step_outcome_icon = "pending.png">
+                    <#else>
+                        <#assign step_outcome_icon = "ignor.png">
+                    </#if>
+                    <#assign step_icon_size = 20>
+                    <#if (level>1)>
+                        <#if step.isAGroup()>
+                            <#assign step_class_root = "nested">
+                        <#else>
+                            <#assign step_class_root = "nested-group">
+                        </#if>
+                    <#else>
+                        <#assign step_class_root = "top-level">
+                    </#if>
+                    <#assign step_indent = level*20>
+                    <#if level == 1 && step.isAGroup()>
+                        <#assign showAccordion = true/>
+                    <#else>
+                        <#assign showAccordion = false/>
+                    </#if>
+                    <tr class="test-${step.result}">
+                        <td width="60" class="step-icon">
+                            <#if step_number?has_content><a name="${step_number}"/></#if>
+                            <#if showAccordion>
+                                <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')"
+                                   style="display:block">
+                                    <img src="images/plus.png" width="24" class="imgstepSection${step_number}"
+                                         style="margin-left: 20px; float:left;  padding-right:5px"/>
+                                </a>
+                            <#else>
+                                <img style="margin-left: ${step_indent}px; margin-right: 5px;"
+                                     src="images/${step_outcome_icon}" class="${step_class_root}-icon"/>
+                            </#if>
+                        </td>
+                        <td>
+                            <div class="step-description">
+                                <#if showAccordion>
+                                <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')"
+                                   style="display:block">
+                                </#if>
+                                <span class="${step_class_root}-step">${formatter.formatWithFields(step.description,testOutcome.exampleFields)}</span>
+                                <#if showAccordion>
+                                </a>
+                                </#if>
+                            </div>
+                        </td>
+                        <#if testOutcome.hasScreenshots()>
+                            <td width="100" class="${step.result}-text">
+                                <#if !step.isAGroup() && step.firstScreenshot??>
+                                    <a href="${relativeLink!}${testOutcome.screenshotReportName}.html#screenshots?screenshot=${screenshotCount}">
+                                        <img src="${step.firstScreenshot.screenshotFile.name}"
+                                             class="screenshot"
+                                             width="48" height="48"/>
+                                        <#assign screenshotCount = screenshotCount + step.screenshotCount />
+                                    </a>
+                                </#if>
+                            </td>
+                        </#if>
+                        <td width="100"><span class="${step_class_root}-step">${step.result}</span></td>
+                        <td width="100"><span class="${step_class_root}-step">${step.durationInSeconds}s</span></td>
+                    </tr>
+                    <#if (step.result == "FAILURE" || step.result == "ERROR") && !step.isAGroup()>
+                        <tr class="test-${step.result}">
+                            <td width="40">&nbsp</td>
+                            <#if step.errorMessage?has_content>
+                                <#assign errorMessageTitle = step.errorMessage?html>
+                            <#else>
+                                <#assign errorMessageTitle = "">
+                            </#if>
+                            <td width="%" colspan="4">
+                                <span class="error-message" title="${errorMessageTitle}"><pre>${step.shortErrorMessage!''}</pre></span>
+                            </td>
+                        </tr>
+                    </#if>
+                </#macro>
+            <#-- Test step results -->
+                <#list testOutcome.testSteps as step>
+                    <@write_step step=step step_number=step_index />
                 </#list>
-                <#assign level = level-1>
-
-                <#if level == 1>
-                </table>
-                </td>
-                <tr>
-                </#if>
-            </#if>
-        </#macro>
-        <#macro step_details(step, step_number, level)>
-            <#if step.result == "FAILURE">
-                <#assign step_outcome_icon = "fail.png">
-            <#elseif step.result == "ERROR">
-                <#assign step_outcome_icon = "cross.png">
-            <#elseif step.result == "SUCCESS">
-                <#assign step_outcome_icon = "success.png">
-            <#elseif step.result == "PENDING">
-                <#assign step_outcome_icon = "pending.png">
-            <#else>
-                <#assign step_outcome_icon = "ignor.png">
-            </#if>
-            <#assign step_icon_size = 20>
-            <#if (level>1)>
-                <#if step.isAGroup()>
-                    <#assign step_class_root = "nested">
-                <#else>
-                    <#assign step_class_root = "nested-group">
-                </#if>
-            <#else>
-                <#assign step_class_root = "top-level">
-            </#if>
-            <#assign step_indent = level*20>
-            <#if level == 1 && step.isAGroup()>
-                <#assign showAccordion = true/>
-            <#else>
-                <#assign showAccordion = false/>
-            </#if>
-            <tr class="test-${step.result}">
-                <td width="60" class="step-icon">
-                    <#if step_number?has_content><a name="${step_number}"/></#if>
-                    <#if showAccordion>
-                        <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')" style="display:block">
-                            <img src="images/plus.png" width="24" class="imgstepSection${step_number}" style="margin-left: 20px; float:left;  padding-right:5px"/>
-                        </a>
-                    <#else>
-                        <img style="margin-left: ${step_indent}px; margin-right: 5px;"
-                             src="images/${step_outcome_icon}" class="${step_class_root}-icon"/>
+                <#if testOutcome.stepCount == 0 || testOutcome.hasNonStepFailure()>
+                    <#if testOutcome.result == "FAILURE">
+                        <#assign step_outcome_icon = "fail.png">
+                    <#elseif testOutcome.result == "ERROR">
+                        <#assign step_outcome_icon = "cross.png">
                     </#if>
-                </td>
-                <td>
-                    <div class="step-description">
-                        <#if showAccordion>
-                        <a href="javaScript:void(0)" onClick="toggleDiv('stepSection${step_number}')" style="display:block">
-                        </#if>
-                        <span class="${step_class_root}-step">${formatter.formatWithFields(step.description,testOutcome.exampleFields)}</span>
-                        <#if showAccordion>
-                        </a>
-                        </#if>
-                    </div>
-                </td>
-                <#if testOutcome.hasScreenshots()>
-                    <td width="100" class="${step.result}-text">
-                        <#if !step.isAGroup() && step.firstScreenshot??>
-                            <a href="${relativeLink!}${testOutcome.screenshotReportName}.html#screenshots?screenshot=${screenshotCount}">
-                                <img src="${step.firstScreenshot.screenshotFile.name}"
-                                     class="screenshot"
-                                     width="48" height="48"/>
-                                <#assign screenshotCount = screenshotCount + step.screenshotCount />
-                            </a>
-                        </#if>
-                    </td>
-                </#if>
-                <td width="100"><span class="${step_class_root}-step">${step.result}</span></td>
-                <td width="100"><span class="${step_class_root}-step">${step.durationInSeconds}s</span></td>
-            </tr>
-            <#if (step.result == "FAILURE" || step.result == "ERROR") && !step.isAGroup()>
-                <tr class="test-${step.result}">
-                    <td width="40">&nbsp</td>
-                    <#if step.errorMessage?has_content>
-                        <#assign errorMessageTitle = step.errorMessage?html>
-                    <#else>
-                        <#assign errorMessageTitle = "">
+                    <#if step_outcome_icon?has_content>
+                        <tr class="test-${testOutcome.result}">
+                            <td width="40">
+                                <img style="margin-left: 20px; margin-right: 5px;" src="images/${step_outcome_icon}"
+                                     class="top-level-icon"/>
+                            </td>
+                            <td width="%">
+                                <span class="top-level-step">An error occurred outside of step execution.</span>
+                            </td>
+                            <td width="100"><span class="top-level-step">${testOutcome.result}</span></td>
+                            <td width="100"><span class="top-level-step">${testOutcome.durationInSeconds}s</span></td>
+                        </tr>
+                        <tr class="test-${testOutcome.result}">
+                            <td width="40">&nbsp</td>
+                            <td width="%" colspan="4">
+                                <#if (testOutcome.errorMessage)??>
+                                    <span class="error-message"
+                                          title="${testOutcome.errorMessage}">${testOutcome.errorMessage}</span>
+                                </#if>
+                            </td>
+                        </tr>
                     </#if>
-                    <td width="%" colspan="4">
-                        <span class="error-message" title="${errorMessageTitle}"><pre>${step.shortErrorMessage!''}</pre></span>
-                    </td>
-                </tr>
-            </#if>
-        </#macro>
-    <#-- Test step results -->
-        <#list testOutcome.testSteps as step>
-            <@write_step step=step step_number=step_index />
-        </#list>
-        <#if testOutcome.stepCount == 0 || testOutcome.hasNonStepFailure()>
-            <#if testOutcome.result == "FAILURE">
-                <#assign step_outcome_icon = "fail.png">
-            <#elseif testOutcome.result == "ERROR">
-                <#assign step_outcome_icon = "cross.png">
-            </#if>
-            <#if step_outcome_icon?has_content>
-                <tr class="test-${testOutcome.result}">
-                    <td width="40">
-                        <img style="margin-left: 20px; margin-right: 5px;" src="images/${step_outcome_icon}" class="top-level-icon"/>
-                    </td>
-                    <td width="%">
-                        <span class="top-level-step">An error occurred outside of step execution.</span>
-                    </td>
-                    <td width="100"><span class="top-level-step">${testOutcome.result}</span></td>
-                    <td width="100"><span class="top-level-step">${testOutcome.durationInSeconds}s</span></td>
-                </tr>
-                <tr class="test-${testOutcome.result}">
-                    <td width="40">&nbsp</td>
-                    <td width="%" colspan="4">
-                        <#if (testOutcome.errorMessage)??>
-                            <span class="error-message" title="${testOutcome.errorMessage}">${testOutcome.errorMessage}</span>
-                        </#if>
-                    </td>
-                </tr>
-            </#if>
-        </#if>
-</table>
-</div>
+                </#if>
+            </table>
+        </div>
+    </div>
 <div id="beforefooter"></div>
 <div id="bottomfooter">
     <span class="version">Thucydides version ${thucydidesVersionNumber} - Build ${buildNumber}</span>
@@ -312,16 +335,16 @@
 
 <script type="text/javascript">
     function toggleDiv(divId) {
-        $("#"+divId).toggle();
-        var imgsrc=$(".img"+divId).attr('src');
-        if(imgsrc=='images/plus.png'){
-            $(".img"+divId).attr("src", function() {
+        $("#" + divId).toggle();
+        var imgsrc = $(".img" + divId).attr('src');
+        if (imgsrc == 'images/plus.png') {
+            $(".img" + divId).attr("src", function () {
                 return "images/minus.png";
             });
 
         }
-        else{
-            $(".img"+divId).attr("src", function() {
+        else {
+            $(".img" + divId).attr("src", function () {
                 return "images/plus.png";
             });
         }
@@ -329,25 +352,27 @@
 </script>
 
 <script type="text/javascript">
-    $('.example-table table').dataTable( {
-        "aaSorting": [[ 1, "asc" ]],
+    $('.example-table table').dataTable({
+        "aaSorting": [
+            [ 1, "asc" ]
+        ],
         "bJQueryUI": true,
         "iDisplayLength": 25,
         "sScrollX": "100%",
         "sScrollXInner": "100%",
         "bScrollCollapse": true
-    } );
+    });
 </script>
 
 <script type="text/javascript">
     //<![CDATA[
 
-    function($) {
+    function ($) {
         $('a').imgPreview({
             imgCSS: {
                 width: '500px'
             },
-            distanceFromCursor: {top:10, left:-200}
+            distanceFromCursor: {top: 10, left: -200}
         });
     }
     //]]>

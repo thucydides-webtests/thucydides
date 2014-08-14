@@ -20,18 +20,27 @@ public class DataTable {
     private final List<String> headers;
     private final List<DataTableRow> rows;
     private final boolean predefinedRows;
-    private final String title;
-    private final String description;
     private AtomicInteger currentRow = new AtomicInteger(0);
+    private List<DataSetDescriptor> dataSetDescriptors;
 
     private final static List<DataTableRow> NO_ROWS = Lists.newArrayList();
 
-    private DataTable(List<String> headers, List<DataTableRow> rows, String title, String description) {
+    protected DataTable(List<String> headers, List<DataTableRow> rows) {
+        this(headers, new CopyOnWriteArrayList(rows), null, null, ImmutableList.of(DataSetDescriptor.DEFAULT_DESCRIPTOR));
+    }
+
+    protected DataTable(List<String> headers, List<DataTableRow> rows, String title, String description) {
+        this(headers, new CopyOnWriteArrayList(rows), title, description, ImmutableList.of(new DataSetDescriptor(0,0,title, description)));
+    }
+
+    protected DataTable(List<String> headers, List<DataTableRow> rows, String title, String description, List<DataSetDescriptor> dataSetDescriptors) {
         this.headers = headers;
         this.rows = new CopyOnWriteArrayList(rows);
         this.predefinedRows = !rows.isEmpty();
-        this.title = title;
-        this.description = description;
+        this.dataSetDescriptors = dataSetDescriptors;
+        if ((title != null) || (description != null)) {
+            setLatestNameAndDescription(title, description);
+        }
     }
 
     public static DataTableBuilder withHeaders(List<String> headers) {
@@ -74,20 +83,8 @@ public class DataTable {
         addRow(new DataTableRow(ImmutableList.copyOf(data.values())));
     }
 
-    public DataTable withTitle(String title) {
-        return new DataTable(headers, rows, title, description);
-    }
-
-    public DataTable withDescription(String description) {
-        return new DataTable(headers, rows, title, description);
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
+    public List<DataSetDescriptor> getDataSetDescriptors() {
+        return dataSetDescriptors;
     }
 
     public void addRow(DataTableRow dataTableRow) {
@@ -104,6 +101,43 @@ public class DataTable {
         currentRow.set(rows.size() - 1);
     }
 
+    public void setLatestNameAndDescription(String name, String description) {
+        if ((dataSetDescriptors == null) || (dataSetDescriptors.isEmpty())) {
+            dataSetDescriptors = ImmutableList.of(new DataSetDescriptor(0,0,name,description));
+        } else {
+            dataSetDescriptors = replaceLatestDescriptor(last(dataSetDescriptors).withNameAndDescription(name, description));
+        }
+    }
+
+    private List<DataSetDescriptor> replaceLatestDescriptor(DataSetDescriptor updatedLatestDescriptor) {
+        List<DataSetDescriptor> previousDescriptors = dataSetDescriptors.subList(0, dataSetDescriptors.size() - 1);
+
+        return new ImmutableList.Builder<DataSetDescriptor>()
+                .addAll(previousDescriptors)
+                .add(updatedLatestDescriptor)
+                .build();
+    }
+
+    public void startNewDataSet(String name, String description) {
+        updateLatestRowCount();
+        dataSetDescriptors = new ImmutableList.Builder<DataSetDescriptor>()
+                            .addAll(dataSetDescriptors)
+                            .add(new DataSetDescriptor(rows.size(), 0, name, description))
+                            .build();
+
+
+    }
+
+    private void updateLatestRowCount() {
+        DataSetDescriptor currentDescriptor = last(dataSetDescriptors);
+        int currentRowCount = rows.size() - currentDescriptor.getStartRow();
+        dataSetDescriptors = replaceLatestDescriptor(currentDescriptor.withRowCount(currentRowCount));
+    }
+
+    private DataSetDescriptor last(List<DataSetDescriptor> dataSetDescriptors) {
+        return dataSetDescriptors.get(dataSetDescriptors.size() - 1);
+    }
+
     public boolean hasPredefinedRows() {
         return predefinedRows;
     }
@@ -112,47 +146,67 @@ public class DataTable {
         return rows.size();
     }
 
+    public List<DataSet> getDataSets() {
+        List<DataSet> dataSets = Lists.newArrayList();
+        for (DataSetDescriptor descriptor : dataSetDescriptors) {
+            dataSets.add(new DataSet(descriptor.getStartRow(),
+                    descriptor.getRowCount(),
+                    descriptor.getName(),
+                    descriptor.getDescription(),
+                    rows));
+        }
+        return dataSets;
+    }
+
     public static class DataTableBuilder {
         final List<String> headers;
         final List<DataTableRow> rows;
         final String description;
         final String title;
+        final List<DataSetDescriptor> descriptors;
 
         public DataTableBuilder(List<String> headers) {
-            this(headers, NO_ROWS, null, null);
+            this(headers, NO_ROWS, null, null, ImmutableList.of(DataSetDescriptor.DEFAULT_DESCRIPTOR));
         }
 
-        public DataTableBuilder(List<String> headers, List<DataTableRow> rows, String title, String description) {
+        public DataTableBuilder(List<String> headers, List<DataTableRow> rows, String title,
+                                String description, List<DataSetDescriptor> descriptors) {
             this.headers = headers;
             this.rows = rows;
             this.description = description;
             this.title = title;
+            this.descriptors = descriptors;
         }
 
         public DataTableBuilder andCopyRowDataFrom(DataTableRow row) {
             List<DataTableRow> rows = new ArrayList<DataTableRow>();
             rows.add(new DataTableRow(row.getValues()));
-            return new DataTableBuilder(headers, rows, title, description);
+            return new DataTableBuilder(headers, rows, title, description, descriptors);
         }
 
         public DataTableBuilder andTitle(String title) {
-            return new DataTableBuilder(headers, rows, title, description);
+            return new DataTableBuilder(headers, rows, title, description, descriptors);
         }
 
         public DataTableBuilder andDescription(String description) {
-            return new DataTableBuilder(headers, rows, title, description);
+            return new DataTableBuilder(headers, rows, title, description, descriptors);
         }
 
         public DataTable build() {
-            return new DataTable(headers, rows, title, description);
+            return new DataTable(headers, rows, title, description, descriptors);
         }
 
         public DataTableBuilder andRows(List<List<Object>> rows) {
-            return new DataTableBuilder(headers, convert(rows, toDataTableRows()), title, description);
+            return new DataTableBuilder(headers, convert(rows, toDataTableRows()), title, description, descriptors);
         }
 
         public DataTableBuilder andRowData(List<DataTableRow> rows) {
-            return new DataTableBuilder(headers, rows, title, description);
+            return new DataTableBuilder(headers, rows, title, description, descriptors);
+        }
+
+
+        public DataTableBuilder andDescriptors(List<DataSetDescriptor> descriptors) {
+            return new DataTableBuilder(headers, rows, title, description, descriptors);
         }
 
         public DataTableBuilder andMappedRows(List<? extends Map<String, ? extends Object>> mappedRows) {
@@ -160,7 +214,7 @@ public class DataTable {
             for (Map<String, ? extends Object> mappedRow : mappedRows) {
                 rowData.add(rowDataFrom(mappedRow));
             }
-            return new DataTableBuilder(headers, convert(rowData, toDataTableRows()), title, description);
+            return new DataTableBuilder(headers, convert(rowData, toDataTableRows()), title, description, descriptors);
         }
 
         private Converter<List<Object>, DataTableRow> toDataTableRows() {
@@ -179,6 +233,7 @@ public class DataTable {
             }
             return rowData;
         }
+
     }
 
     public class RowValueAccessor {

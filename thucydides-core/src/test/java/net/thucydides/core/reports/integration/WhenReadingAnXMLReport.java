@@ -212,7 +212,7 @@ public class WhenReadingAnXMLReport {
                         + "    <tag name='important feature' type='feature' />\n"
                         + "    <tag name='simple story' type='story' />\n"
                         + "  </tags>\n"
-                        + "  <examples title='a title' description='some description'>\n"
+                        + "  <examples>\n"
                         + "    <headers>\n"
                         + "      <header>firstName</header>\n"
                         + "      <header>lastName</header>\n"
@@ -243,8 +243,6 @@ public class WhenReadingAnXMLReport {
         DataTable table = testOutcome.get().getDataTable();
         assertThat(table.getHeaders(), hasItems("firstName","lastName","age"));
         assertThat(table.getRows().size(), is(2));
-        assertThat(table.getTitle(), is("a title"));
-        assertThat(table.getDescription(), is("some description"));
         assertThat(table.getRows().get(0).getStringValues(), hasItems("Joe","Smith","20"));
         assertThat(table.getRows().get(0).getResult(), is(TestResult.FAILURE));
         assertThat(table.getRows().get(1).getStringValues(), hasItems("Jack","Jones","21"));
