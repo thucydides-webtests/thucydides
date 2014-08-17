@@ -472,6 +472,9 @@ public class StepEventBus {
         getBaseStepListener().getCurrentTestOutcome().setDescription(description);
     }
 
+    public void setBackgroundDescription(String description) {
+        getBaseStepListener().getCurrentTestOutcome().setBackgroundDescription(description);
+    }
     public void useExamplesFrom(DataTable table) {
         for (StepListener stepListener : getAllListeners()) {
             stepListener.useExamplesFrom(table);

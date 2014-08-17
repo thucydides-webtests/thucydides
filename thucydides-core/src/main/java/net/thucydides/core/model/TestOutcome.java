@@ -111,6 +111,8 @@ public class TestOutcome {
 
     private String title;
     private String description;
+    private String backgroundDescription;
+
     /**
      *
      */
@@ -514,10 +516,17 @@ public class TestOutcome {
         this.description = description;
     }
 
+    public void setBackgroundDescription(String description) {
+        this.backgroundDescription = description;
+    }
+
     public String getDescription() {
         return description;
     }
 
+    public String getBackgroundDescription() {
+        return backgroundDescription;
+    }
 
     /**
      * Tests may have a description.

@@ -110,6 +110,13 @@
                     </#list>
                     </td>
                 </tr>
+                <tr>
+                    <td colspan="3">
+                        <#if (testOutcome.backgroundDescription??)>
+                            <div class="requirementNarrative">Background: ${testOutcome.backgroundDescription}</div>
+                        </#if>
+                    </td>
+                </tr>
             </table>
         </div>
     </div>
