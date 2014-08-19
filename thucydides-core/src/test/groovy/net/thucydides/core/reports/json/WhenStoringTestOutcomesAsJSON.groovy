@@ -347,6 +347,20 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
         reloadedOutcome.sessionId == "1234"
     }
 
+    def "should include annotated results if provided"() {
+        given:
+        def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenarioWithTags.class);
+        testOutcome.startTime = FIRST_OF_JANUARY
+        testOutcome.setAnnotatedResult(TestResult.IGNORED)
+        testOutcome.recordStep(TestStepFactory.successfulTestStepCalled("step 1").startingAt(FIRST_OF_JANUARY))
+        when:
+        def jsonReport = reporter.generateReportFor(testOutcome, allTestOutcomes)
+        TestOutcome reloadedOutcome = loader.loadReportFrom(jsonReport).get()
+        then:
+        reloadedOutcome.getResult() == TestResult.IGNORED
+    }
+
+
 
     def "should include a data table if provided"() {
         given:

@@ -44,6 +44,7 @@ public class TestOutcomeConverter implements Converter {
     private static final String IGNORED_FIELD = "ignored";
     private static final String PENDING_FIELD = "pending";
     private static final String RESULT_FIELD = "result";
+    private static final String ANNOTATED_RESULT_FIELD = "annotated-result";
     private static final String TEST_GROUP = "test-group";
     private static final String TEST_STEP = "test-step";
     private static final String USER_STORY = "user-story";
@@ -116,7 +117,11 @@ public class TestOutcomeConverter implements Converter {
         writer.addAttribute(SKIPPED_FIELD, Integer.toString(testOutcome.getSkippedCount()));
         writer.addAttribute(IGNORED_FIELD, Integer.toString(testOutcome.getIgnoredCount()));
         writer.addAttribute(PENDING_FIELD, Integer.toString(testOutcome.getPendingCount()));
+        if (testOutcome.getAnnotatedResult() != null) {
+            writer.addAttribute(ANNOTATED_RESULT_FIELD, testOutcome.getAnnotatedResult().name());
+        }
         writer.addAttribute(RESULT_FIELD, testOutcome.getResult().name());
+
         writer.addAttribute(DURATION, Long.toString(testOutcome.getDuration()));
         writer.addAttribute(TIMESTAMP, formattedTimestamp(testOutcome.getStartTime()));
         if (testOutcome.isManual()) {
@@ -399,6 +404,11 @@ public class TestOutcomeConverter implements Converter {
         }
 
         TestResult savedTestResult = TestResult.valueOf(reader.getAttribute(RESULT_FIELD));
+        TestResult savedAnnotatedResult = null;
+        if ((reader.getAttribute(ANNOTATED_RESULT_FIELD) != null)) {
+            savedAnnotatedResult = TestResult.valueOf(reader.getAttribute(ANNOTATED_RESULT_FIELD));
+        }
+
         if (reader.getAttribute(QUALIFIER_FIELD) != null) {
             testOutcome = testOutcome.withQualifier(unescape(reader.getAttribute(QUALIFIER_FIELD)));
         }
@@ -415,7 +425,10 @@ public class TestOutcomeConverter implements Converter {
         String sessionId = readSessionId(reader);
         testOutcome.setSessionId(sessionId);
         readChildren(reader, testOutcome);
-        if(testOutcome.getStepCount().equals(0)) {
+        if (savedAnnotatedResult != null) {
+            testOutcome.setAnnotatedResult(savedAnnotatedResult);
+        }
+        if (savedAnnotatedResult == null && testOutcome.getStepCount().equals(0)) {
             testOutcome.setAnnotatedResult(savedTestResult);
         }
         return testOutcome;
