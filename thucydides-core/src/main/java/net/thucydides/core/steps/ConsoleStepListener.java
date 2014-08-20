@@ -93,6 +93,16 @@ public class ConsoleStepListener extends BaseStepListener {
     }
 
     @Override
+    public void testSkipped() {
+        buffer.append("--> TEST SKIPPED").append("\n");
+    }
+
+    @Override
+    public void testPending() {
+        buffer.append("--> TEST PENDING").append("\n");
+    }
+
+    @Override
     public void testFailed(TestOutcome testOutcome, Throwable cause) {
         buffer.append("--> TEST FAILED").append("\n");
     }

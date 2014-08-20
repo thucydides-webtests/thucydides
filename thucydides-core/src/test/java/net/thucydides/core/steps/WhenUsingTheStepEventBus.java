@@ -439,6 +439,7 @@ public class WhenUsingTheStepEventBus {
                 + "-step1\n"
                 + "---> STEP DONE\n"
                 + "-pendingStep\n"
+                + "--> TEST PENDING\n"
                 + "---> STEP PENDING\n"
                 + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
@@ -493,6 +494,7 @@ public class WhenUsingTheStepEventBus {
                 + "--step1\n"
                 + "----> STEP DONE\n"
                 + "--pendingStep\n"
+                + "--> TEST PENDING\n"
                 + "----> STEP PENDING\n"
                 + "--step4\n"
                 + "---step5\n"
@@ -658,6 +660,7 @@ public class WhenUsingTheStepEventBus {
 
         String expectedSteps =
                 "TEST a_test\n"
+                + "--> TEST PENDING\n"
                 + "-step1\n"
                 + "---> STEP IGNORED\n"
                 + "-step2\n"
@@ -678,6 +681,7 @@ public class WhenUsingTheStepEventBus {
         String expectedSteps =
                 "TEST a_test\n"
                 + "-a step\n"
+                + "--> TEST PENDING\n"
                 + "---> STEP PENDING\n"
                 + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
@@ -693,6 +697,19 @@ public class WhenUsingTheStepEventBus {
                 "TEST a_test\n"
                 + "--> TEST IGNORED\n"
                 + "TEST DONE\n";
+        assertThat(consoleStepListener.toString(), is(expectedSteps));
+    }
+
+    @Test
+    public void when_an_entier_test_is_skipped_the_test_is_marked_as_skipped() {
+        StepEventBus.getEventBus().testStarted("a_test", SampleTestScenario.class);
+        StepEventBus.getEventBus().testSkipped();
+        StepEventBus.getEventBus().testFinished(testOutcome);
+
+        String expectedSteps =
+                "TEST a_test\n"
+                        + "--> TEST SKIPPED\n"
+                        + "TEST DONE\n";
         assertThat(consoleStepListener.toString(), is(expectedSteps));
     }
 

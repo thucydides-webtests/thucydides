@@ -116,6 +116,10 @@ public class BaseStepListener implements StepListener, StepPublisher {
         return (Optional<TestStep>) ((currentStepExists()) ? getCurrentStep().clone() : Optional.absent());
     }
 
+    public void setAllStepsTo(TestResult result) {
+        getCurrentTestOutcome().setAllStepsTo(result);
+    }
+
     protected enum ScreenshotType {
         OPTIONAL_SCREENSHOT,
         MANDATORY_SCREENSHOT
@@ -391,7 +395,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
             step.setResult(TestResult.PENDING);
         }
         if (TestAnnotations.isIgnored(description.getTestMethod())) {
-            step.setResult(TestResult.SKIPPED);
+            step.setResult(TestResult.IGNORED);
         }
     }
 
@@ -713,6 +717,14 @@ public class BaseStepListener implements StepListener, StepPublisher {
 
     public void testIgnored() {
         getCurrentTestOutcome().setAnnotatedResult(IGNORED);
+    }
+
+    public void testSkipped() {
+        getCurrentTestOutcome().setAnnotatedResult(SKIPPED);
+    }
+
+    public void testPending() {
+        getCurrentTestOutcome().setAnnotatedResult(PENDING);
     }
 
     public void notifyScreenChange() {

@@ -313,7 +313,20 @@ public class ConsoleLoggingListener implements StepListener {
         }
     }
 
-    
+    @Override
+    public void testSkipped() {
+        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
+            getLogger().info("TEST SKIPPED");
+        }
+    }
+
+    @Override
+    public void testPending() {
+        if (loggingLevelIsAtLeast(LoggingLevel.NORMAL)) {
+            getLogger().info("TEST PENDING");
+        }    }
+
+
     public void notifyScreenChange() {
     }
 

@@ -105,9 +105,19 @@ public interface StepListener {
     void testFailed(TestOutcome testOutcome, final Throwable cause);
 
     /**
-     * The test as a whole was skipped or ignored.
+     * The test as a whole was ignored.
      */
     void testIgnored();
+
+    /**
+     * The test as a whole was skipped.
+     */
+    void testSkipped();
+
+    /**
+     * The test as a whole should be marked as 'pending'.
+     */
+    void testPending();
 
     void notifyScreenChange();
 

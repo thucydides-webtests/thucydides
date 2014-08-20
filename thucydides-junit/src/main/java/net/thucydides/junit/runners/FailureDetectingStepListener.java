@@ -101,7 +101,17 @@ public class FailureDetectingStepListener implements StepListener {
         
     }
 
-    
+    @Override
+    public void testSkipped() {
+
+    }
+
+    @Override
+    public void testPending() {
+
+    }
+
+
     public void notifyScreenChange() {
         
     }

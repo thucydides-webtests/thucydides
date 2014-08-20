@@ -125,6 +125,16 @@ public class TestCountListener implements StepListener {
     public void testIgnored() {
     }
 
+    @Override
+    public void testSkipped() {
+
+    }
+
+    @Override
+    public void testPending() {
+
+    }
+
 
     public void notifyScreenChange() {
     }

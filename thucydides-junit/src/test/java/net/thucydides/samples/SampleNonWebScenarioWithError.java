@@ -15,7 +15,6 @@ public class SampleNonWebScenarioWithError {
     public void happy_day_scenario() {
         steps.stepThatSucceeds();
         steps.stepThatIsIgnored();
-        steps.stepThatIsPending();
         steps.anotherStepThatSucceeds();
         throw new AssertionError("Oh bother!");
     }

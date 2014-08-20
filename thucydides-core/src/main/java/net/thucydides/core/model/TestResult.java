@@ -39,8 +39,8 @@ public enum TestResult {
     IGNORED, 
     
     /**
-     * The test was not executed because a previous test in this test case failed.
-     * Doesn't make sense for a test case.
+     * The test step was not executed because a previous step in this test case failed.
+     * A whole test case can be skipped using tags or annotations to indicate that it is currently "work-in-progress"
      */
     SKIPPED,
     

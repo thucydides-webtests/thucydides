@@ -72,6 +72,16 @@ public class SampleStepListener implements StepListener {
     public void testIgnored() {
     }
 
+    @Override
+    public void testSkipped() {
+
+    }
+
+    @Override
+    public void testPending() {
+
+    }
+
     public List<TestOutcome> getTestOutcomes() {
         return null;  
     }

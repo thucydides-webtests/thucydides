@@ -493,6 +493,21 @@ public class TestOutcome {
         return new TitleBuilder(this, true);
     }
 
+    public void setAllStepsTo(TestResult result) {
+        for(TestStep step : testSteps) {
+            step.setResult(result);
+        }
+    }
+
+    public void setAllStepsTo(List<TestStep> steps, TestResult result) {
+        for(TestStep step : steps) {
+            step.setResult(result);
+            if (step.hasChildren()) {
+                setAllStepsTo(step.getChildren(), result);
+            }
+        }
+    }
+
     public class TitleBuilder {
         private final boolean qualified;
         private final TestOutcome testOutcome;

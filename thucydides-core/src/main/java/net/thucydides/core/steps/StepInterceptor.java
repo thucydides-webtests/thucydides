@@ -184,7 +184,7 @@ public class StepInterceptor implements MethodInterceptor, Serializable {
     }
 
     private boolean testIsPending() {
-        return StepEventBus.getEventBus().currentTestIsPending();
+        return StepEventBus.getEventBus().currentTestIsSuspended();
     }
 
     private boolean aPreviousStepHasFailed() {

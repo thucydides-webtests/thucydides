@@ -65,7 +65,7 @@ public class StepEventBus {
     private Set<StepListener> customListeners;
 
     private boolean stepFailed;
-    private boolean pendingTest;
+    private boolean suspendedTest;
     private boolean assumptionViolated;
     private String assumptionViolatedMessage;
     private boolean uniqueSession;
@@ -195,7 +195,7 @@ public class StepEventBus {
     public void clear() {
         stepStack.clear();
         clearStepFailures();
-        currentTestIsNotPending();
+        currentTestIsNotSuspended();
         noAssumptionsViolated();
         resultTally = null;
         classUnderTest = null;
@@ -207,8 +207,8 @@ public class StepEventBus {
         assumptionViolatedMessage = "";
     }
 
-    private void currentTestIsNotPending() {
-        pendingTest = false;
+    private void currentTestIsNotSuspended() {
+        suspendedTest = false;
     }
 
     private TestResultTally getResultTally() {
@@ -351,7 +351,7 @@ public class StepEventBus {
 
     public void assumptionViolated(String message) {
         testIgnored();
-        testPending();
+        suspendTest();
         stepDone();
         getResultTally().logIgnoredTest();
 
@@ -403,11 +403,18 @@ public class StepEventBus {
      * The test will stil be executed to record the steps, but any webdriver calls will be skipped.
      */
     public void testPending() {
-        pendingTest = true;
+        for (StepListener stepListener : getAllListeners()) {
+            stepListener.testPending();
+        }
+        suspendTest();
     }
 
-    public boolean currentTestIsPending() {
-        return pendingTest;
+    public void suspendTest() {
+        suspendedTest = true;
+    }
+
+    public boolean currentTestIsSuspended() {
+        return suspendedTest;
     }
 
     public boolean assumptionViolated() {
@@ -418,7 +425,14 @@ public class StepEventBus {
         for (StepListener stepListener : getAllListeners()) {
             stepListener.testIgnored();
         }
-        testPending();
+        suspendTest();
+    }
+
+    public void testSkipped() {
+        for (StepListener stepListener : getAllListeners()) {
+            stepListener.testSkipped();
+        }
+        suspendTest();
     }
 
     public boolean areStepsRunning() {
@@ -509,4 +523,13 @@ public class StepEventBus {
     }
 
     public Optional<TestStep> getCurrentStep() {return getBaseStepListener().cloneCurrentStep(); }
+
+    /**
+     * Set all steps in the current test outcome to a given result.
+     * Used to set all steps to PENDING or SKIPPED, for example.
+     * @param result
+     */
+    public void setAllStepsTo(TestResult result) {
+        baseStepListener.setAllStepsTo(result);
+    }
 }
