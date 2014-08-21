@@ -117,6 +117,7 @@ public class BaseStepListener implements StepListener, StepPublisher {
     }
 
     public void setAllStepsTo(TestResult result) {
+        getCurrentTestOutcome().setAnnotatedResult(result);
         getCurrentTestOutcome().setAllStepsTo(result);
     }
 
