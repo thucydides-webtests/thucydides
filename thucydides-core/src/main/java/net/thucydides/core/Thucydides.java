@@ -81,6 +81,7 @@ public class Thucydides {
         injectDriverInto(testCase);
         injectAnnotatedPagesObjectInto(testCase);
         injectScenarioStepsInto(testCase);
+        ThucydidesWebDriverSupport.initializeFieldsIn(testCase);
         injectDependenciesInto(testCase);
     }
 
