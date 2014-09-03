@@ -104,7 +104,10 @@ public class FailureCause {
             exception.setStackTrace(this.getStackTrace());
             return Optional.of(exception);
         } catch (Exception e) {
-            return Optional.absent();
+            Throwable exception = new RuntimeException(testFailureClassname + ": " + testFailureMessage);
+            exception.setStackTrace(this.getStackTrace());
+            return Optional.of(exception);
+//            return Optional.absent();
         }
 
     }

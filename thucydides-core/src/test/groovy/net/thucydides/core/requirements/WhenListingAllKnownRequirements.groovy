@@ -63,6 +63,17 @@ class WhenListingAllKnownRequirements extends Specification {
         capabilityNames == ["Search feature"]
     }
 
+    def "Should use the 'src/resources/stories' directory by default for requirements"() {
+        given:
+            RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider()
+        when:
+            def rootDirectory = capabilityProvider.getRootDirectoryPath()
+        then:
+            rootDirectory.isPresent()
+        and:
+            rootDirectory.get().endsWith("stories")
+
+    }
     def "Should be able to read requirements from an absolutely-defined requirements base dir if it is specified in environment properties"() {
         given: "we have stored requirements in a non-standard folder structure"
             def requirementsFolder = newTemporaryRequirementsDirectory()

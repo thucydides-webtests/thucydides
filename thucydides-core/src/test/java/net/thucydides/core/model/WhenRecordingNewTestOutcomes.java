@@ -17,6 +17,7 @@ import net.thucydides.core.util.MockEnvironmentVariables;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -41,11 +42,7 @@ import static net.thucydides.core.model.TestStepFactory.forASkippedTestStepCalle
 import static net.thucydides.core.model.TestStepFactory.forASuccessfulTestStepCalled;
 import static net.thucydides.core.model.TestStepFactory.forAnIgnoredTestStepCalled;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -614,6 +611,13 @@ public class WhenRecordingNewTestOutcomes {
     public void a_failing_screenshot_records_the_error_message() {
         Screenshot screenshot = new Screenshot("step_1.png", "Step 1", 800, new FailureCause(new AssertionError("Element not found")));
         assertThat(screenshot.getErrorMessage(), is("Element not found"));
+    }
+
+    @Test
+    public void a_failing_step_should_the_error_message_for_errors_with_complex_constructors() {
+        Screenshot screenshot = new Screenshot("step_1.png", "Step 1", 800, new FailureCause(new ComparisonFailure("oh crap", "a","b")));
+        assertThat(screenshot.getError().getMessage(), is("oh crap expected:<[a]> but was:<[b]>"));
+        assertThat(screenshot.getError().getStackTrace().length, is(greaterThan(0)));
     }
 
     @Test

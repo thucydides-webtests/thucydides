@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -42,6 +43,8 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     private final static String DEFAULT_ROOT_DIRECTORY = "stories";
     private final static String DEFAULT_RESOURCE_DIRECTORY = "src/test/resources";
     private static final String WORKING_DIR = "user.dir";
+    private static final String DEFAULT_FEATURES_PATH = "src/test/resources/features";
+    private static final String DEFAULT_STORIES_PATH = "src/test/resources/stories";
     private static final List<Requirement> NO_REQUIREMENTS = Lists.newArrayList();
     private static final List<TestTag> NO_TEST_TAGS = Lists.newArrayList();
 
@@ -63,6 +66,12 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
         }
         if (ThucydidesSystemProperty.THUCYDIDES_TEST_ROOT.isDefinedIn(environmentVariables)) {
             return ThucydidesSystemProperty.THUCYDIDES_TEST_ROOT.from(environmentVariables);
+        }
+
+        if (Paths.get(DEFAULT_FEATURES_PATH).toFile().exists()) {
+            return "features";
+        } else if (Paths.get(DEFAULT_STORIES_PATH).toFile().exists()) {
+            return "stories";
         }
         return DEFAULT_ROOT_DIRECTORY;
     }
