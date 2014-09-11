@@ -222,18 +222,25 @@ public class TestAnnotations {
 
     public List<TestTag> getTagsForMethod(String methodName) {
 
-        List<TestTag> allTags = new ArrayList<TestTag>(getTags());
+        List<TestTag> allTags = new ArrayList<>(getTags());
         allTags.addAll(getTagsFor(methodName));
 
         return ImmutableList.copyOf(allTags);
     }
 
     public List<TestTag> getTags() {
-        List<TestTag> tags = new ArrayList<TestTag>();
+        return getTags(testClass);
+    }
+
+    private List<TestTag> getTags(Class<?> testClass) {
+        List<TestTag> tags = new ArrayList<>();
         if (testClass != null) {
             addTagValues(tags, testClass.getAnnotation(WithTagValuesOf.class));
             addTags(tags, testClass.getAnnotation(WithTags.class));
             addTag(tags, testClass.getAnnotation(WithTag.class));
+        }
+        if (testClass.getSuperclass() != Object.class) {
+            tags.addAll(getTags(testClass.getSuperclass()));
         }
         return tags;
     }
