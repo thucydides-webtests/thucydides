@@ -18,7 +18,7 @@ class WhenReadingTagsInAClass extends Specification {
 
     @WithTag("color:pink")
     static class StrawberryIcecream extends StrawberryClass {
-        @WithTag("temperature:warm")
+        @WithTag("temperature:cold")
         public void someMethod(){}
     }
 
@@ -48,7 +48,7 @@ class WhenReadingTagsInAClass extends Specification {
         def tags = TestAnnotations.forClass(StrawberryIcecream).getTagsForMethod("someMethod")
         println tags
         then:
-        tags == [TestTag.withName("pink").andType("color"),  TestTag.withName("strawberry").andType("flavor"), TestTag.withName("warm").andType("temperature")]
+        tags == [TestTag.withName("pink").andType("color"),  TestTag.withName("strawberry").andType("flavor"), TestTag.withName("cold").andType("temperature")]
     }
 
 }
