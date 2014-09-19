@@ -81,6 +81,7 @@ public class Thucydides {
         injectDriverInto(testCase);
         injectAnnotatedPagesObjectInto(testCase);
         injectScenarioStepsInto(testCase);
+        ThucydidesWebDriverSupport.initializeFieldsIn(testCase);
         injectDependenciesInto(testCase);
     }
 
@@ -177,7 +178,7 @@ public class Thucydides {
         getCurrentSession().clear();
     }
 
-    public static SessionMap<String, Object> getCurrentSession() {
+    public static SessionMap<Object, Object> getCurrentSession() {
 
         if (testSessionThreadLocal.get() == null) {
             testSessionThreadLocal.set(new TestSessionVariables());
