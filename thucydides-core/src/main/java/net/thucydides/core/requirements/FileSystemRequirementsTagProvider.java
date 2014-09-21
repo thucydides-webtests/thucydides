@@ -54,8 +54,6 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     private final NarrativeReader narrativeReader;
     private final int level;
 
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemRequirementsTagProvider.class);
     //    @Transient
     private List<Requirement> requirements;
 
@@ -160,7 +158,7 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     /**
      * Find the root directory in the classpath or on the file system from which the requirements will be read.
      */
-    protected Optional<String> getRootDirectoryPath() throws IOException {
+    public Optional<String> getRootDirectoryPath() throws IOException {
 
         if (ThucydidesSystemProperty.THUCYDIDES_TEST_REQUIREMENTS_BASEDIR.isDefinedIn(environmentVariables)) {
             return getRootDirectoryFromRequirementsBaseDir();
