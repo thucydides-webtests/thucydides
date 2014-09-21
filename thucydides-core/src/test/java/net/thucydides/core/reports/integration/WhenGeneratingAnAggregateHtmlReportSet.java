@@ -2,8 +2,9 @@ package net.thucydides.core.reports.integration;
 
 import net.thucydides.core.digest.Digest;
 import net.thucydides.core.issues.IssueTracking;
-import net.thucydides.core.reports.FormatConfiguration;
-import net.thucydides.core.reports.OutcomeFormat;
+import net.thucydides.core.reports.ResultChecker;
+import net.thucydides.core.reports.TestOutcomesError;
+import net.thucydides.core.reports.TestOutcomesFailures;
 import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import net.thucydides.core.reports.html.ReportNameProvider;
@@ -21,7 +22,6 @@ import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import java.io.File;
@@ -190,5 +190,33 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
     public void should_display_links_to_test_result_reports_in_top_level_reports() {
         ReportProperties reportProperties = ReportProperties.forAggregateResultsReport();
         assertThat(reportProperties.getShouldDisplayResultLink(), is(true));
+    }
+
+    @Test(expected = TestOutcomesError.class)
+    public void should_throw_an_exception_when_asked_if_errors_are_present() {
+        File reports = directoryInClasspathCalled("/test-outcomes/containing-errors");
+        ResultChecker resultChecker = new ResultChecker(reports);
+        resultChecker.checkTestResults();
+    }
+
+    @Test(expected = TestOutcomesFailures.class)
+    public void should_throw_an_exception_when_asked_if_failures_are_present() {
+        File reports = directoryInClasspathCalled("/test-outcomes/containing-failures");
+        ResultChecker resultChecker = new ResultChecker(reports);
+        resultChecker.checkTestResults();
+    }
+
+    @Test
+    public void should_throw_no_exception_for_successful_tests() {
+        File reports = directoryInClasspathCalled("/test-outcomes/all-successful");
+        ResultChecker resultChecker = new ResultChecker(reports);
+        resultChecker.checkTestResults();
+    }
+
+    @Test
+    public void should_check_json_results() {
+        File reports = directoryInClasspathCalled("/test-outcomes/full-json");
+        ResultChecker resultChecker = new ResultChecker(reports);
+        resultChecker.checkTestResults();
     }
 }

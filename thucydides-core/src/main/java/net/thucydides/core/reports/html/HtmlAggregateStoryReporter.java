@@ -575,5 +575,12 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
             return types;
         }
     }
+
+    /**
+     * Check the test outcomes for failures or errors, and throw an appropriate exception if one is found.
+     */
+    public void checkOutcomes() {
+
+    }
 }
 
