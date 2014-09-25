@@ -612,7 +612,7 @@ public class WebDriverFactory {
 
         LOGGER.info("Setting browser dimensions to {}/{}", height, width);
 
-        if (usesFirefox(driver) || usesInternetExplorer(driver)) {
+        if (usesFirefox(driver) || usesInternetExplorer(driver) || usesPhantomJS(driver)) {
             driver.manage().window().setSize(new Dimension(width, height));
         } else if (usesChrome(driver)) {
             ((JavascriptExecutor) driver).executeScript("window.open('about:blank','_blank','width=#{width},height=#{height}');");
@@ -673,6 +673,9 @@ public class WebDriverFactory {
 
     private boolean isAPhantomJSDriver(Class<? extends WebDriver> driverClass) {
         return (PhantomJSDriver.class.isAssignableFrom(driverClass));
+    }
+    private boolean usesPhantomJS(WebDriver driver) {
+        return (PhantomJSDriver.class.isAssignableFrom(getDriverClass(driver)));
     }
 
 
