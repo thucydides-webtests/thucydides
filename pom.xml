@@ -185,6 +185,7 @@
                                 <include>**/When*.*</include>
                                 <include>**/*Test.*</include>
                                 <include>**/*Story.*</include>
+                                <include>**/*Specification.*</include>
                             </includes>
                             <excludes>
                                 <exclude>**/Abstract*.*</exclude>

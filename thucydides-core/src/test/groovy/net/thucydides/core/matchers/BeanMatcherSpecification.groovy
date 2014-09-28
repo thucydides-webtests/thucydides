@@ -12,7 +12,7 @@ class BeanMatcherSpecification extends Specification {
         expect:
             BeanMatchers.checkThat(value, is(comparedWith)).matches() == expectedResult
         where:
-            getText       | comparedWith  | expectedResult
+        value       | comparedWith  | expectedResult
             "Smith"     | "Smith"       | true
             "Smith"     | "Jones"       | false
     }
@@ -21,7 +21,7 @@ class BeanMatcherSpecification extends Specification {
         expect:
          BeanMatchers.checkThat(value, org.hamcrest.Matchers.is(comparedWith)).matches() == expectedResult
         where:
-        getText     | comparedWith  | expectedResult
+        value     | comparedWith  | expectedResult
         true      | true          | true
         true      | false         | false
         false     | true          | false
@@ -32,7 +32,7 @@ class BeanMatcherSpecification extends Specification {
         expect:
         BeanMatchers.checkThat(value, equalTo(comparedWith)).matches() == expectedResult
         where:
-        getText     | comparedWith             | expectedResult
+        value     | comparedWith             | expectedResult
         100       | 100.0                    | true
         100.0     | 100                      | true
         100.00    | 100.0                    | true
@@ -59,7 +59,7 @@ class BeanMatcherSpecification extends Specification {
         expect:
         BeanMatchers.checkThat(value, org.hamcrest.Matchers.is(comparedWith)).matches() == expectedResult
         where:
-        getText     | comparedWith             | expectedResult
+        value     | comparedWith             | expectedResult
         100       | 100.0                    | true
         100.0     | 100                      | true
         100.00    | 100.0                    | true

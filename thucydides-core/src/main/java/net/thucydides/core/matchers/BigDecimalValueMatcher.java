@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import net.thucydides.core.reflection.FieldValue;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.Is;
+import org.hamcrest.core.IsEqual;
 
 import java.math.BigDecimal;
 
@@ -16,16 +17,27 @@ public class BigDecimalValueMatcher {
     protected BigDecimalValueMatcher(Number value, Matcher<? extends BigDecimal> matcher) {
         this.value = value;
         Object expectedValue = expectedValue(matcher);
-        this.matcher = closeTo(new BigDecimal(expectedValue.toString()), new BigDecimal("0"));
+//        this.matcher = matcher;
+        if ((matcher instanceof IsEqual) || (matcher instanceof Is)) {
+            this.matcher = closeTo(new BigDecimal(expectedValue.toString()), new BigDecimal("0"));
+        } else {
+            this.matcher = matcher;
+        }
     }
 
     private Object expectedValue(Matcher matcher) {
         if (matcher.getClass() == Is.class) {
             Matcher innerMatcher = (Matcher) FieldValue.inObject(matcher).fromFieldNamed("matcher").get();
             Optional<Object> fieldValue = FieldValue.inObject(innerMatcher).fromFieldNamed("expectedValue");
+            if (!fieldValue.isPresent()) {
+                fieldValue = FieldValue.inObject(innerMatcher).fromFieldNamed("expected");
+            }
             return fieldValue.orNull();
         } else {
             Optional<Object> fieldValue = FieldValue.inObject(matcher).fromFieldNamed("expectedValue");
+            if (!fieldValue.isPresent()) {
+                fieldValue = FieldValue.inObject(matcher).fromFieldNamed("expected");
+            }
             return fieldValue.orNull();
         }
     }
