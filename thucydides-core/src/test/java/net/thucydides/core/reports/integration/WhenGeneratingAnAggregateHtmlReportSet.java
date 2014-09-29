@@ -201,7 +201,7 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
 
     @Test(expected = TestOutcomesFailures.class)
     public void should_throw_an_exception_when_asked_if_failures_are_present() {
-        File reports = directoryInClasspathCalled("/test-outcomes/containing-failures");
+        File reports = directoryInClasspathCalled("/test-outcomes/containing-failure");
         ResultChecker resultChecker = new ResultChecker(reports);
         resultChecker.checkTestResults();
     }
