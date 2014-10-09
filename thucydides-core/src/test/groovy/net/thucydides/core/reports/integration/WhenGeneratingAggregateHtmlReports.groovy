@@ -48,6 +48,11 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         mockTestHistory.history >> NO_SNAPSHOTS
     }
 
+    def cleanup() {
+        if (driver) {
+            driver.quit()
+        }
+    }
     def "we can navigate sub reports"() {
         given: "We generate reports from a directory containing features and stories only"
             reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
@@ -120,7 +125,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         and:"a list of releases should be displayed"
             def releases = driver.findElements(By.cssSelector(".jqtree-title")).collect { it.text }
             releases.containsAll(["Release 1.0", "Release 2.0"])
-            driver.close()
+            driver.quit()
     }
 
     def "should generate a detailed release report for each release"() {
@@ -135,7 +140,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
             driver.findElement(By.className("jqtree-title")).click()
         and: "the release report should contain the requirement type as a title"
             driver.findElement(By.className("requirementTitle"))?.getText() == "Scheduled Requirements"
-            driver.close()
+            driver.quit()
 
     }
 

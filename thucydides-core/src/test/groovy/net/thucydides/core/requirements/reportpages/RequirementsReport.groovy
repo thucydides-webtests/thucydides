@@ -49,7 +49,7 @@ class RequirementsReport extends PageObject {
     }
 
     def close() {
-        driver.close()
+        driver.quit()
     }
 
     class RequirementRow {

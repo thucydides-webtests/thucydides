@@ -14,10 +14,7 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.mockito.MockitoAnnotations;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -77,6 +74,10 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
         driver = new PhantomJSDriver();
     }
 
+    @After
+    public void closeDriver() {
+        driver.quit();
+    }
     @Test
     public void should_generate_an_aggregate_dashboard() throws Exception {
         assertThat(new File(outputDirectory,"index.html"), exists());

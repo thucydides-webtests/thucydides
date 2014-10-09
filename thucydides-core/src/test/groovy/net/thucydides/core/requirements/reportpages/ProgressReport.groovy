@@ -33,6 +33,6 @@ class ProgressReport extends PageObject {
 
 
     def close() {
-        driver.close()
+        driver.quit()
     }
 }

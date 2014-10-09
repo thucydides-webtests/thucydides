@@ -71,7 +71,7 @@ class WhenUsingSmartFindBy extends Specification {
 
     def cleanupSpec() {
         if (driver) {
-            driver.close()
+            driver.quit()
         }
     }
 
