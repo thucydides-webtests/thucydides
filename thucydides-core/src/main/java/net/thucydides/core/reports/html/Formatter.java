@@ -301,10 +301,22 @@ public class Formatter {
 
 
     private String replaceWithTokens(String value, List<String> issues) {
-        for(int i = 0; i < issues.size(); i++) {
-            value = value.replaceAll(issues.get(i), "%%%" + i  + "%%%");
+        List<String> sortedIssues = inOrderOfDecreasingLength(issues);
+        for(int i = 0; i < sortedIssues.size(); i++) {
+            value = value.replaceAll(sortedIssues.get(i), "%%%" + i  + "%%%");
         }
         return value;
+    }
+
+    private List<String> inOrderOfDecreasingLength(List<String> issues) {
+        List<String> sortedIssues = Lists.newArrayList(issues);
+        Collections.sort(sortedIssues, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o2.length() - o1.length();
+            }
+        });
+        return sortedIssues;
     }
 
     public static List<String> shortenedIssuesIn(String value) {
