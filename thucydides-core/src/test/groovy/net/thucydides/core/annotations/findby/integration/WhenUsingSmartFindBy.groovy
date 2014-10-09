@@ -1,5 +1,6 @@
-package net.thucydides.core.annotations.findby
+package net.thucydides.core.annotations.findby.integration
 
+import net.thucydides.core.annotations.findby.By
 import net.thucydides.core.pages.integration.StaticSitePageWithFacades
 import net.thucydides.core.webdriver.WebDriverFacade
 import net.thucydides.core.webdriver.WebDriverFactory
