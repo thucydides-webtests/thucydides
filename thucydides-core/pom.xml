@@ -353,6 +353,7 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
+                                    <forkMode>always</forkMode>
                                     <parallel>classes</parallel>
                                     <threadCountClasses>8</threadCountClasses>
                                 </configuration>
@@ -364,6 +365,7 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
+                                    <forkMode>always</forkMode>
                                     <parallel>classes</parallel>
                                     <threadCount>4</threadCount>
                                 </configuration>
