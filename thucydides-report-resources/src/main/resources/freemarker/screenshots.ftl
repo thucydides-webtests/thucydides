@@ -132,8 +132,10 @@
                 <tr>
                     <td colspan="3">
                     <#list testOutcome.tags as tag>
+                        <#assign tagReport = absoluteReportName.forTag(tag) />
+                        <#assign tagTitle = inflection.of(tag.shortName).asATitle() >
                         <#assign tagReport = reportName.forTag(tag.name) />
-                        <a class="tagLink" href="${tagReport}">${tag.name} (${tag.type})</a>
+                        <a class="tagLink" href="${tagReport}">${tagTitle} (${tag.type})</a>
                     </#list>
                     </td>
                 </tr>

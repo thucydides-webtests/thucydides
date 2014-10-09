@@ -148,8 +148,6 @@ public class HtmlAcceptanceTestReporter extends HtmlReporter implements Acceptan
         addTestOutcomeToContext(testOutcome, allTestOutcomes, context);
         addFormattersToContext(context);
         context.put("screenshots", screenshots);
-        context.put("reportName", new ReportNameProvider());
-        context.put("absoluteReportName", new ReportNameProvider());
         context.put("narrativeView", testOutcome.getReportName());
         String htmlContents = mergeTemplate(DEFAULT_ACCEPTANCE_TEST_SCREENSHOT).usingContext(context);
         writeReportToOutputDirectory(screenshotReport, htmlContents);

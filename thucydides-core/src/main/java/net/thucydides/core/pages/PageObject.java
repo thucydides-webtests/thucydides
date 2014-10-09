@@ -229,6 +229,7 @@ public abstract class PageObject {
 
     public PageObject waitForRenderedElementsToBePresent(final By byElementCriteria) {
         getRenderedView().waitForPresenceOf(byElementCriteria);
+
         return this;
     }
 
