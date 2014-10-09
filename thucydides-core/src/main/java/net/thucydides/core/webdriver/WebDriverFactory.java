@@ -197,8 +197,11 @@ public class WebDriverFactory {
     // Thucydides tests, add the 'phantomjs.binary.path' property into a thucydides.properties file in your home directory.
     private void setPhantomJSPathIfNotSet() {
         if (!phantomJSIsAvailable()) {
+            LOGGER.info("PhantomJS not on path, trying to get path from PHANTOMJS_BINARY_PATH");
             String phantomJSPath = System.getProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY);
             String phantomJSPathEnvironmentProperty = System.getenv("PHANTOMJS_BINARY_PATH");
+            LOGGER.info("PHANTOMJS_BINARY_PATH = " + phantomJSPathEnvironmentProperty);
+            LOGGER.info("PHANTOMJS_EXECUTABLE_PATH_PROPERTY = " + phantomJSPath);
             if (StringUtils.isNotEmpty(phantomJSPath)) {
                 System.setProperty(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, phantomJSPath);
             } else if (StringUtils.isNotEmpty(phantomJSPathEnvironmentProperty)) {
