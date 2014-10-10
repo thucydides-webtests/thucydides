@@ -170,7 +170,7 @@
                 <configuration>
                     <skip>true</skip>
                     <argLine>-Xmx256m -XX:MaxPermSize=128m</argLine>
-                    <reuseForks>true</reuseForks>
+                    <reuseForks>false</reuseForks>
                     <threadCountClasses>4</threadCountClasses>
                 </configuration>
                 <executions>

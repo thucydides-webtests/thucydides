@@ -353,7 +353,7 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <reuseForks>true</reuseForks>
+                                    <reuseForks>false</reuseForks>
                                     <parallel>classes</parallel>
                                     <threadCountClasses>8</threadCountClasses>
                                 </configuration>
