@@ -29,7 +29,8 @@ class WhenFindingTheCurrentAppVersion extends Specification {
 
     def "should return UNKNOWN if build number is not provided"() {
         when:
-        VersionProvider versionProvider = new VersionProvider()
+        def environmentVariables = new MockEnvironmentVariables()
+        VersionProvider versionProvider = new VersionProvider(environmentVariables)
         then:
         versionProvider.buildNumberText == "UNKNOWN"
     }
