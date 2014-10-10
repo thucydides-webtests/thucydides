@@ -353,7 +353,7 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <reuseForks>false</reuseForks>
+                                    <reuseForks>true</reuseForks>
                                     <parallel>classes</parallel>
                                     <threadCountClasses>8</threadCountClasses>
                                 </configuration>
@@ -365,7 +365,7 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
-                                    <reuseForks>false</reuseForks>
+                                    <reuseForks>true</reuseForks>
                                     <parallel>classes</parallel>
                                     <threadCount>4</threadCount>
                                 </configuration>
