@@ -53,31 +53,4 @@ class WhenProcessingScreenshots extends Specification {
             assert (screenshotProcessor.isEmpty())
             assert targetDirectory.list().size() == 10
     }
-
-
-    @Timeout(30)
-    def "should process queued screenshots when tests are run in parallel"() {
-        given:
-            def screenshotProcessor = new SingleThreadScreenshotProcessor(environmentVariables)
-        when:
-            def thread = Thread.start {
-                for( i in 1..5 ) {
-                    (1..20).each {
-                        def screenshotFile = copySourceScreenshot(sourceDirectory)
-                        def targetFile = new File(targetDirectory,"screenshot-${i}-${it}.png")
-                        screenshotProcessor.queueScreenshot(new QueuedScreenshot(screenshotFile,targetFile))
-                    }
-                }
-            }
-            thread.join()
-            screenshotProcessor.waitUntilDone()
-            screenshotProcessor.terminate()
-
-
-        then:
-            assert (screenshotProcessor.isEmpty())
-            assert targetDirectory.list().size() == 100
-    }
-
-
 }
