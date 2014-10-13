@@ -5,7 +5,6 @@ import net.thucydides.core.issues.IssueTracking;
 import net.thucydides.core.reports.ResultChecker;
 import net.thucydides.core.reports.TestOutcomesError;
 import net.thucydides.core.reports.TestOutcomesFailures;
-import net.thucydides.core.reports.history.TestHistory;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import net.thucydides.core.reports.html.ReportNameProvider;
 import net.thucydides.core.reports.html.ReportProperties;
@@ -44,10 +43,9 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
     @BeforeClass
     public static void generateReports() throws IOException {
         IssueTracking issueTracking = mock(IssueTracking.class);
-        TestHistory testHistory = mock(TestHistory.class);
         RequirementsService requirementsService = mock(RequirementsService.class);
         environmentVariables.setProperty("output.formats","xml");
-        HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter("project", "", issueTracking, testHistory,
+        HtmlAggregateStoryReporter reporter = new HtmlAggregateStoryReporter("project", "", issueTracking,
                                                                               requirementsService, environmentVariables);
         outputDirectory = newTemporaryDirectory();
         reporter.setOutputDirectory(outputDirectory);

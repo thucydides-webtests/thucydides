@@ -19,7 +19,7 @@ class WhenAssociatingAVersionWithAnOutcome extends Specification {
 
         @Test
         @Version("Version 1.1")
-        def someTest() {}
+        public void someTest() {}
     }
 
     def "should be able to get a version number from an annotation"() {
@@ -34,7 +34,7 @@ class WhenAssociatingAVersionWithAnOutcome extends Specification {
 
         @Test
         @Version("Version 1.1")
-        def someTest() {}
+        public void someTest() {}
     }
 
     def "should be able to get a version number from a class-level annotation"() {

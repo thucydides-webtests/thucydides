@@ -7,15 +7,11 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.misc.Service;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -163,12 +159,15 @@ public class ReportService {
 
         FormatConfiguration formatConfiguration
                 = new FormatConfiguration(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
-        Iterator<?> reporterImplementations = Service.providers(AcceptanceTestReporter.class);
+
+        ServiceLoader<AcceptanceTestReporter> reporterServiceLoader = ServiceLoader.load(AcceptanceTestReporter.class);
+        Iterator<AcceptanceTestReporter> reporterImplementations = reporterServiceLoader.iterator();
+        // Service.providers(AcceptanceTestReporter.class);
 
         LOGGER.info("Reporting formats: " + formatConfiguration.getFormats());
 
         while (reporterImplementations.hasNext()) {
-            AcceptanceTestReporter reporter = (AcceptanceTestReporter) reporterImplementations.next();
+            AcceptanceTestReporter reporter =reporterImplementations.next();
             LOGGER.info("Found reporter: " + reporter + "(format = " + reporter.getFormat() + ")");
             if (!reporter.getFormat().isPresent() || formatConfiguration.getFormats().contains(reporter.getFormat().get())) {
                 LOGGER.info("Registering reporter: " + reporter);

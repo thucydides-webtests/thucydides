@@ -3,6 +3,7 @@ package net.thucydides.core.requirements;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
@@ -13,8 +14,6 @@ import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.Inflector;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -24,7 +23,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -59,10 +57,10 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     private List<Requirement> requirements;
 
     public FileSystemRequirementsTagProvider() {
-        this(getDefaultRootDirectoryPathFrom(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ));
+        this(defaultRootDirectoryPathFrom(Injectors.getInjector().getProvider(EnvironmentVariables.class).get()));
     }
 
-    public static String getDefaultRootDirectoryPathFrom(EnvironmentVariables environmentVariables) {
+    public static String defaultRootDirectoryPathFrom(EnvironmentVariables environmentVariables) {
 
         if (ThucydidesSystemProperty.THUCYDIDES_REQUIREMENTS_DIR.isDefinedIn(environmentVariables)) {
             return ThucydidesSystemProperty.THUCYDIDES_REQUIREMENTS_DIR.from(environmentVariables);
@@ -118,19 +116,16 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
      */
     public List<Requirement> getRequirements() {
         if (requirements == null) {
-            URL rootDirectoryPath = null;
             try {
-                Optional<String> directoryPath = getRootDirectoryPath();
-                if (directoryPath.isPresent()) {
-                    File rootDirectory = new File(directoryPath.get());
-                    List<Requirement> allRequirements = Lists.newArrayList();
+                Set<Requirement> allRequirements = Sets.newHashSet();
+                Set<String> directoryPaths = getRootDirectoryPaths();
+                for(String rootDirectoryPath : directoryPaths) {
+                    File rootDirectory = new File(rootDirectoryPath);
                     allRequirements.addAll(loadCapabilitiesFrom(rootDirectory.listFiles(thatAreDirectories())));
                     allRequirements.addAll(loadStoriesFrom(rootDirectory.listFiles(thatAreStories())));
-                    Collections.sort(allRequirements);
-                    requirements = allRequirements;
-                } else {
-                    requirements = NO_REQUIREMENTS;
                 }
+                requirements = Lists.newArrayList(allRequirements);
+                Collections.sort(requirements);
             } catch (IOException e) {
                 requirements = NO_REQUIREMENTS;
                 throw new IllegalArgumentException("Could not load requirements from '" + rootDirectoryPath + "'", e);
@@ -159,13 +154,13 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     /**
      * Find the root directory in the classpath or on the file system from which the requirements will be read.
      */
-    public Optional<String> getRootDirectoryPath() throws IOException {
+    public Set<String> getRootDirectoryPaths() throws IOException {
 
         if (ThucydidesSystemProperty.THUCYDIDES_TEST_REQUIREMENTS_BASEDIR.isDefinedIn(environmentVariables)) {
-            return getRootDirectoryFromRequirementsBaseDir();
+            return getRootDirectoryFromRequirementsBaseDir().asSet();
         } else {
-            Optional<String> rootDirectoryOnClasspath = getRootDirectoryFromClasspath();
-            if (rootDirectoryOnClasspath.isPresent()) {
+            Set<String> rootDirectoryOnClasspath = getRootDirectoryFromClasspath();
+            if (!rootDirectoryOnClasspath.isEmpty()) {
                 return rootDirectoryOnClasspath;
             } else {
                 return getRootDirectoryFromWorkingDirectory();
@@ -173,18 +168,25 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
         }
     }
 
-    private Optional<String> getRootDirectoryFromClasspath() throws IOException {
-        Enumeration<URL> requirementResources;
+    private Set<String> getRootDirectoryFromClasspath() throws IOException {
+        List<URL> resourceRoots;
         try {
-            requirementResources = getDirectoriesFrom(rootDirectoryPath);
+            Enumeration<URL> requirementResources = getDirectoriesFrom(rootDirectoryPath);
+            resourceRoots = Collections.list(requirementResources);
+            System.out.println("resourceRoots from " + rootDirectoryPath + " = " + resourceRoots);
         } catch (URISyntaxException e) {
             throw new IOException(e);
         }
-        if (requirementResources.hasMoreElements()) {
-            return Optional.of(withRestoredSpaces(requirementResources.nextElement().getPath()));
-        } else {
-            return Optional.absent();
+        return restoreSpacesIn(resourceRoots);
+//        return Optional.of(withRestoredSpaces(requirementResources.nextElement().getPath()));
+    }
+
+    private Set<String> restoreSpacesIn(List<URL> resourceRoots) {
+        Set<String> urlsWithRestoredSpaces = Sets.newHashSet();
+        for(URL resourceRoot : resourceRoots) {
+            urlsWithRestoredSpaces.add(withRestoredSpaces(resourceRoot.getPath()));
         }
+        return urlsWithRestoredSpaces;
     }
 
     private String withRestoredSpaces(String path) {
@@ -195,8 +197,8 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
         }
     }
 
-    private Optional<String> getRootDirectoryFromWorkingDirectory() throws IOException {
-        return getRootDirectoryFromParentDir(System.getProperty(WORKING_DIR));
+    private Set<String> getRootDirectoryFromWorkingDirectory() throws IOException {
+        return getRootDirectoryFromParentDir(System.getProperty(WORKING_DIR)).asSet();
     }
 
     private Optional<String> configuredRelativeRootDirectory;

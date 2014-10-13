@@ -158,7 +158,7 @@ public class WhenReadingResourcesFromTheClasspath {
     }
 
     @Test
-    @Ignore
+    @Ignore("Takes too long to run")
     public void should_fail_to_get_output_stream_for_target_after_timeout() throws Exception {
 
         expectedException.expect(FileNotFoundException.class);

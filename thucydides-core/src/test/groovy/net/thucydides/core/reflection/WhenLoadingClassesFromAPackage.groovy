@@ -1,9 +1,9 @@
 package net.thucydides.core.reflection
 
 import junit.framework.Assert
-import net.thucydides.core.reflection.sampleclasses.SomeClass
-import net.thucydides.core.reflection.sampleclasses.SomeOtherClass
-import net.thucydides.core.reflection.sampleclasses.SomeTestClass
+import net.thucydides.core.reflection.samples.SomeClass
+import net.thucydides.core.reflection.samples.SomeOtherClass
+import net.thucydides.core.reflection.samples.SomeTestClass
 import net.thucydides.sampletests.SomeTest
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -14,7 +14,7 @@ public class WhenLoadingClassesFromAPackage extends Specification {
 
     def "should load all classes in a given package"() {
         when:
-            List<Class> classes = ClassFinder.loadClasses().fromPackage("net.thucydides.core.reflection.sampleclasses");
+            List<Class> classes = ClassFinder.loadClasses().fromPackage("net.thucydides.core.reflection.samples");
         then:
             classes.contains(SomeTestClass) && classes.contains(SomeOtherClass) && classes.contains(SomeClass)
 
@@ -45,7 +45,7 @@ public class WhenLoadingClassesFromAPackage extends Specification {
         when:
             List<Class> classes = ClassFinder.loadClasses()
                                              .annotatedWith(RunWith)
-                                             .fromPackage("net.thucydides.core.reflection.sampleclasses");
+                                             .fromPackage("net.thucydides.core.reflection.samples");
         then:
             classes == [SomeTestClass]
     }

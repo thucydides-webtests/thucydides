@@ -1103,6 +1103,7 @@ public class WhenRecordingStepExecutionResults {
 
         assertThat(testOutcome.getTestSteps().get(0).getDescription(), is("Parent step [When someone does this sort of thing]"));
     }
+
     @Test
     public void a_test_group_without_an_annotated_title_should_record_the_humanized_group_name() {
 

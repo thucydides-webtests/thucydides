@@ -1,6 +1,5 @@
 package net.thucydides.core.reports
 
-import com.github.goldin.spock.extensions.tempdir.TempDir
 import net.thucydides.core.ThucydidesReports
 import net.thucydides.core.model.Story
 import net.thucydides.core.model.TestOutcome
@@ -9,14 +8,22 @@ import net.thucydides.core.webdriver.SystemPropertiesConfiguration
 import org.openqa.selenium.WebDriver
 import spock.lang.Specification
 
+import java.nio.file.Files
+
 class WhenSettingUpReportServices extends Specification {
 
-
-    @TempDir
-    File outputDir;
+//    File outputDir;
 
     def environmentVariables = new MockEnvironmentVariables();
     def configuration = new SystemPropertiesConfiguration(environmentVariables);
+
+//    def setup() {
+//        outputDir = Files.createTempDirectory("reports").toFile()
+//    }
+//
+//    def cleanup() {
+//        outputDir.deleteDir()
+//    }
 
     def "should be able to configure default report services"() {
         when:
@@ -49,15 +56,16 @@ class WhenSettingUpReportServices extends Specification {
 
     def "should generate reports using each of the subscribed reporters"() {
         given:
+            def outputDir = Files.createTempDirectory("reports").toFile()
             configuration.setOutputDirectory(outputDir)
             ThucydidesReports.setupListeners(configuration)
             def testOutcomes = [TestOutcome.forTestInStory("some test", Story.called("some story"))]
         when:
             ThucydidesReports.getReportService(configuration).generateReportsFor(testOutcomes)
         then:
+            println outputDir
             outputDir.list().findAll { it.endsWith(".html")}.size() == 1
             outputDir.list().findAll { it.endsWith(".xml")}.size() == 1
             outputDir.list().findAll { it.endsWith(".json")}.size() == 1
     }
-
 }

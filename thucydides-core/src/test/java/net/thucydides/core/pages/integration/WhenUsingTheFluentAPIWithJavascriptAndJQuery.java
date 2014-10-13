@@ -1,18 +1,15 @@
 package net.thucydides.core.pages.integration;
 
 
-import net.thucydides.core.categories.RealBrowserTests;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import net.thucydides.core.webdriver.jquery.ByJQuery;
 import net.thucydides.core.webdriver.jquery.ByJQuerySelector;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import java.util.List;
@@ -36,20 +33,6 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
     @AfterClass
     public static void shutdownDriver() {
         driver.quit();
-    }
-
-    @Test
-    @Category(RealBrowserTests.class)
-    public void should_check_and_close_javascript_alerts() {
-        WebDriver driver = new FirefoxDriver();
-        StaticSitePage page = new StaticSitePage(driver, 1000);
-        page.open();
-
-		page.openAlert();
-        page.getAlert().accept();
-
-        assertThat(page.getTitle(), is("Thucydides Test Site"));
-        driver.close();
     }
 
     @Test

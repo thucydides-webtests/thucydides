@@ -11,148 +11,148 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 @DefaultUrl("classpath:static-site/index.html")
 public class StaticSitePage extends PageObject {
 
-        @FindBy(name = "firstname")
-        protected WebElement firstName;
+    @FindBy(name = "firstname")
+    public WebElement firstName;
 
-        @FindBy(name = "lastname")
-        protected WebElement lastName;
+    @FindBy(name = "lastname")
+    public WebElement lastName;
 
-        @FindBy(name = "city")
-        protected WebElement city;
+    @FindBy(name = "city")
+    public WebElement city;
 
-        @FindBy(name = "country")
-        protected WebElement country;
+    @FindBy(name = "country")
+    public WebElement country;
 
-        @FindBy(name = "hiddenfield")
-        protected WebElement hiddenField;
+    @FindBy(name = "hiddenfield")
+    public WebElement hiddenField;
 
-        protected WebElement csshiddenfield;
+    public WebElement csshiddenfield;
 
-        protected WebElement readonlyField;
+    public WebElement readonlyField;
 
-        protected WebElement doesNotExist;
+    public WebElement doesNotExist;
 
-        protected WebElement textField;
+    public WebElement textField;
 
-        protected WebElement checkbox;
+    public WebElement checkbox;
 
-        protected WebElement radioButton1;
-        protected WebElement radioButton2;
+    public WebElement radioButton1;
+    public WebElement radioButton2;
 
-        protected WebElement selectedCheckbox;
+    public WebElement selectedCheckbox;
 
-        protected WebElement buttonThatIsInitiallyDisabled;
+    public WebElement buttonThatIsInitiallyDisabled;
 
-        protected WebElement buttonThatIsInitiallyEnabled;
+    public WebElement buttonThatIsInitiallyEnabled;
 
-        protected WebElement placetitle;
+    public WebElement placetitle;
 
-        protected WebElement dissapearingtext;
+    public WebElement dissapearingtext;
 
-        @FindBy(id = "visible")
-        protected WebElement visibleTitle;
+    @FindBy(id = "visible")
+    public WebElement visibleTitle;
 
-        @FindBy(id = "color")
-        protected WebElement colors;
+    @FindBy(id = "color")
+    public WebElement colors;
 
-        protected WebElement elements;
+    public WebElement elements;
 
-        protected WebElement grid;
+    public WebElement grid;
 
-        protected WebElement emptylist;
+    public WebElement emptylist;
 
-        @FindBy(name = "fieldDoesNotExist")
-        protected WebElement fieldDoesNotExist;
+    @FindBy(name = "fieldDoesNotExist")
+    public WebElement fieldDoesNotExist;
 
-        @FindBy(id = "emptyLabelID")
-        protected WebElement emptyLabel;
+    @FindBy(id = "emptyLabelID")
+    public WebElement emptyLabel;
 
-        @FindBy(id = "nonEmptyLabelID")
-        protected WebElement nonEmptyLabel;
+    @FindBy(id = "nonEmptyLabelID")
+    public WebElement nonEmptyLabel;
 
-        protected WebElement focusmessage;
+    public WebElement focusmessage;
 
-        protected WebElement clients;
+    public WebElement clients;
 
-        protected WebElement clients_with_no_headings;
+    public WebElement clients_with_no_headings;
 
-        protected WebElement clients_with_nested_cells;
+    public WebElement clients_with_nested_cells;
 
-        protected WebElement clients_with_extra_cells;
+    public WebElement clients_with_extra_cells;
 
-        protected WebElement clients_with_missing_cells;
+    public WebElement clients_with_missing_cells;
 
-        protected WebElement table_with_merged_cells;
+    public WebElement table_with_merged_cells;
 
-        protected WebElement table_with_empty_headers;
+    public WebElement table_with_empty_headers;
 
-        protected WebElement table_with_td_headers;
+    public WebElement table_with_td_headers;
 
-        protected WebElement alertButton;
+    public WebElement alertButton;
 
-        protected WebElementFacade alertButton() {
-            return element(alertButton);
-        }
-
-        public void openAlert() {
-		    alertButton().click();
-		    waitABit(500);
-		}
-
-        public StaticSitePage(WebDriver driver, int timeout) {
-            super(driver, timeout);
-        }
-
-        public void setFirstName(String value) {
-            element(firstName).type(value);
-        }
-
-        public void fieldDoesNotExistShouldNotBePresent() {
-            element(fieldDoesNotExist).shouldNotBePresent();
-        }
-
-        public void fieldDoesNotExistShouldBePresent() {
-            element(fieldDoesNotExist).shouldBePresent();
-        }
-
-        public void hiddenFieldShouldNotBePresent() {
-            element(hiddenField).shouldNotBePresent();
-        }
-
-        public void fieldDoesNotExistShouldContainText(String value) {
-            element(fieldDoesNotExist).shouldContainText(value);
-        }
-
-        public WebElementFacade firstName() {
-            return element(firstName);
-        }
-
-        public void waitForFirstNameField() {
-            waitForCondition().until(firstAndLastNameAreEnabled());
-        }
-
-        public ExpectedCondition<Boolean> firstNameIsVisibleAndDisabled() {
-            return new ExpectedCondition<Boolean>() {
-                public Boolean apply(WebDriver driver) {
-                    return (firstName.isDisplayed() && firstName.isEnabled());
-                }
-            };
-        }
-
-        public ExpectedCondition<Boolean> firstAndLastNameAreEnabled() {
-            return new ExpectedCondition<Boolean>() {
-                public Boolean apply(WebDriver driver) {
-                    return (firstName.isEnabled() && lastName.isEnabled());
-                }
-            };
-        }
-
-        public ExpectedCondition<Boolean> twoFieldsAreDisabled() {
-            return new ExpectedCondition<Boolean>() {
-                public Boolean apply(WebDriver driver) {
-                    return (!buttonThatIsInitiallyEnabled.isEnabled() && !readonlyField.isEnabled());
-                }
-            };
-        }
-
+    public WebElementFacade alertButton() {
+        return element(alertButton);
     }
+
+    public void openAlert() {
+        alertButton().click();
+        waitABit(500);
+    }
+
+    public StaticSitePage(WebDriver driver, int timeout) {
+        super(driver, timeout);
+    }
+
+    public void setFirstName(String value) {
+        element(firstName).type(value);
+    }
+
+    public void fieldDoesNotExistShouldNotBePresent() {
+        element(fieldDoesNotExist).shouldNotBePresent();
+    }
+
+    public void fieldDoesNotExistShouldBePresent() {
+        element(fieldDoesNotExist).shouldBePresent();
+    }
+
+    public void hiddenFieldShouldNotBePresent() {
+        element(hiddenField).shouldNotBePresent();
+    }
+
+    public void fieldDoesNotExistShouldContainText(String value) {
+        element(fieldDoesNotExist).shouldContainText(value);
+    }
+
+    public WebElementFacade firstName() {
+        return element(firstName);
+    }
+
+    public void waitForFirstNameField() {
+        waitForCondition().until(firstAndLastNameAreEnabled());
+    }
+
+    public ExpectedCondition<Boolean> firstNameIsVisibleAndDisabled() {
+        return new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver driver) {
+                return (firstName.isDisplayed() && firstName.isEnabled());
+            }
+        };
+    }
+
+    public ExpectedCondition<Boolean> firstAndLastNameAreEnabled() {
+        return new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver driver) {
+                return (firstName.isEnabled() && lastName.isEnabled());
+            }
+        };
+    }
+
+    public ExpectedCondition<Boolean> twoFieldsAreDisabled() {
+        return new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver driver) {
+                return (!buttonThatIsInitiallyEnabled.isEnabled() && !readonlyField.isEnabled());
+            }
+        };
+    }
+
+}

@@ -17,7 +17,6 @@ public class BigDecimalValueMatcher {
     protected BigDecimalValueMatcher(Number value, Matcher<? extends BigDecimal> matcher) {
         this.value = value;
         Object expectedValue = expectedValue(matcher);
-//        this.matcher = matcher;
         if ((matcher instanceof IsEqual) || (matcher instanceof Is)) {
             this.matcher = closeTo(new BigDecimal(expectedValue.toString()), new BigDecimal("0"));
         } else {

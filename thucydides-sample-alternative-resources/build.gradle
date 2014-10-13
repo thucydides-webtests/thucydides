@@ -1,0 +1,3 @@
+dependencies {
+    compile("org.jbehave:jbehave-core:3.8")
+}

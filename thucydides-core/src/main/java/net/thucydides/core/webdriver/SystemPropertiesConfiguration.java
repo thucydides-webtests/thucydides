@@ -24,12 +24,6 @@ import static net.thucydides.core.webdriver.WebDriverFactory.getDriverFrom;
 public class SystemPropertiesConfiguration implements Configuration {
 
     /**
-     * Use the 'webdriver.driver' property to tell Thucydides what browser to
-     * run the tests in.
-     */
-    public static final String WEBDRIVER_DRIVER = ThucydidesSystemProperty.WEBDRIVER_DRIVER.getPropertyName();
-
-    /**
      * The default browser is Firefox.
      */
     public static final String DEFAULT_WEBDRIVER_DRIVER = "firefox";
@@ -98,15 +92,11 @@ public class SystemPropertiesConfiguration implements Configuration {
     }
 
     public EnvironmentVariables getEnvironmentVariables() {
-//        if (environmentVariables == null) {
-//            environmentVariables = Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ;
-//        }
         return environmentVariables;
     }
 
     public int maxRetries() {
-        int maxRetries = getEnvironmentVariables().getPropertyAsInteger(MAX_RETRIES, 0);
-        return maxRetries;
+        return getEnvironmentVariables().getPropertyAsInteger(MAX_RETRIES, 0);
     }
 
     /**
@@ -197,10 +187,12 @@ public class SystemPropertiesConfiguration implements Configuration {
                 DEFAULT_ESTIMATED_AVERAGE_STEP_COUNT);
     }
 
+    @SuppressWarnings("deprecation")
     public boolean onlySaveFailingScreenshots() {
         return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.THUCYDIDES_ONLY_SAVE_FAILING_SCREENSHOTS.getPropertyName(), false);
     }
 
+    @SuppressWarnings("deprecation")
     public boolean takeVerboseScreenshots() {
         return getEnvironmentVariables().getPropertyAsBoolean(ThucydidesSystemProperty.THUCYDIDES_VERBOSE_SCREENSHOTS.getPropertyName(), false);
     }

@@ -1,7 +1,7 @@
 package net.thucydides.core.model
 
 import net.thucydides.core.digest.Digest
-import net.thucydides.core.reflection.sampleclasses.SomeOtherClass
+import net.thucydides.core.reflection.samples.SomeOtherClass
 import spock.lang.Shared
 import spock.lang.Specification
 

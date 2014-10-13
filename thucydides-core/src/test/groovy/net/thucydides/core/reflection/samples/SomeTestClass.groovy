@@ -1,4 +1,4 @@
-package net.thucydides.core.reflection.sampleclasses
+package net.thucydides.core.reflection.samples
 
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized

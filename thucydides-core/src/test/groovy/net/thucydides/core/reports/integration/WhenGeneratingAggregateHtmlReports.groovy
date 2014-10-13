@@ -5,16 +5,12 @@ import net.thucydides.core.ThucydidesSystemProperties
 import net.thucydides.core.ThucydidesSystemProperty
 import net.thucydides.core.issues.IssueTracking
 import net.thucydides.core.reports.FormatConfiguration
-import net.thucydides.core.reports.OutcomeFormat
 import net.thucydides.core.reports.history.ProgressSnapshot
-import net.thucydides.core.reports.history.TestHistory
 import net.thucydides.core.reports.history.TestResultSnapshot
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter
 import net.thucydides.core.util.MockEnvironmentVariables
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
-import org.openqa.selenium.firefox.FirefoxDriver
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.openqa.selenium.phantomjs.PhantomJSDriver
 import spock.lang.Specification
 
@@ -25,10 +21,9 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
     @TempDir File temporaryDirectory
 
     def issueTracking = Mock(IssueTracking)
-    def mockTestHistory = Mock(TestHistory)
     def mockSystemProperties = Mock(ThucydidesSystemProperties)
     def environmentVariables = new MockEnvironmentVariables()
-    def reporter = new HtmlAggregateStoryReporter("project", issueTracking, mockTestHistory);
+    def reporter = new HtmlAggregateStoryReporter("project", issueTracking);
 
     File outputDirectory
     WebDriver driver;
@@ -44,8 +39,6 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         reporter.formatConfiguration = new FormatConfiguration(environmentVariables)
 
         driver = new PhantomJSDriver();
-        mockTestHistory.progress >> NO_PROGRESS_HISTORY
-        mockTestHistory.history >> NO_SNAPSHOTS
     }
 
     def cleanup() {
@@ -104,15 +97,6 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
 
     }
 
-    def "should be able to clear history"() {
-        given:
-            def customReport = new CustomHtmlAggregateStoryReporter("project")
-        when:
-            reporter.clearHistory();
-        then:
-            1 * mockTestHistory.clearHistory()
-    }
-
     def "should generate an overall release report"() {
         given: "We generate reports from a directory containing features and stories only"
             reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
@@ -151,9 +135,6 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
             super(projectName);
         }
 
-        protected TestHistory getTestHistory() {
-            return mockTestHistory;
-        }
         @Override
         protected ThucydidesSystemProperties getSystemProperties() {
             return mockSystemProperties;

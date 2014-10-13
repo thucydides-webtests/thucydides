@@ -1,180 +1,82 @@
-ext {
-	currentBranch = getCurrentBranch()
-    releaseBranch = "release-${versionNumber}"
-    workDirectory = createWorkDirectory()
-    project = 'thucydides'
-    artifacts = ['thucydides-report-resources','thucydides-core', 'thucydides-junit',
-                 'maven-thucydides-plugin','thucydides-ant-task',
-                 'thuydides-browsermob-plugin', 'thucydides-test-utils']
-    mavenRepo = "~/.m2/repository"
-}
-
-task createBranch {
-    executeOnShell "git checkout -b ${project.ext.releaseBranch}"
-}
-
-task setNewVersion {
-    dependsOn createBranch
-    executeOnShell "mvn versions:set -DnewVersion=${versionNumber}"
-}
-
-task buildArtifacts {
-    dependsOn setNewVersion
-    executeOnShell "mvn clean install -DskipTests"
-    executeOnShell "mvn compile test-compile javadoc:jar source:jar"
-}
-
-task deployArtifacts {
-	dependsOn buildArtifacts
-    def parentPomFile = findParentArtifact()
-    def jarFiles = findChildArtifacts()
-    def javadocFiles = findJavadocArtifacts()
-    def sourceJarFiles = findSourceArtifacts()
-
-    deployFile(parentPomFile, parentPomFile)
-
-    jarFiles.each { jarFile ->
-        def artifactName = new File(jarFile).name.replace(".jar","")
-        def pomFile = jarFile.replace(".jar",".pom")
-        def sourceFile = sourceJarFiles.find { it.contains(artifactName)}
-        def javadocFile = javadocFiles.find { it.contains(artifactName)}
-        deployFiles(pomFile, jarFile, sourceFile, javadocFile)
+buildscript {
+    dependencies {
+        project(':thucydides-test-utils')
     }
 }
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    apply plugin: 'maven'
 
-task deployCurrentBuildArtifacts {
-    def parentPomFile = findParentArtifact()
-    def jarFiles = findChildArtifacts()
-    def javadocFiles = findJavadocArtifacts()
-    def sourceJarFiles = findSourceArtifacts()
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+    version = '0.9.273-SNAPSHOT'
 
-    deployFile(parentPomFile, parentPomFile)
-
-    jarFiles.each { jarFile ->
-        def artifactName = new File(jarFile).name.replace(".jar","")
-        def pomFile = jarFile.replace(".jar",".pom")
-        def sourceFile = sourceJarFiles.find { it.contains(artifactName)}
-        def javadocFile = javadocFiles.find { it.contains(artifactName)}
-        deployFiles(pomFile, jarFile, sourceFile, javadocFile)
+    repositories {
+        mavenLocal()
+        mavenCentral()
     }
-}
 
-task pushNewBranch {
-    executeOnShell "git commit -a -m '[Release version ${versionNumber}]'"
-    executeOnShell "git tag -f release-${versionNumber}"
-    executeOnShell "git push origin ${project.ext.releaseBranch}"
-    executeOnShell "git push origin --tags"
-}
-
-task checkoutOriginalBranch {
-    executeOnShell "git checkout ${project.ext.currentBranch}"
-}
-
-task release {
-	dependsOn deployArtifacts, pushNewBranch, checkoutOriginalBranch
-	println "RELEASING THUCYDIDES VERSION ${versionNumber}"
-}
-
-def deployFile(pomFilePath, artifactFilePath) {
-    deployFiles(pomFilePath, artifactFilePath, null, null)
-}
-
-def deployFiles(pomFilePath, artifactFilePath, sourceFile, javadocFile) {
-
-    println "Deploying $artifactFilePath"
-    def tempDirectory = project.ext.workDirectory
-    def toSonatypeStagingRepo = "-Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging"
-
-    def pomFile = new File(pomFilePath)
-    def artifactFile = new File(artifactFilePath)
-    def tempPom = new File(tempDirectory, pomFile.getName())
-    def tempArtifact = new File(tempDirectory, artifactFile.getName())
-
-    executeOnShell "cp ${pomFilePath.trim()} ${tempDirectory.path}"
-    executeOnShell "cp ${artifactFilePath.trim()} ${tempDirectory.path}"
-
-    def deployCmd = "mvn gpg:sign-and-deploy-file $toSonatypeStagingRepo -DpomFile=${tempPom.path} -Dfile=${tempArtifact.path}"
-    if (sourceFile) {
-        deployCmd += " -Dsources=$sourceFile"
+    task wrapper(type: Wrapper) {
+        gradleVersion = '1.11'
     }
-    if (javadocFile) {
-        deployCmd += " -Djavadoc=$javadocFile"
+
+    test {
+        exclude '**/*$*'
+        exclude '**/integration/**'
+        exclude '**/samples/**'
+        exclude '**/Sample*'
+        maxParallelForks = 8
     }
-    executeOnShell deployCmd
 
-}
+    task integrationTests(type: Test) {
+        exclude '**/*$*'
+        exclude '**/samples/**'
+        exclude '**/*Sample*'
+        exclude '**/integration/browsers**'
+        include '**/integration/**'
+        maxParallelForks = 4
+    }
 
-def getCurrentBranch() {
-	def branches = executeOnShell('git branch',true)
-	def branch = branches.readLines().find { it.startsWith('*') }
-	branch.stripIndent(2)
-}
+    task browserTests(type: Test) {
+        exclude '**/*$*'
+        exclude '**/samples/**'
+        exclude '**/*Sample*'
+        include '**/integration/browsers**'
+    }
 
-def findParentArtifact() {
-    def parentPom = executeOnShell "find ~/.m2/repository -name '*.pom' | grep ${project.ext.project}-${versionNumber}.pom"
-    parentPom.trim()
-}
+    integrationTests.dependsOn test
+    check.dependsOn integrationTests
 
-def findChildArtifacts() {
-    findJarsWithQualifier(versionNumber, "~/.m2/repository")
-}
 
-def findJavadocArtifacts() {
-    findJarsWithQualifier("javadoc")
-}
-
-def findSourceArtifacts() {
-    findJarsWithQualifier("sources")
-}
-
-def findJarsWithQualifier(qualifier) {
-    findJarsWithQualifier(qualifier,".")
-}
-
-def findJarsWithQualifier(qualifier, directory) {
-
-    def artifactPaths = []
-
-    project.ext.artifacts.each {
-        def jarFile = executeOnShell "find ${directory} -name '*.jar' | grep ${it} | grep ${qualifier}.jar"
-        if (jarFile) {
-            artifactPaths.add jarFile.trim()
+    dependencies {
+        compile "com.google.inject:guice:3.0"
+        compile "org.slf4j:slf4j-api:1.6.4"
+        testCompile "ch.qos.logback:logback-classic:1.0.13"
+        testCompile "junit:junit:4.11"
+        testCompile "org.hamcrest:hamcrest-integration:1.3"
+        testCompile "org.hamcrest:hamcrest-library:1.3"
+        testCompile "org.hamcrest:hamcrest-core:1.3"
+        testCompile('org.mockito:mockito-all:1.10.7') {
+            exclude group: "org.hamcrest"
         }
-
+        testCompile("org.spockframework:spock-core:0.7-groovy-2.0") {
+            exclude group: "junit"
+        }
+        testCompile("com.github.goldin:spock-extensions:0.1.4") {
+            exclude module: "spock-core"
+        }
+        testCompile("org.codehaus.groovy:groovy-all:2.3.3")
+        testCompile("org.easytesting:fest-assert:1.4")
     }
-    return artifactPaths
-}
-def executeOnShell(String command) {
-    return executeOnShell(command, false)
-}
 
-def createWorkDirectory() {
-    File dir = File.createTempFile( 'artifacts', '.dir' )
-    dir.delete()
-    dir.mkdir()
-    return dir
-}
+    subprojects {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:-options"
 
-def executeOnShell(String command, boolean failOnError) {
-    println "EXECUTING $command"
-    def output = new StringBuffer();
-    def process = new ProcessBuilder(addShellPrefix(command))
-            .redirectErrorStream(true)
-            .start()
-    process.inputStream.eachLine {println it; output.append(it).append("\n")}
-    process.waitFor();
-    if (failOnError && process.exitValue() != 0) {
-        throw new GradleException("$command failed to execute")
+        }
     }
-    return output.toString()
 }
-
-private def addShellPrefix(String command) {
-    def commandArray = new String[3]
-    commandArray[0] = "sh"
-    commandArray[1] = "-c"
-    commandArray[2] = command
-    return commandArray
-}
-
 

@@ -41,6 +41,7 @@
             <artifactId>jackson-datatype-guava</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
@@ -52,6 +53,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
@@ -67,6 +69,7 @@
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.opera</groupId>
             <artifactId>operadriver</artifactId>

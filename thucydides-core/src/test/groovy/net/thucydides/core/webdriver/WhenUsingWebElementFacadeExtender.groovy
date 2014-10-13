@@ -10,14 +10,14 @@ class WhenUsingWebElementFacadeExtender extends Specification {
 	
 	@Shared
 	def driver =  new WebDriverFacade(HtmlUnitDriver, new WebDriverFactory())
-//
-//	@Shared
-//	def page = new TestPage(driver)
-//
-//	def setupSpec() {
-//		new DefaultPageObjectInitialiser(driver, 1000).apply(page);
-//		page.open()
-//	}
+
+	@Shared
+	def page = new TestPage(driver)
+
+	def setupSpec() {
+		new DefaultPageObjectInitialiser(driver, 1000).apply(page);
+		page.open()
+	}
 
     def "WebElementFacade methods can be defined in a page object"(){
         when: "instantiating a page object with WebElementFacade fields"
@@ -27,7 +27,7 @@ class WhenUsingWebElementFacadeExtender extends Specification {
             page.elementFirst != null
     }
 
-    @Ignore("Fragile test: to review")
+//    @Ignore("Fragile test: to review")
 	def "WebElementFacade methods should be able to be called on Extender"(){
 		when: "calling WebElementFacade method"
 
@@ -35,7 +35,7 @@ class WhenUsingWebElementFacadeExtender extends Specification {
 			page.elementFirst.getTagName() == "input"
 	}
 
-    @Ignore("Fragile test: to review")
+//    @Ignore("Fragile test: to review")
 	def "Extender methods should be able to be called"(){
 		when: "calling WebElementFacadeInput method"
 			page.elementLast.enterText("text")

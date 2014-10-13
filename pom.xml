@@ -195,7 +195,6 @@
                                 <exclude>**/*Sample.*</exclude>
                                 <exclude>%regex[.*integration.*]</exclude>
                             </excludes>
-                            <excludedGroups>net.thucydides.core.categories.RealBrowserTests</excludedGroups>
                             <systemPropertyVariables>
                                 <thucydides.logging>QUIET</thucydides.logging>
                             </systemPropertyVariables>
@@ -415,10 +414,9 @@
                                         <exclude>**/Sample*.*</exclude>
                                         <exclude>**/*Sample.*</exclude>
                                     </excludes>
-                                    <groups>net.thucydides.core.categories.RealBrowserTests</groups>
                                     <includes>
-                                        <include>%regex[.*integration.*Story.*]</include>
-                                        <include>%regex[.*integration.*When.*]</include>
+                                        <include>%regex[.*integration.browser.*Story.*]</include>
+                                        <include>%regex[.*integration.browser.*When.*]</include>
                                     </includes>
                                 </configuration>
                             </execution>

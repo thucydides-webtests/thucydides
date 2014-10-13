@@ -14,6 +14,8 @@ import org.openqa.selenium.support.FindBy;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -127,8 +129,8 @@ public class WhenUploadingFiles {
     @Test
     public void should_upload_a_relative_path_from_the_current_working_directory() throws IOException {
 
-        File currentDirectory = new File(System.getProperty("user.dir"));
-        File targetDirectory = new File(currentDirectory, "target");
+        Path tempPath = Files.createTempDirectory("temp");
+        File targetDirectory = tempPath.toFile();
         File uploadedFile = new File(targetDirectory, "upload.txt");
         writeTextToFile(uploadedFile);
 

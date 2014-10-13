@@ -93,8 +93,8 @@ class WhenConfiguringTheStartingUrlForAPage extends Specification {
             startingUrl.startsWith(startsWith) && startingUrl.endsWith(endsWith)
         where:
         webdriverBaseUrl                                | pageObject                  | startsWith | endsWith
-        ""                                              | pageObjectUsingAClasspath   | "file:/"   | "target/test-classes/static-site/index.html"
-        null                                            | pageObjectUsingAClasspath   | "file:/"   | "target/test-classes/static-site/index.html"
+        ""                                              | pageObjectUsingAClasspath   | "file:/"   | "static-site/index.html"
+        null                                            | pageObjectUsingAClasspath   | "file:/"   | "static-site/index.html"
         "http://system.provided.url"                    | pageObjectUsingAClasspath   | "http://"  | "http://system.provided.url"
         "classpath:static-site/alternative-index.html"  | pageObjectUsingAClasspath   | "file:/"   | "static-site/alternative-index.html"
 

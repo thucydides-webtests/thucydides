@@ -12,8 +12,6 @@ import net.thucydides.core.model.TestTag;
 import net.thucydides.core.releases.ReleaseManager;
 import net.thucydides.core.reports.*;
 import net.thucydides.core.reports.csv.CSVReporter;
-import net.thucydides.core.reports.history.TestHistory;
-import net.thucydides.core.reports.history.TestResultSnapshot;
 import net.thucydides.core.requirements.RequirementsProviderService;
 import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.requirements.model.Requirement;
@@ -30,12 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.CopyOption;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +49,7 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private static final String TAGTYPE_TEMPLATE_PATH = "freemarker/results-by-tagtype.ftl";
     private static final String REQUIREMENT_TYPE_TEMPLATE_PATH = "freemarker/requirement-type.ftl";
 
-    private TestHistory testHistory;
+//    private TestHistory testHistory;
     private String projectName;
     private String relativeLink;
     private ReportNameProvider reportNameProvider;
@@ -64,7 +57,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
     private final RequirementsService requirementsService;
     private final RequirmentsOutcomeFactory requirementsFactory;
     private final HtmlRequirementsReporter htmlRequirementsReporter;
-    private final HtmlProgressReporter htmlProgressReporter;
     private final RequirementsConfiguration requirementsConfiguration;
     private final EnvironmentVariables environmentVariables;
     private FormatConfiguration formatConfiguration;
@@ -75,31 +67,28 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     public HtmlAggregateStoryReporter(final String projectName, final String relativeLink) {
         this(projectName, relativeLink,
-             Injectors.getInjector().getInstance(IssueTracking.class), new TestHistory(projectName),
+             Injectors.getInjector().getInstance(IssueTracking.class),
              Injectors.getInjector().getInstance(RequirementsService.class),
              Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public HtmlAggregateStoryReporter(final String projectName,
-                                      final IssueTracking issueTracking,
-                                      final TestHistory testHistory) {
-        this(projectName, "", issueTracking, testHistory, Injectors.getInjector().getInstance(RequirementsService.class),
+                                      final IssueTracking issueTracking) {
+        this(projectName, "", issueTracking, Injectors.getInjector().getInstance(RequirementsService.class),
              Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
     public HtmlAggregateStoryReporter(final String projectName,
                                       final String relativeLink,
                                       final IssueTracking issueTracking,
-                                      final TestHistory testHistory,
                                       final RequirementsService requirementsService,
                                       final EnvironmentVariables environmentVariables) {
         this.projectName = projectName;
         this.relativeLink = relativeLink;
         this.issueTracking = issueTracking;
-        this.testHistory = testHistory;
+//        this.testHistory = testHistory;
         this.reportNameProvider = new ReportNameProvider();
         this.htmlRequirementsReporter = new HtmlRequirementsReporter(relativeLink);
-        this.htmlProgressReporter = new HtmlProgressReporter(issueTracking, testHistory);
 
         RequirementsProviderService requirementsProviderService = Injectors.getInjector().getInstance(RequirementsProviderService.class);
         this.requirementsFactory = new RequirmentsOutcomeFactory(requirementsProviderService.getRequirementsProviders(), issueTracking);
@@ -115,13 +104,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     public String getProjectName() {
         return projectName;
-    }
-
-    protected TestHistory getTestHistory() {
-        if (testHistory == null) {
-            testHistory = new TestHistory(getProjectName());
-        }
-        return testHistory;
     }
 
     private void addFormattersToContext(final Map<String, Object> context) {
@@ -163,8 +145,6 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
 
     public void generateReportsForTestResultsIn(TestOutcomes testOutcomes) throws IOException {
         RequirementsOutcomes requirementsOutcomes = requirementsFactory.buildRequirementsOutcomesFrom(testOutcomes.withRequirementsTags());
-
-        updateHistoryFor(requirementsOutcomes);
 
         copyResourcesToOutputDirectory();
         copyTestResultsToOutputDirectory();
@@ -488,48 +468,11 @@ public class HtmlAggregateStoryReporter extends HtmlReporter implements UserStor
         return context;
     }
 
-
-    private void updateHistoryFor(final RequirementsOutcomes requirementsOutcomes) {
-        getTestHistory().updateData(requirementsOutcomes);
-    }
-
-    private void generateHistoryReportFor(TestOutcomes testOutcomes) throws IOException {
-        List<TestResultSnapshot> history = getTestHistory().getHistory();
-        Map<String, Object> context = buildContext(testOutcomes, reportNameProvider);
-        context.put("history", history);
-        context.put("rowcount", history.size());
-        addFormattersToContext(context);
-
-        String htmlContents = mergeTemplate(HISTORY_TEMPLATE_PATH).usingContext(context);
-        LOGGER.debug("Writing history page");
-        writeReportToOutputDirectory("history.html", htmlContents);
-
-    }
-
     private void generateReportPage(final Map<String, Object> context,
                                     final String template,
                                     final String outputFile) throws IOException {
         String htmlContents = mergeTemplate(template).usingContext(context);
         writeReportToOutputDirectory(outputFile, htmlContents);
-    }
-
-//    private void generateCoverageData(final TestOutcomes testOutcomes, String tagType) throws IOException {
-//        Map<String, Object> context = new HashMap<String, Object>();
-//
-//        JSONResultTree resultTree = new JSONResultTree();
-//        for (String tag : testOutcomes.getTagsOfType(tagType)) {
-//            resultTree.addTestOutcomesForTag(tag, testOutcomes.withTag(tag));
-//        }
-//
-//        context.put("coverageData", resultTree.toJSON());
-//        addFormattersToContext(context);
-//
-//        String javascriptCoverageData = mergeTemplate(COVERAGE_DATA_TEMPLATE_PATH).usingContext(context);
-//        writeReportToOutputDirectory(tagType + "-coverage.js", javascriptCoverageData);
-//    }
-
-    public void clearHistory() {
-        getTestHistory().clearHistory();
     }
 
     protected ThucydidesSystemProperties getSystemProperties() {

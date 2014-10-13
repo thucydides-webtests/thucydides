@@ -1,6 +1,5 @@
 package net.thucydides.core.webdriver.integration;
 
-import net.thucydides.core.categories.RealBrowserTests;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.SupportedWebDriver;
@@ -10,14 +9,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.openqa.selenium.WebDriver;
 
 import static org.fest.assertions.Assertions.assertThat;
 
 public class WhenInstanciatingAChromeDriver {
 
-    private WebDriverFactory webDriverFactory;
     private EnvironmentVariables environmentVariables;
     private String previousChromeDriverPath;
 
@@ -25,7 +22,6 @@ public class WhenInstanciatingAChromeDriver {
     public void createATestableDriverFactory() throws Exception {
         previousChromeDriverPath = System.getProperty("webdriver.chrome.driver");
         environmentVariables = new MockEnvironmentVariables();
-        webDriverFactory = new WebDriverFactory(environmentVariables);
     }
 
     @After
@@ -38,7 +34,6 @@ public class WhenInstanciatingAChromeDriver {
     }
 
     @Test
-    @Category(RealBrowserTests.class)
     public void should_honor_chromdriver_bin_path_in_environment_properties() {
         environmentVariables.setProperty("webdriver.chrome.driver","/path/to/chromedriver/bin");
         try {

@@ -61,8 +61,10 @@ public class RootCauseAnalyzer {
 
     private final static List<String> MASKED_PACKAGES = ImmutableList.of(
             "sun.",
+            "com.sun",
             "java.",
             "org.junit",
+            "org.gradle",
             "org.fest",
             "org.hamcrest",
             "org.openqa.selenium",

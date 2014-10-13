@@ -11,17 +11,8 @@ import net.thucydides.core.screenshots.ScreenshotProcessor;
 import net.thucydides.core.webdriver.ThucydidesWebDriverSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.misc.Service;
-import sun.misc.ServiceConfigurationError;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * An event bus for Step-related notifications.
@@ -144,11 +135,14 @@ public class StepEventBus {
 
         if (customListeners == null) {
             customListeners = Collections.synchronizedSet(new HashSet<StepListener>());
-            Iterator<?> listenerImplementations = Service.providers(StepListener.class);
+
+            ServiceLoader<StepListener> stepListenerServiceLoader = ServiceLoader.load(StepListener.class);
+            Iterator<StepListener> listenerImplementations = stepListenerServiceLoader.iterator();
+//            Iterator<?> listenerImplementations = Service.providers(StepListener.class);
 
             while (listenerImplementations.hasNext()) {
                 try {
-                    StepListener listener = (StepListener) listenerImplementations.next();
+                    StepListener listener = listenerImplementations.next();
                     if (!isACore(listener)) {
                         LOGGER.info("Registering custom listener " + listener);
                         customListeners.add(listener);

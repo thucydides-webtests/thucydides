@@ -105,7 +105,7 @@ class WhenConfiguringTheWebdriverInstance extends Specification {
 
     }
 
-    @Ignore("Opera driver needs updating")
+//    @Ignore("Opera driver needs updating")
     def "Should create opera driver proxy when required"() {
         when:
             def webdriver = webDriverFactory.newInstanceOf(SupportedWebDriver.OPERA)

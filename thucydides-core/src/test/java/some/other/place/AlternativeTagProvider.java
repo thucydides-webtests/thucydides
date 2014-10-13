@@ -9,6 +9,6 @@ import java.util.Set;
 public class AlternativeTagProvider implements TagProvider {
     @Override
     public Set<TestTag> getTagsFor(TestOutcome testOutcome) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 }

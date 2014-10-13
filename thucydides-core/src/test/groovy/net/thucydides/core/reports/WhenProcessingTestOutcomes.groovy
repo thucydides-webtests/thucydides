@@ -262,14 +262,4 @@ class WhenProcessingTestOutcomes extends Specification {
         then:
             testOutcomes.total == 3
     }
-
-    @Ignore
-    def "should complete test outcome with history if requested"() {
-        when:
-            def testOutcomes = TestOutcomeLoader.loadTestOutcomes().inFormat(OutcomeFormat.XML).from(directoryInClasspathCalled("/tagged-test-outcomes")).withHistory()
-            TestStatistics statistics = testOutcomes.tests[0].statistics
-        then:
-            statistics != null;
-    }
-
 }

@@ -5,7 +5,7 @@ import net.thucydides.core.issues.IssueTracking
 import net.thucydides.core.model.*
 import net.thucydides.core.reports.TestOutcomes
 import net.thucydides.core.reports.history.DateProvider
-import net.thucydides.core.reports.history.TestHistory
+
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter
 import net.thucydides.core.reports.html.HtmlRequirementsReporter
 import net.thucydides.core.requirements.FileSystemRequirementsTagProvider
@@ -13,7 +13,6 @@ import net.thucydides.core.requirements.model.Requirement
 import net.thucydides.core.requirements.reports.RequirementsOutcomes
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory
 import org.joda.time.DateTime
-import org.junit.Ignore
 import spock.lang.Specification
 import net.thucydides.core.requirements.reportpages.RequirementsReport
 import net.thucydides.core.requirements.reportpages.ProgressReport
@@ -33,8 +32,7 @@ class WhenGeneratingRequirementsReports extends Specification {
     def issueTracking = Mock(IssueTracking)
     def requirmentsOutcomeFactory = new RequirmentsOutcomeFactory([], issueTracking);
     def dateProvider = new MockedDateProvider()
-    def testHistory = new TestHistory("project",outputDirectory, dateProvider)
-    def aggregateReporter = new HtmlAggregateStoryReporter("project", issueTracking, testHistory)
+    def aggregateReporter = new HtmlAggregateStoryReporter("project", issueTracking)
 
     def firstOfJanuary = new DateTime(2010,1,1,0,0);
     def firstOfFebruary= new DateTime(2010,2,1,0,0);
