@@ -1,7 +1,13 @@
 package net.thucydides.core.webdriver;
 
 import com.gargoylesoftware.htmlunit.ScriptException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import net.thucydides.core.steps.StepEventBus;
+import static net.thucydides.core.webdriver.WebdriverTools.prepareDriverToClose;
+import static net.thucydides.core.webdriver.WebdriverTools.prepareDriverToQuit;
 import net.thucydides.core.webdriver.stubs.NavigationStub;
 import net.thucydides.core.webdriver.stubs.OptionsStub;
 import net.thucydides.core.webdriver.stubs.TargetLocatorStub;
@@ -20,11 +26,6 @@ import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * A proxy class for webdriver instances, designed to prevent the browser being opened unnecessarily.
@@ -71,7 +72,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
 
     private void forcedQuit() {
         try {
-            getDriverInstance().quit();
+            prepareDriverToQuit(getDriverInstance()).quit();
             proxiedWebDriver = null;
         } catch (WebDriverException e) {
             LOGGER.warn("Closing a driver that was already closed: " + e.getMessage());
@@ -187,7 +188,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
         	if (getDriverInstance().getWindowHandles() != null && getDriverInstance().getWindowHandles().size() == 1){
         		this.quit();
         	} else{
-        		getDriverInstance().close();
+                        prepareDriverToClose(getDriverInstance()).close();
         	}
             webDriverFactory.shutdownFixtureServices();
         }
@@ -196,7 +197,7 @@ public class WebDriverFacade implements WebDriver, TakesScreenshot, HasInputDevi
     public void quit() {
         if (proxyInstanciated()) {
             try {
-                getDriverInstance().quit();
+                prepareDriverToQuit(getDriverInstance()).quit();
             } catch (WebDriverException e) {
                 LOGGER.warn("Error while quitting the driver (" + e.getMessage() + ")");
             }
