@@ -1,6 +1,6 @@
 package net.thucydides.core.requirements
 
-import annotatedstorieswithcontents.apples.Test1
+import annotatedstorieswithcontents.apples.TestSample1
 import com.google.common.base.Optional
 import net.thucydides.core.ThucydidesSystemProperty
 import net.thucydides.core.model.Story
@@ -85,8 +85,8 @@ class WhenAssociatingATestOutcomeWithARequirement extends Specification {
             vars.setProperty(ThucydidesSystemProperty.THUCYDIDES_ANNOTATED_REQUIREMENTS_DIR.propertyName, "annotatedstorieswithcontents")
             RequirementsTagProvider capabilityProvider = new PackageAnnotationBasedTagProvider(vars)
         when: "We load requirements we have an annotated test"
-            def story = new Story(Test1.class)
-            def testOutcome = new TestOutcome("Title for test 1", Test1.class, story)
+            def story = new Story(TestSample1.class)
+            def testOutcome = new TestOutcome("Title for test 1", TestSample1.class, story)
         then:
             capabilityProvider.getParentRequirementOf(testOutcome).isPresent()
             capabilityProvider.getParentRequirementOf(testOutcome).get().narrative.renderedText == "A Narrative for test 1\nMultiple lines"

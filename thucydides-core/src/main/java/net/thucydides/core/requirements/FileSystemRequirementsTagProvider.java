@@ -173,12 +173,10 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
         try {
             Enumeration<URL> requirementResources = getDirectoriesFrom(rootDirectoryPath);
             resourceRoots = Collections.list(requirementResources);
-            System.out.println("resourceRoots from " + rootDirectoryPath + " = " + resourceRoots);
         } catch (URISyntaxException e) {
             throw new IOException(e);
         }
         return restoreSpacesIn(resourceRoots);
-//        return Optional.of(withRestoredSpaces(requirementResources.nextElement().getPath()));
     }
 
     private Set<String> restoreSpacesIn(List<URL> resourceRoots) {

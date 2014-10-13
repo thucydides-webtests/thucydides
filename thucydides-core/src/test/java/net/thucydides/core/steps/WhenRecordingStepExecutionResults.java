@@ -1088,23 +1088,6 @@ public class WhenRecordingStepExecutionResults {
     }
 
     @Test
-    @Ignore("Work in progress")
-    public void fluent_step_calls_should_be_nestable() {
-
-        StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);
-        StepEventBus.getEventBus().testStarted("app_should_work");
-
-        FluentScenarioSteps steps = stepFactory.getStepLibraryFor(FluentScenarioSteps.class);
-
-        steps.parent_step();
-
-        List<TestOutcome> results = stepListener.getTestOutcomes();
-        TestOutcome testOutcome = results.get(0);
-
-        assertThat(testOutcome.getTestSteps().get(0).getDescription(), is("Parent step [When someone does this sort of thing]"));
-    }
-
-    @Test
     public void a_test_group_without_an_annotated_title_should_record_the_humanized_group_name() {
 
         StepEventBus.getEventBus().testSuiteStarted(MyTestCase.class);

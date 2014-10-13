@@ -1,0 +1,7 @@
+dependencies {
+    compile project(':thucydides-core')
+    compile "org.apache.ant:ant:1.9.3"
+
+    testCompile project(':thucydides-test-utils')
+    testCompile "org.apache.ant:ant-testutil:1.9.3"
+}

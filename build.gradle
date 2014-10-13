@@ -1,8 +1,9 @@
-buildscript {
-    dependencies {
-        project(':thucydides-test-utils')
-    }
-}
+//buildscript {
+//    dependencies {
+//        project(':thucydides-test-utils')
+//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.6'
+//    }
+//}
 allprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
@@ -10,13 +11,19 @@ allprojects {
     apply plugin: 'idea'
     apply plugin: 'maven'
 
+//    apply plugin: 'maven-publish'
+//    apply plugin: 'com.jfrog.bintray'
+//    apply plugin: 'release'
+
+
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
     version = '0.9.273-SNAPSHOT'
 
     repositories {
         mavenLocal()
-        mavenCentral()
+        jcenter()
+//        mavenCentral()
     }
 
     task wrapper(type: Wrapper) {
@@ -27,8 +34,8 @@ allprojects {
         exclude '**/*$*'
         exclude '**/integration/**'
         exclude '**/samples/**'
-        exclude '**/Sample*'
-        maxParallelForks = 8
+        exclude '**/*Sample*'
+        maxParallelForks = 4
     }
 
     task integrationTests(type: Test) {
@@ -37,13 +44,16 @@ allprojects {
         exclude '**/*Sample*'
         exclude '**/integration/browsers**'
         include '**/integration/**'
-        maxParallelForks = 4
+        reports.junitXml.destination = "${buildDir}/reports/integration-tests"
+        reports.html.destination = "${buildDir}/reports/integration-tests"
+//        maxParallelForks = 4
     }
 
     task browserTests(type: Test) {
         exclude '**/*$*'
         exclude '**/samples/**'
         exclude '**/*Sample*'
+        exclude '**/*Base'
         include '**/integration/browsers**'
     }
 

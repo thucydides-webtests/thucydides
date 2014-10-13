@@ -194,6 +194,7 @@
                                 <exclude>**/Sample*.*</exclude>
                                 <exclude>**/*Sample.*</exclude>
                                 <exclude>%regex[.*integration.*]</exclude>
+                                <exclude>%regex[.*integration.browser.*When.*]</exclude>
                             </excludes>
                             <systemPropertyVariables>
                                 <thucydides.logging>QUIET</thucydides.logging>
@@ -213,6 +214,7 @@
                                 <exclude>**/samples/*.*</exclude>
                                 <exclude>**/Sample*.*</exclude>
                                 <exclude>**/*Sample.*</exclude>
+                                <exclude>%regex[.*integration.browser.*When.*]</exclude>
                             </excludes>
                             <excludedGroups>net.thucydides.core.categories.RealBrowserTests</excludedGroups>
                             <includes>
@@ -383,6 +385,13 @@
         <profile>
             <id>integration-tests</id>
             <modules>
+                <module>thucydides-maven-integration-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>gradle</id>
+            <modules>
+                <module>maven-thucydides-plugin</module>
                 <module>thucydides-maven-integration-tests</module>
             </modules>
         </profile>

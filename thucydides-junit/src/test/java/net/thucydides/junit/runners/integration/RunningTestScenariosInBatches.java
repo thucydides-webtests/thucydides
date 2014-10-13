@@ -27,14 +27,14 @@ public class RunningTestScenariosInBatches {
 
     private void runTestCases(SystemVariableBasedBatchManager batchManager) {
         try {
-            new ThucydidesRunner(TestScenario1.class, batchManager).run(new RunNotifier());
-            new ThucydidesRunner(TestScenario2.class, batchManager).run(new RunNotifier());
-            new ThucydidesRunner(TestScenario3.class, batchManager).run(new RunNotifier());
-            new ThucydidesRunner(TestScenario4.class, batchManager).run(new RunNotifier());
-            new ThucydidesRunner(TestScenario5.class, batchManager).run(new RunNotifier());
-            new ThucydidesRunner(TestScenario6.class, batchManager).run(new RunNotifier());
-            new ThucydidesRunner(TestScenario7.class, batchManager).run(new RunNotifier());
-            new ThucydidesRunner(TestScenario8.class, batchManager).run(new RunNotifier());
+            new ThucydidesRunner(SampleTestScenario1.class, batchManager).run(new RunNotifier());
+            new ThucydidesRunner(SampleTestScenario2.class, batchManager).run(new RunNotifier());
+            new ThucydidesRunner(SampleTestScenario3.class, batchManager).run(new RunNotifier());
+            new ThucydidesRunner(SampleTestScenario4.class, batchManager).run(new RunNotifier());
+            new ThucydidesRunner(SampleTestScenario5.class, batchManager).run(new RunNotifier());
+            new ThucydidesRunner(SampleTestScenario6.class, batchManager).run(new RunNotifier());
+            new ThucydidesRunner(SampleTestScenario7.class, batchManager).run(new RunNotifier());
+            new ThucydidesRunner(SampleTestScenario8.class, batchManager).run(new RunNotifier());
         } catch (InitializationError initializationError) {
             initializationError.printStackTrace();
         }
@@ -90,11 +90,11 @@ public class RunningTestScenariosInBatches {
     // TEST CLASSES USED IN THE MAIN TESTS.
 
     @RunWith(ThucydidesRunner.class)
-    public static class TestScenario1 {
+    public static class SampleTestScenario1 {
 
         int testNumber;
 
-        public TestScenario1() {
+        public SampleTestScenario1() {
             this.testNumber = testCount.getAndIncrement();
         }
 
@@ -127,11 +127,11 @@ public class RunningTestScenariosInBatches {
     }
 
     @RunWith(ThucydidesRunner.class)
-    public static class TestScenario2 {
+    public static class SampleTestScenario2 {
 
         int testNumber;
 
-        public TestScenario2() {
+        public SampleTestScenario2() {
             this.testNumber = testCount.getAndIncrement();
         }
 
@@ -164,11 +164,11 @@ public class RunningTestScenariosInBatches {
     }
 
     @RunWith(ThucydidesRunner.class)
-    public static class TestScenario3 {
+    public static class SampleTestScenario3 {
 
         int testNumber;
 
-        public TestScenario3() {
+        public SampleTestScenario3() {
             this.testNumber = testCount.getAndIncrement();
         }
 
@@ -202,11 +202,11 @@ public class RunningTestScenariosInBatches {
 
 
     @RunWith(ThucydidesRunner.class)
-    public static class TestScenario4 {
+    public static class SampleTestScenario4 {
 
         int testNumber;
 
-        public TestScenario4() {
+        public SampleTestScenario4() {
             this.testNumber = testCount.getAndIncrement();
         }
 
@@ -241,11 +241,11 @@ public class RunningTestScenariosInBatches {
 
 
     @RunWith(ThucydidesRunner.class)
-    public static class TestScenario5 {
+    public static class SampleTestScenario5 {
 
         int testNumber;
 
-        public TestScenario5() {
+        public SampleTestScenario5() {
             this.testNumber = testCount.getAndIncrement();
         }
 
@@ -278,11 +278,11 @@ public class RunningTestScenariosInBatches {
     }
 
     @RunWith(ThucydidesRunner.class)
-    public static class TestScenario6 {
+    public static class SampleTestScenario6 {
 
         int testNumber;
 
-        public TestScenario6() {
+        public SampleTestScenario6() {
             this.testNumber = testCount.getAndIncrement();
         }
 
@@ -315,11 +315,11 @@ public class RunningTestScenariosInBatches {
     }
 
     @RunWith(ThucydidesRunner.class)
-    public static class TestScenario7 {
+    public static class SampleTestScenario7 {
 
         int testNumber;
 
-        public TestScenario7() {
+        public SampleTestScenario7() {
             this.testNumber = testCount.getAndIncrement();
         }
 
@@ -352,11 +352,11 @@ public class RunningTestScenariosInBatches {
     }
 
     @RunWith(ThucydidesRunner.class)
-    public static class TestScenario8 {
+    public static class SampleTestScenario8 {
 
         int testNumber;
 
-        public TestScenario8() {
+        public SampleTestScenario8() {
             this.testNumber = testCount.getAndIncrement();
         }
 

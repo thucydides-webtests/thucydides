@@ -9,7 +9,7 @@ import spock.lang.Specification
 class WhenUsingWebElementFacadeExtender extends Specification {
 	
 	@Shared
-	def driver =  new WebDriverFacade(HtmlUnitDriver, new WebDriverFactory())
+	def driver = new HtmlUnitDriver();//  new WebDriverFacade(HtmlUnitDriver, new WebDriverFactory())
 
 	@Shared
 	def page = new TestPage(driver)

@@ -158,36 +158,6 @@ public class WhenReadingResourcesFromTheClasspath {
     }
 
     @Test
-    @Ignore("Takes too long to run")
-    public void should_fail_to_get_output_stream_for_target_after_timeout() throws Exception {
-
-        expectedException.expect(FileNotFoundException.class);
-        expectedException.expectMessage(containsString("Destination file not found"));
-
-        File targetDir = temporaryDirectory.newFolder("target");
-        String sourceResource = new File("src/test/resources/resourcelist/sample.css").getAbsolutePath();
-        final TestTimer timer = new TestTimer(FileResources.getDefaultRetryTimeout() * 2) ;
-
-        FileResources fileResource = new FileResources("resourcelist") {
-            @Override
-            protected FileOutputStream createOutputStream(File destinationFile) throws FileNotFoundException {
-                timer.increment();
-                if (timer.timeOut()) {
-                    return new FileOutputStream(destinationFile);
-                } else {
-                    throw new FileNotFoundException("Destination file not found");
-                }
-            }
-        };
-
-        fileResource.copyResourceTo(sourceResource, targetDir);
-
-        File destinationFile = new File(targetDir, "sample.css");
-        assertThat(destinationFile, exists());
-
-    }
-
-    @Test
     public void should_copy_resource_file_into_target_directory() throws Exception {
         File targetDir = temporaryDirectory.newFolder("target");
         String sourceResource = new File("src/test/resources/resourcelist/sample.css").getAbsolutePath();

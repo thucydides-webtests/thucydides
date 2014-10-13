@@ -1,18 +1,98 @@
-apply plugin: 'groovy'
+//
+//group = 'net.thucydides.plugins.gradle'
+//version = '0.0.1'
 
-
-repositories {
-    mavenCentral()
-    maven { url = "https://oss.sonatype.org/content/repositories/releases" }
-    maven { url = "https://oss.sonatype.org/content/repositories/snapshots" }
-    maven { url = "https://oss.sonatype.org/content/groups/public" }
-    maven { url = "http://wakaleo.artifactoryonline.com/wakaleo/libs-releases" }
-    maven { url = "http://wakaleo.artifactoryonline.com/wakaleo/libs-snapshots" }
-}
+//buildscript {
+//    repositories {
+//        jcenter()
+//        maven {
+//            url 'http://maven.tmatesoft.com/content/repositories/releases/'
+//        }
+//        mavenCentral()
+//    }
+//    dependencies {
+//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.6'
+//        classpath 'au.com.ish.gradle:release:2.2.2'
+//    }
+//}
+//apply plugin: 'java'
+//apply plugin: 'groovy'
+//apply plugin: 'maven-publish'
+//apply plugin: 'idea'
+//apply plugin: 'com.jfrog.bintray'
+//apply plugin: 'release'
 
 dependencies {
     compile gradleApi()
-    compile 'net.thucydides:thucydides-core:0.8.8'
-    groovy localGroovy()
+    compile localGroovy()
+
+    compile 'net.thucydides:thucydides-core:0.9.273'
+
+    testCompile "junit:junit:4.11"
 }
 
+//release {
+//    failOnSnapshotDependencies = true
+//    allowLocalModifications = false
+//    releaseDryRun = false
+//    scm = 'git'
+//}
+//version = release.projectVersion
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "wakaleo"
+            name "John Ferguson Smart"
+            email "john.smart@wakaleo.com"
+        }
+    }
+}
+
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            from components.java
+//            artifact sourcesJar
+//            artifact javadocJar
+//
+//            pom.withXml {
+//                def root = asNode()
+//                root.appendNode('description', 'A gradle plugin for generating Thucydides Living Documentation reports')
+//                root.children().last() + pomConfig
+//            }
+//        }
+//    }
+//}
+
+//bintray {
+//    user = bintrayUser
+//    key = bintrayKey
+//    publications = ['mavenJava']
+//    pkg {
+//        repo = 'thucydides-gradle-plugin'
+//        userOrg = 'thucydides'
+//        name = 'thucydides-gradle-plugin'
+//        licenses = ['Apache-2.0']
+//        version {
+//            attributes = ['gradle-plugin': 'net.thucydides.thucydides-aggregator:net.thucydides.plugins.gradle:gradle-thucydides-plugin']
+//        }
+//    }
+//}

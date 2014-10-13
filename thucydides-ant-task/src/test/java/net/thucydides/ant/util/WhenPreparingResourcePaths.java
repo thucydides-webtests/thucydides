@@ -13,8 +13,4 @@ public class WhenPreparingResourcePaths {
         assertThat(pathProcessor.normalize("some/path")).isEqualTo("some/path");
     }
 
-    @Test
-    public void shouldConvertClasspathResourceToRealPath() {
-        assertThat(pathProcessor.normalize("classpath:test-outcomes")).matches(".*target[/\\\\]test-classes[/\\\\]test-outcomes");
-    }
 }

@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import static java.lang.Thread.currentThread;
 import static org.fest.assertions.Assertions.assertThat;
 
-public class ThucydidesAntTaskTestBase extends BuildFileTest {
+public abstract class ThucydidesAntTaskTestBase extends BuildFileTest {
     protected void thucydidesReportsShouldAppearIn(String reportDirectory) throws URISyntaxException {
         assertThat(getLog()).contains("Generating Thucydides reports");
         String indexFilePath = reportDirectory + "/" + "index.html";

@@ -12,18 +12,8 @@ import java.nio.file.Files
 
 class WhenSettingUpReportServices extends Specification {
 
-//    File outputDir;
-
     def environmentVariables = new MockEnvironmentVariables();
     def configuration = new SystemPropertiesConfiguration(environmentVariables);
-
-//    def setup() {
-//        outputDir = Files.createTempDirectory("reports").toFile()
-//    }
-//
-//    def cleanup() {
-//        outputDir.deleteDir()
-//    }
 
     def "should be able to configure default report services"() {
         when:
@@ -52,20 +42,5 @@ class WhenSettingUpReportServices extends Specification {
             def listeners = ThucydidesReports.setupListeners(configuration)
         then:
             listeners.getResults() == listeners.baseStepListener.testOutcomes
-    }
-
-    def "should generate reports using each of the subscribed reporters"() {
-        given:
-            def outputDir = Files.createTempDirectory("reports").toFile()
-            configuration.setOutputDirectory(outputDir)
-            ThucydidesReports.setupListeners(configuration)
-            def testOutcomes = [TestOutcome.forTestInStory("some test", Story.called("some story"))]
-        when:
-            ThucydidesReports.getReportService(configuration).generateReportsFor(testOutcomes)
-        then:
-            println outputDir
-            outputDir.list().findAll { it.endsWith(".html")}.size() == 1
-            outputDir.list().findAll { it.endsWith(".xml")}.size() == 1
-            outputDir.list().findAll { it.endsWith(".json")}.size() == 1
     }
 }

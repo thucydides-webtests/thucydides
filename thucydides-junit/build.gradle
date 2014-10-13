@@ -5,6 +5,7 @@ dependencies {
     compile "org.springframework:spring-beans:3.2.3.RELEASE" // optional
     compile "org.springframework:spring-test:3.2.3.RELEASE" // optional
     compile "org.springframework:spring-context:3.2.3.RELEASE" // optional
+    compile "org.springframework:spring-context-support:3.2.3.RELEASE" // optional
     compile "junit:junit:4.11"
     compile "org.hamcrest:hamcrest-core:1.3"
 

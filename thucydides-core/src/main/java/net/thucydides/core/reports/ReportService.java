@@ -112,17 +112,10 @@ public class ReportService {
             future.addListener(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        final TestOutcome outcome = future.get();
-                        LOGGER.info("Processing test outcome " + outcome.getCompleteName());
-                        generateReportFor(outcome, testOutcomes, reporter);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
+                    generateQueuedReport(future, testOutcomes, reporter);
                 }
             }, MoreExecutors.sameThreadExecutor());
+
             Futures.addCallback(future, new FutureCallback<TestOutcome>() {
                 @Override
                 public void onSuccess(TestOutcome result) {
@@ -137,15 +130,28 @@ public class ReportService {
             });
         }
         waitForReportGenerationToFinish(remainingReportCount);
-        LOGGER.info("Reports generated in: " + (System.currentTimeMillis() - t0) );
+        LOGGER.info("Reports generated in: " + (System.currentTimeMillis() - t0));
 
     }
 
+    private void generateQueuedReport(ListenableFuture<TestOutcome> future, TestOutcomes testOutcomes, AcceptanceTestReporter reporter) {
+        try {
+            final TestOutcome outcome = future.get();
+            LOGGER.info("Processing test outcome " + outcome.getCompleteName());
+            generateReportFor(outcome, testOutcomes, reporter);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Report generation failure", e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Report generation failure", e);
+        }
+    }
+
     private void waitForReportGenerationToFinish(AtomicInteger reportCount) {
-        while(reportCount.get() > 0) {
+        while (reportCount.get() > 0) {
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException e) {
+            }
         }
     }
 
@@ -158,7 +164,7 @@ public class ReportService {
         List<AcceptanceTestReporter> reporters = new ArrayList<AcceptanceTestReporter>();
 
         FormatConfiguration formatConfiguration
-                = new FormatConfiguration(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
+                = new FormatConfiguration(Injectors.getInjector().getProvider(EnvironmentVariables.class).get());
 
         ServiceLoader<AcceptanceTestReporter> reporterServiceLoader = ServiceLoader.load(AcceptanceTestReporter.class);
         Iterator<AcceptanceTestReporter> reporterImplementations = reporterServiceLoader.iterator();
@@ -167,7 +173,7 @@ public class ReportService {
         LOGGER.info("Reporting formats: " + formatConfiguration.getFormats());
 
         while (reporterImplementations.hasNext()) {
-            AcceptanceTestReporter reporter =reporterImplementations.next();
+            AcceptanceTestReporter reporter = reporterImplementations.next();
             LOGGER.info("Found reporter: " + reporter + "(format = " + reporter.getFormat() + ")");
             if (!reporter.getFormat().isPresent() || formatConfiguration.getFormats().contains(reporter.getFormat().get())) {
                 LOGGER.info("Registering reporter: " + reporter);
