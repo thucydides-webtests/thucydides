@@ -212,6 +212,7 @@ public class WhenRunningStepsWithTestData {
 
         TestSteps steps = factory.getStepLibraryFor(TestSteps.class);
 
+        StepEventBus.getEventBus().testStarted("some test");
         withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).step1();
 
         verify(driver).get("Bill");
@@ -224,6 +225,7 @@ public class WhenRunningStepsWithTestData {
 
         TestSteps steps = factory.getStepLibraryFor(TestSteps.class);
 
+        StepEventBus.getEventBus().testStarted("some test");
         withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).fail_sometimes();
 
         verify(driver).get("Bill");
@@ -236,6 +238,7 @@ public class WhenRunningStepsWithTestData {
 
         TestSteps steps = factory.getStepLibraryFor(TestSteps.class);
 
+        StepEventBus.getEventBus().testStarted("some test");
         withTestDataFrom("testdata/test.csv")
                 .usingFactory(factory)
                 .run(steps).fail_sometimes();
@@ -251,6 +254,7 @@ public class WhenRunningStepsWithTestData {
 
         setDefaultStepFactory(factory);
 
+        StepEventBus.getEventBus().testStarted("some test");
         withTestDataFrom("testdata/test.csv")
                 .run(steps).step1();
 
@@ -264,6 +268,7 @@ public class WhenRunningStepsWithTestData {
 
         TestSteps steps = factory.getStepLibraryFor(TestSteps.class);
 
+        StepEventBus.getEventBus().testStarted("some test");
         withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).step1();
 
         verify(driver).get("Bill");
@@ -278,6 +283,7 @@ public class WhenRunningStepsWithTestData {
 
         setDefaultStepFactory(factory);
 
+        StepEventBus.getEventBus().testStarted("some test");
         withTestDataFrom("testdata/test.csv").run(steps).step1();
 
         verify(driver).get("Bill");
@@ -292,6 +298,7 @@ public class WhenRunningStepsWithTestData {
 
         setDefaultStepFactory(factory);
 
+        StepEventBus.getEventBus().testStarted("some test");
         withTestDataFrom("testdata/semicolon-test.csv").separatedBy(';').run(steps).step1();
 
         verify(driver).get("Bill");
@@ -305,6 +312,7 @@ public class WhenRunningStepsWithTestData {
         TestSteps steps =  factory.getStepLibraryFor(TestSteps.class);
         DifferentTestSteps differentSteps = factory.getStepLibraryFor(DifferentTestSteps.class);
 
+        StepEventBus.getEventBus().testStarted("some test");
         setDefaultStepFactory(factory);
 
         withTestDataFrom("testdata/test.csv").run(steps).name_and_dob();
@@ -322,6 +330,7 @@ public class WhenRunningStepsWithTestData {
 
         setDefaultStepFactory(factory);
 
+        StepEventBus.getEventBus().testStarted("some test");
         withTestDataFrom("testdata/test.csv").run(steps).nameStep();
 
         verify(driver).get("Bill");
@@ -336,14 +345,16 @@ public class WhenRunningStepsWithTestData {
 
         setDefaultStepFactory(factory);
 
+        StepEventBus.getEventBus().testStarted("some test");
         withTestDataFrom("testdata/test.csv").run(steps).nameStep();
     }
     
     @Test
     public void should_instantiate_any_uninitialized_page_objects_in_a_step_class_when_using_data_driven_approach()
     	throws IOException {
-	
+
 		TestSteps steps = factory.getStepLibraryFor(TestSteps.class);
+        StepEventBus.getEventBus().testStarted("some test");
 		withTestDataFrom("testdata/test.csv").usingFactory(factory).run(steps).verifyPage();
 		verify(driver, times(3)).get("TestPageObject");
     }

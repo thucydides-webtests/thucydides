@@ -186,6 +186,8 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
     }
 
 
+
+
     def "should generate a minimized JSON report by default"() {
         given:
         def testOutcome = TestOutcome.forTest("should_do_this", SomeTestScenario.class)
@@ -332,6 +334,7 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
                                           TestTag.withName("simple story").andType("story"),
                                           TestTag.withName("important feature").andType("feature")])
     }
+
 
 
     def "should include the session id if provided"() {
@@ -740,5 +743,21 @@ class WhenStoringTestOutcomesAsJSON extends Specification {
             def loadedOutcome = loader.loadReportFrom(savedOutcome)
         then:
             !loadedOutcome.isPresent()
+    }
+
+
+    def "should read a test outcome with tags"() {
+        given:
+        def serializedTestOutcome =
+                """{"name":"Another Addition","testSteps":[{"number":1,"description":"Given a calculator I just turned on","duration":4,"startTime":1413519392021,"result":"SUCCESS"},{"number":2,"description":"When I add 4 and 7","duration":3,"startTime":1413519392025,"result":"SUCCESS"},{"number":3,"description":"Then the result is 11","duration":2,"startTime":1413519392028,"result":"SUCCESS"}],"userStory":{"id":"basic-arithmetic","storyName":"Basic Arithmetic","path":"src/test/resources/samples/calculator/basic_arithmetic.feature","narrative":"Calculing additions","type":"feature"},"title":"Another Addition","tags":[{"name":"ISSUE-123","type":"issue"},{"name":"foo","type":"tag"},{"name":"Calculator/Basic arithmetic","type":"story"},{"name":"Basic Arithmetic","type":"feature"}],"startTime":1413519392020,"duration":10,"manual":false,"result":"SUCCESS"}"""
+
+        def jsonReport = new File(outputDirectory,"result.json")
+        jsonReport.withWriter{ it << serializedTestOutcome }
+
+        when:
+        TestOutcome loadedOutcome = loader.loadReportFrom(jsonReport).get()
+
+        then:
+        loadedOutcome.tags
     }
 }

@@ -26,13 +26,13 @@ import static org.hamcrest.Matchers.is;
 
 public class ReadingTableData extends FluentElementAPITestsBaseClass {
 
-    WebDriver htmlUnitDriver;
+    WebDriver driver;
     StaticSitePage page;
 
     @Before
     public void openStaticPage() {
-        htmlUnitDriver = new WebDriverFacade(PhantomJSDriver.class, new WebDriverFactory());
-        page = new StaticSitePage(htmlUnitDriver, 1);
+        driver = new WebDriverFacade(PhantomJSDriver.class, new WebDriverFactory());
+        page = new StaticSitePage(driver, 1);
         page.setWaitForTimeout(500);
         page.open();
     }
@@ -130,7 +130,6 @@ public class ReadingTableData extends FluentElementAPITestsBaseClass {
 
     @Test
     public void should_read_table_data_from_a_nested_table() {
-        HtmlTable table = new HtmlTable(page.clients_with_nested_cells);
         List<Map<Object, String>> tableRows = HtmlTable.rowsFrom(page.clients_with_nested_cells);
 
         assertThat(tableRows.size(), is(3));
