@@ -1,7 +1,6 @@
 package net.thucydides.maven.plugins;
 
 import net.thucydides.core.reports.ResultChecker;
-import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
