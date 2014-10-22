@@ -46,8 +46,6 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
     private final static String FEATURES_ROOT_DIRECTORY = "features";
     private final static String DEFAULT_RESOURCE_DIRECTORY = "src/test/resources";
     private static final String WORKING_DIR = "user.dir";
-    private static final String DEFAULT_FEATURES_PATH = "src/test/resources/features";
-    private static final String DEFAULT_STORIES_PATH = "src/test/resources/stories";
     private static final List<Requirement> NO_REQUIREMENTS = Lists.newArrayList();
     private static final List<TestTag> NO_TEST_TAGS = Lists.newArrayList();
     public static final String STORY_EXTENSION = "story";
@@ -470,16 +468,19 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
         Optional<Narrative> optionalNarrative = narrativeReader.loadFromStoryFile(storyFile);
         String storyFileName = storyFile.getName();
         String storyName = "";
+        String storyType = "story";
         if(storyFileName.endsWith("." + STORY_EXTENSION)) {
             storyName = storyFile.getName().replace("." + STORY_EXTENSION, "");
+            storyType = "story";
         }
         else if(storyFileName.endsWith("." + FEATURE_EXTENSION)) {
             storyName = storyFile.getName().replace("." + FEATURE_EXTENSION, "");
+            storyType = "feature";
         }
         if (optionalNarrative.isPresent()) {
-            return requirementWithNarrative(storyFile, humanReadableVersionOf(storyName), optionalNarrative.get());
+            return requirementWithNarrative(storyFile, humanReadableVersionOf(storyName), optionalNarrative.get()).withType(storyType);
         } else {
-            return storyNamed(storyName);
+            return storyNamed(storyName).withType(storyType);
         }
     }
 
@@ -493,6 +494,8 @@ public class FileSystemRequirementsTagProvider extends AbstractRequirementsTagPr
         String shortName = humanReadableVersionOf(storyName);
         return Requirement.named(shortName).withType(STORY_EXTENSION).withNarrative(shortName);
     }
+
+
 
     private Requirement requirementWithNarrative(File requirementDirectory, String shortName, Narrative requirementNarrative) {
         String displayName = getTitleFromNarrativeOrDirectoryName(requirementNarrative, shortName);

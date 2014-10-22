@@ -135,6 +135,11 @@ public class Requirement implements Comparable {
         return new Requirement(this.name, this.displayName, this.cardNumber, parent, this.type, this.narrative, children, examples, releaseVersions);
     }
 
+
+    public Requirement withType(String type) {
+        return new Requirement(this.name, this.displayName, this.cardNumber, this.parent, type, this.narrative, children, examples, releaseVersions);
+    }
+
     public Requirement withExample(Example example) {
         List<Example> updatedExamples = Lists.newArrayList(examples);
         updatedExamples.add(example);

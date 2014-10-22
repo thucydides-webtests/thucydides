@@ -73,6 +73,20 @@ class WhenLoadingRequirementsFromADirectoryStructure extends Specification {
             potatoeGrowingCapability.name == "Grow potatoes"
     }
 
+    def "Should support feature files in the requirements directory"() {
+        RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/feature_files");
+        when: "We load requirements with nested capability directories"
+        def capabilities = capabilityProvider.getRequirements()
+        then: "the nested requirements should be recorded as features"
+        def growApples = capabilities.get(0)
+        and:
+        growApples.childrenCount
+        and:
+        growApples.children[0].type == "feature"
+
+    }
+
+
     def "The capability is determined by a configurable convention"() {
         given: "We are using the default requirements provider"
             RequirementsTagProvider capabilityProvider = new FileSystemRequirementsTagProvider("sample-story-directories/capabilities_and_features");

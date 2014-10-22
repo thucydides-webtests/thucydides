@@ -1162,34 +1162,6 @@ public class TestOutcome {
         return tags;
     }
 
-//    private void removeAnyLessSpecificMatchingStoryTags(Set<TestTag> tags, String storyName) {
-//        Set<TestTag> duplicatedTags = Sets.newHashSet();
-//        for(TestTag tag : tags) {
-//            if (tag.getType().equalsIgnoreCase("story") && (isLessSpecific(tag, storyName))) {
-//                duplicatedTags.add(tag);
-//            }
-//        }
-//        tags.removeAll(duplicatedTags);
-//    }
-//
-//    private boolean existsMoreSpecificTag(Set<TestTag> tags, String storyName) {
-//        for(TestTag tag : tags) {
-//            if (tag.getType().equalsIgnoreCase("story") && (!isLessSpecific(tag, storyName))) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-    private boolean isLessSpecific(TestTag tag, String storyName) {
-        return storyName.toLowerCase().endsWith("/" + tag.getName().toLowerCase());
-    }
-
-    private boolean isAStory(TestTag tag) {
-        return (tag.getType().equalsIgnoreCase("story"));
-    }
-
-
     public void setTags(Set<TestTag> tags) {
         this.tags = Sets.newHashSet(tags);
     }
