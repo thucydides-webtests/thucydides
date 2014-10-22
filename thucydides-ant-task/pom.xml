@@ -2,7 +2,7 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>0.9.275</version>
+        <version>0.9.276-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thucydides</groupId>
