@@ -31,11 +31,15 @@ public class JQueryEnabledPage {
         return new JQueryEnabledPage(driver);
     }
 
-    public boolean isJQueryEnabled() {
-        boolean jqueryIntegrationEnabled =
-                    Boolean.valueOf(ThucydidesSystemProperty.THUCYDIDES_JQUERY_INTEGRATION
-                                                            .from(environmentVariables,"true"));
+	public boolean isJQueryIntegrationEnabled(){
+		boolean jqueryIntegrationEnabled =
+				Boolean.valueOf(ThucydidesSystemProperty.THUCYDIDES_JQUERY_INTEGRATION
+						.from(environmentVariables,"true"));
+		return jqueryIntegrationEnabled;
+	}
 
+    public boolean isJQueryAvailable() {
+        boolean jqueryIntegrationEnabled = isJQueryIntegrationEnabled();
         if (jqueryIntegrationEnabled && javascriptIsSupportedIn(driver)) {
             JavascriptExecutorFacade js = new JavascriptExecutorFacade(driver);
             Boolean result = (Boolean) js.executeScript("return (typeof jQuery === 'function')");

@@ -828,7 +828,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
 
     private void enableHighlightingIfRequired() {
         JQueryEnabledPage jQueryEnabledPage = JQueryEnabledPage.withDriver(driver);
-        if (jQueryEnabledPage.isJQueryEnabled()) {
+        if (jQueryEnabledPage.isJQueryIntegrationEnabled() && !jQueryEnabledPage.isJQueryAvailable()) {
             jQueryEnabledPage.injectJQueryPlugins();
         }
     }
