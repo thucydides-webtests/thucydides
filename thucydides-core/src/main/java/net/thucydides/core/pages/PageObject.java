@@ -860,7 +860,7 @@ public abstract class PageObject {
     public void addJQuerySupport() {
         if (pageIsLoaded()) {
             JQueryEnabledPage jQueryEnabledPage = JQueryEnabledPage.withDriver(getDriver());
-            if (!jQueryEnabledPage.isJQueryEnabled()) {
+            if (jQueryEnabledPage.isJQueryIntegrationEnabled() && !jQueryEnabledPage.isJQueryAvailable()) {
                 jQueryEnabledPage.injectJQuery();
                 jQueryEnabledPage.injectJQueryPlugins();
             }

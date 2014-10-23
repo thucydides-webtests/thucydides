@@ -118,7 +118,7 @@ public class WhenAddingJQuerySupportToPageObjects {
     public void should_not_add_the_jquery_library_to_a_page_if_jquery_integration_is_deactivated() {
         environmentVariables.setProperty("thucydides.jquery.integration", "false");
 
-        assertThat(page.isJQueryEnabled(), is(false));
+        assertThat(page.isJQueryIntegrationEnabled(), is(false));
     }
 
 }
