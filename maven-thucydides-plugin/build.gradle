@@ -1,0 +1,23 @@
+dependencies {
+    compile project(':thucydides-core')
+
+    compile "org.apache.maven:maven-plugin-api:2.2.1"
+    compile "org.apache.maven.reporting:maven-reporting-api:2.2.1"
+    compile "org.apache.maven.reporting:maven-reporting-impl:2.2"
+}
+
+task generatePom << {
+    pom {
+        project {
+            inceptionYear '2014'
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+            packaging 'maven-plugin'
+        }
+    }.writeTo("pom.xml")
+}
