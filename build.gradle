@@ -18,7 +18,7 @@ allprojects {
 
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
-    version = '0.9.273-SNAPSHOT'
+    version = '0.9.280-SNAPSHOT'
 
     repositories {
         mavenLocal()
