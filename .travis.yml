@@ -3,4 +3,3 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install phantomjs
   - sudo apt-get install firefox
-install: travis_wait gradle check
