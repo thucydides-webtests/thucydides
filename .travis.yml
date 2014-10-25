@@ -14,9 +14,11 @@ before_install:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
 
-script: gradle clean $TEST_SUITE
+script: gradle clean test integrationTests browserTests
 
 cache:
   directories:
+  - apt
   - $HOME/.m2
   - $HOME/.gradle
+  - $HOME/tools

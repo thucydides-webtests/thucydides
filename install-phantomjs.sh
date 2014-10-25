@@ -1,6 +1,5 @@
-builddir="$PWD"
-mkdir -p $builddir/tools
-if [ ! -f $builddir/tools/phantomjs ]; then
+mkdir -p $HOME/tools
+if [ ! -f $HOME/tools/phantomjs ]; then
 
 	unamestr=`uname`
 	if [[ "$unamestr" == 'Linux' ]]; then
@@ -14,8 +13,9 @@ if [ ! -f $builddir/tools/phantomjs ]; then
 		wget https://bitbucket.org/ariya/phantomjs/downloads/$phantomjs_file -O $phantomjs_file --no-check-certificate
 		unzip $phantomjs_file
 	fi
-	mv $phantomjs_dir/bin/phantomjs $builddir/tools
+	mv $phantomjs_dir/bin/phantomjs $HOME/tools
 	rm -Rf $phantomjs_dir
-	chmod +x $builddir/tools/phantomjs
+	rm -f $phantomjs_file
+	chmod +x $HOME/tools/phantomjs
 fi
-$builddir/tools/phantomjs -v
+$HOME/tools/phantomjs -v
