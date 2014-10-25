@@ -137,19 +137,6 @@ public class WhenTakingLargeScreenshots {
         assertThat(screenshotFile.exists(), is(true));
     }
 
-    @Test
-    public void should_take_screenshots_correctly_in_chrome() throws IOException {
-
-        driver = testSite.open("http://www.google.com", "screenshots/google.html", "chrome");
-
-        Photographer photographer = new Photographer(driver, screenshotDirectory);
-        File screenshotFile = photographer.takeScreenshot().get();
-
-		waitUntilFileIsWritten(screenshotFile);
-
-        assertThat(screenshotFile.exists(), is(true));
-    }
-
 	private void waitUntilFileIsWritten(File screenshotFile) {
         Wait<File> wait = new FluentWait<File>(screenshotFile)
                 .withTimeout(10, TimeUnit.SECONDS)

@@ -12,7 +12,6 @@ public class StaticTestSite {
     private WebDriverFactory factory;
     private ThucydidesWebdriverManager webdriverManager;
     private EnvironmentVariables environmentVariables;
-    private String driverType;
 
     public StaticTestSite() {
         factory = new WebDriverFactory();
@@ -20,8 +19,9 @@ public class StaticTestSite {
         webdriverManager = new ThucydidesWebdriverManager(factory, new SystemPropertiesConfiguration(environmentVariables));
     }
 
-    public WebDriver open() {
-        WebDriver driver; 
+    public WebDriver open(String driverType) {
+        environmentVariables.setProperty("chrome.switches","--homepage=about:blank,--no-first-run");
+        WebDriver driver;
         if (driverType != null) {
             driver = webdriverManager.getWebdriver(driverType);
         } else {
@@ -40,16 +40,15 @@ public class StaticTestSite {
         webdriverManager.closeAllCurrentDrivers();
     }
 
-    public WebDriver open(String driverType) {
-        this.driverType = driverType;
-        environmentVariables.setProperty("webdriver.driver", driverType);
-        environmentVariables.setProperty("chrome.switches","--homepage=about:blank,--no-first-run");
-        return open();
-    }
-
-    public WebDriver open(String remoteUrl, String correspondingLocalFile, String driver) {
-        environmentVariables.setProperty("webdriver.driver", driver);
-        return open(remoteUrl, correspondingLocalFile);
+    public WebDriver open(String remoteUrl, String correspondingLocalFile, String drivername) {
+        WebDriver driver = webdriverManager.getWebdriver(drivername);
+        if (factory.usesSauceLabs()) {
+            driver.get(remoteUrl);
+        } else {
+            File testSite = fileInClasspathCalled(correspondingLocalFile);
+            driver.get("file://" + testSite.getAbsolutePath());
+        }
+        return driver;
     }
 
     public WebDriver open(String remoteUrl, String correspondingLocalFile) {
