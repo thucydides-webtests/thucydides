@@ -46,17 +46,17 @@ allprojects {
         reports.html.destination = "${buildDir}/reports/integration-tests"
     }
 
-    test {
-        afterTest { desc, result ->
-            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
-        }
-    }
-
-    integrationTests {
-        afterTest { desc, result ->
-            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
-        }
-    }
+//    test {
+//        afterTest { desc, result ->
+//            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
+//        }
+//    }
+//
+//    integrationTests {
+//        afterTest { desc, result ->
+//            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
+//        }
+//    }
 
     task browserTests(type: Test) {
         exclude '**/*$*'
