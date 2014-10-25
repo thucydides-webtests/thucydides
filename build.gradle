@@ -35,7 +35,7 @@ allprojects {
         exclude '**/integration/**'
         exclude '**/samples/**'
         exclude '**/*Sample*'
-        maxParallelForks = 4
+        maxParallelForks = 8
     }
 
     task integrationTests(type: Test) {
@@ -46,10 +46,16 @@ allprojects {
         include '**/integration/**'
         reports.junitXml.destination = "${buildDir}/reports/integration-tests"
         reports.html.destination = "${buildDir}/reports/integration-tests"
-//        maxParallelForks = 4
+        maxParallelForks = 2
     }
 
     test {
+        afterTest { desc, result ->
+            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
+        }
+    }
+
+    integrationTests {
         afterTest { desc, result ->
             println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
         }
