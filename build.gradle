@@ -35,7 +35,6 @@ allprojects {
         exclude '**/integration/**'
         exclude '**/samples/**'
         exclude '**/*Sample*'
-        maxParallelForks = 4
     }
 
     task integrationTests(type: Test) {
