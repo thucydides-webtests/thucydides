@@ -15,9 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -101,7 +99,9 @@ public class WhenFormattingForHTML {
 
         String formattedValue = formatter.addLinks("A big story (#MYPROJECT-12,#MYPROJECT-123,#MYPROJECT-1)");
 
-        assertThat(formattedValue, is("A big story (<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-123\">#MYPROJECT-123</a>,<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-1\">#MYPROJECT-1</a>,<a target=\"_blank\" href=\"http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-12\">#MYPROJECT-12</a>)"));
+        assertThat(formattedValue, containsString("http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-1"));
+        assertThat(formattedValue, containsString("http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-12"));
+        assertThat(formattedValue, containsString("http://my.issue.tracker/MYPROJECT/browse/MYPROJECT-123"));
     }
 
     @Test
