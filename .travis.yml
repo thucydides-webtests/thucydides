@@ -1,6 +1,5 @@
 language: java
-
 before_install:
-	- sudo apt-get update
-	- sudo apt-get install phantomjs
+  - sudo apt-get update
+  - sudo apt-get install phantomjs
 
