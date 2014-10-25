@@ -15,9 +15,9 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
 
 env:
-  - TEST_SUITE=units
-  - TEST_SUITE=integration
-  - TEST_SUITE=browser
+  - TEST_SUITE=test
+  - TEST_SUITE=integrationTests
+  - TEST_SUITE=browserTests
 
 script: gradle clean $TEST_SUITE
 
