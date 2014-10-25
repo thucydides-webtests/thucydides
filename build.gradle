@@ -35,7 +35,7 @@ allprojects {
         exclude '**/integration/**'
         exclude '**/samples/**'
         exclude '**/*Sample*'
-        maxParallelForks = 8
+        maxParallelForks = 4
     }
 
     task integrationTests(type: Test) {
@@ -46,7 +46,6 @@ allprojects {
         include '**/integration/**'
         reports.junitXml.destination = "${buildDir}/reports/integration-tests"
         reports.html.destination = "${buildDir}/reports/integration-tests"
-        maxParallelForks = 2
     }
 
     test {
