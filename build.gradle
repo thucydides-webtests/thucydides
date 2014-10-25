@@ -65,7 +65,7 @@ allprojects {
         exclude '**/samples/**'
         exclude '**/*Sample*'
         exclude '**/*Base'
-        include '**/integration/browsers**'
+        include '**/integration/browsers/**'
     }
 
     integrationTests.dependsOn test

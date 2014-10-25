@@ -14,11 +14,6 @@ before_install:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
 
-env:
-  - TEST_SUITE=test
-  - TEST_SUITE=integrationTests
-  - TEST_SUITE=browserTests
-
 script: gradle clean $TEST_SUITE
 
 cache:
