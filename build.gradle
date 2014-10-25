@@ -49,6 +49,12 @@ allprojects {
 //        maxParallelForks = 4
     }
 
+    test {
+        afterTest { desc, result ->
+            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
+        }
+    }
+
     task browserTests(type: Test) {
         exclude '**/*$*'
         exclude '**/samples/**'
