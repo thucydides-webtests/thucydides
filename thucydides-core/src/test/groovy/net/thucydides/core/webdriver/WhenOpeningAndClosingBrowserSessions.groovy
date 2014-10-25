@@ -60,7 +60,7 @@ class WhenOpeningAndClosingBrowserSessions extends Specification {
 
     def "should open a new browser when a page is opened"() {
         given:
-            def webdriver = webdriverManager.getWebdriver()
+            def webdriver = webdriverManager.getWebdriver("htmlunit")
         when:
             webdriver.get("about:blank")
         then:
@@ -69,7 +69,7 @@ class WhenOpeningAndClosingBrowserSessions extends Specification {
 
     def "should shutdown browser when requested"() {
         given:
-            def webdriver = webdriverManager.getWebdriver()
+            def webdriver = webdriverManager.getWebdriver("htmlunit")
         when:
             webdriver.get("about:blank")
             webdriver.quit()
@@ -79,7 +79,7 @@ class WhenOpeningAndClosingBrowserSessions extends Specification {
 
     def "should open a new browser after shutdown browser when requested"() {
         given:
-            def webdriver = webdriverManager.getWebdriver()
+            def webdriver = webdriverManager.getWebdriver("htmlunit")
         when:
             webdriver.get("about:blank")
             webdriver.quit()
@@ -90,7 +90,7 @@ class WhenOpeningAndClosingBrowserSessions extends Specification {
 
     def "quitting a shut browser should have no effect"() {
         given:
-            def webdriver = webdriverManager.getWebdriver()
+            def webdriver = webdriverManager.getWebdriver("htmlunit")
             webdriver.get("about:blank")
             webdriver.quit()
         when:
@@ -101,7 +101,7 @@ class WhenOpeningAndClosingBrowserSessions extends Specification {
 
     def "resetting the proxy should close the current browser"() {
         given:
-            def webdriver = webdriverManager.getWebdriver()
+            def webdriver = webdriverManager.getWebdriver("htmlunit")
             webdriver.get("about:blank")
         when:
             webdriver.reset()
