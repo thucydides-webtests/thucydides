@@ -16,10 +16,7 @@ import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportService;
 import net.thucydides.core.statistics.TestCount;
-import net.thucydides.core.steps.StepAnnotations;
-import net.thucydides.core.steps.StepData;
-import net.thucydides.core.steps.StepEventBus;
-import net.thucydides.core.steps.StepFactory;
+import net.thucydides.core.steps.*;
 import net.thucydides.core.tags.TagScanner;
 import net.thucydides.core.webdriver.*;
 import net.thucydides.junit.listeners.JUnitStepListener;
@@ -67,6 +64,9 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Special listener that keeps track of test step execution and results.
      */
     private JUnitStepListener stepListener;
+
+    private PageObjectDependencyInjector dependencyInjector;
+
     /**
      * Retrieve the runner getConfiguration().from an external source.
      */
@@ -318,6 +318,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     private void initPagesObjectUsing(final WebDriver driver) {
         pages = new Pages(driver, getConfiguration());
+        dependencyInjector = new PageObjectDependencyInjector(pages);
     }
 
     protected JUnitStepListener initListenersUsing(final Pages pageFactory) {
@@ -531,6 +532,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     protected void injectDriverInto(final Object testCase,
                                     final FrameworkMethod method) {
         TestCaseAnnotations.forTestCase(testCase).injectDriver(driverFor(method));
+        dependencyInjector.injectDependenciesInto(testCase);
     }
 
     protected WebDriver driverFor(final FrameworkMethod method) {

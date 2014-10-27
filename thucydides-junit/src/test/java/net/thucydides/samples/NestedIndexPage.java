@@ -9,17 +9,15 @@ import org.openqa.selenium.WebElement;
 import java.util.Set;
 
 @DefaultUrl("classpath:static-site/index.html")
-public class IndexPage extends PageObject {
-
-    public NestedIndexPage nestedIndexPage;
+public class NestedIndexPage extends PageObject {
 
     public WebElement multiselect;
 
     public WebElement checkbox;
-    
+
     public WebElement textfield;
 
-    public IndexPage(WebDriver driver) {
+    public NestedIndexPage(WebDriver driver) {
         super(driver);
     }
     
