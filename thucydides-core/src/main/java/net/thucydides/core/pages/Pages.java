@@ -3,6 +3,7 @@ package net.thucydides.core.pages;
 import com.google.common.base.Optional;
 import net.thucydides.core.annotations.Fields;
 import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.steps.PageObjectDependencyInjector;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebdriverProxyFactory;
@@ -43,8 +44,11 @@ public class Pages implements Serializable {
 
     private transient boolean usePreviousPage = false;
 
+    private PageObjectDependencyInjector dependencyInjector;
+
     public Pages(Configuration configuration) {
         this.configuration = configuration;
+        this.dependencyInjector = new PageObjectDependencyInjector(this);
         proxyFactory = WebdriverProxyFactory.getFactory();
     }
 
@@ -207,6 +211,7 @@ public class Pages implements Serializable {
             if (hasPageFactoryProperty(currentPage)) {
                 setPageFactory(currentPage);
             }
+            dependencyInjector.injectDependenciesInto(currentPage);
 
         } catch (NoSuchMethodException e) {
             LOGGER.info("This page object does not appear have a constructor that takes a WebDriver parameter: {} ({})",

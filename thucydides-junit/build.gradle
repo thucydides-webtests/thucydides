@@ -1,6 +1,11 @@
 dependencies {
     compile project(':thucydides-core')
 
+    compile ("org.seleniumhq.selenium:selenium-server:2.43.1") {
+        exclude group: 'cglib'
+        exclude module: 'guava'
+        exclude module: 'commons-io'
+    }
     compile "org.springframework:spring-core:3.2.3.RELEASE" // optional
     compile "org.springframework:spring-beans:3.2.3.RELEASE" // optional
     compile "org.springframework:spring-test:3.2.3.RELEASE" // optional
