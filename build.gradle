@@ -18,7 +18,6 @@ allprojects {
 
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
-    group = 'net.thucydides'
     version = '0.9.280-SNAPSHOT'
 
     repositories {
@@ -27,7 +26,7 @@ allprojects {
     }
 
     task wrapper(type: Wrapper) {
-        gradleVersion = '2.1'
+        gradleVersion = '1.11'
     }
 
     test {
@@ -35,7 +34,6 @@ allprojects {
         exclude '**/integration/**'
         exclude '**/samples/**'
         exclude '**/*Sample*'
-        jvmArgs '-XX:MaxPermSize=256m'
     }
 
     task integrationTests(type: Test) {
@@ -46,7 +44,6 @@ allprojects {
         include '**/integration/**'
         reports.junitXml.destination = "${buildDir}/reports/integration-tests"
         reports.html.destination = "${buildDir}/reports/integration-tests"
-        jvmArgs '-XX:MaxPermSize=256m'
     }
 
 //    test {
@@ -76,13 +73,6 @@ allprojects {
     dependencies {
         compile "com.google.inject:guice:3.0"
         compile "org.slf4j:slf4j-api:1.6.4"
-        compile "com.google.guava:guava:18.0"
-        compile "joda-time:joda-time:2.0"
-        compile ("com.googlecode.lambdaj:lambdaj:2.3.3") {
-            exclude group: 'org.hamcrest'
-            exclude group: 'cglib'
-        }
-
         testCompile "ch.qos.logback:logback-classic:1.0.13"
         testCompile "junit:junit:4.11"
         testCompile "org.hamcrest:hamcrest-integration:1.3"

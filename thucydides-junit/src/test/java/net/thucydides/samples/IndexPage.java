@@ -11,8 +11,6 @@ import java.util.Set;
 @DefaultUrl("classpath:static-site/index.html")
 public class IndexPage extends PageObject {
 
-    public NestedIndexPage nestedIndexPage;
-
     public WebElement multiselect;
 
     public WebElement checkbox;

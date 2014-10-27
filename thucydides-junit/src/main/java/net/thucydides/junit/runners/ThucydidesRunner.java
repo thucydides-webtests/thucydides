@@ -6,12 +6,12 @@ import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.annotations.ManagedWebDriverAnnotatedField;
 import net.thucydides.core.annotations.Pending;
+import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.TestCaseAnnotations;
 import net.thucydides.core.batches.BatchManager;
 import net.thucydides.core.batches.BatchManagerProvider;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.steps.PageObjectDependencyInjector;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.ReportService;
@@ -67,9 +67,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * Special listener that keeps track of test step execution and results.
      */
     private JUnitStepListener stepListener;
-
-    private PageObjectDependencyInjector dependencyInjector;
-
     /**
      * Retrieve the runner getConfiguration().from an external source.
      */
@@ -321,7 +318,6 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     private void initPagesObjectUsing(final WebDriver driver) {
         pages = new Pages(driver, getConfiguration());
-        dependencyInjector = new PageObjectDependencyInjector(pages);
     }
 
     protected JUnitStepListener initListenersUsing(final Pages pageFactory) {
@@ -517,7 +513,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
             initStepFactoryUsing(getPages());
         }
 
-        injectDependenciesInto(test);
+        injectScenarioStepsInto(test);
 
         useStepFactoryForDataDrivenSteps();
 
@@ -550,9 +546,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     /**
      * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
      */
-    protected void injectDependenciesInto(final Object testCase) {
+    protected void injectScenarioStepsInto(final Object testCase) {
         StepAnnotations.injectScenarioStepsInto(testCase, stepFactory);
-        dependencyInjector.injectDependenciesInto(testCase);
     }
 
     /**
