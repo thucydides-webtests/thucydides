@@ -1,7 +1,12 @@
 package net.thucydides.core.util;
 
+import ch.lambdaj.Lambda;
+import ch.lambdaj.function.convert.DefaultStringConverter;
+import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.Properties;
 
 public class MockEnvironmentVariables implements EnvironmentVariables {
@@ -104,6 +109,11 @@ public class MockEnvironmentVariables implements EnvironmentVariables {
 
     public EnvironmentVariables copy() {
         return new MockEnvironmentVariables(properties, values);
+    }
+
+    @Override
+    public List<String> getKeys() {
+        return Lambda.convert(properties.keySet(), new DefaultStringConverter());
     }
 
     public void setValue(String name, String value) {

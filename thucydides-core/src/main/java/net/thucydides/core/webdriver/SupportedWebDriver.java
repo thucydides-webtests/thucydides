@@ -2,6 +2,7 @@ package net.thucydides.core.webdriver;
 
 import com.google.common.base.Joiner;
 import com.opera.core.systems.OperaDriver;
+import io.appium.java_client.AppiumDriver;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -56,6 +57,10 @@ public enum SupportedWebDriver {
      */
     SAFARI(SafariDriver.class),
 
+    /**
+     * Appium
+     */
+    APPIUM(AppiumDriver.class),
     /**
      * A user-provided driver
      */

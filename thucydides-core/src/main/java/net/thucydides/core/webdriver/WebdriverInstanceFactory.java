@@ -1,5 +1,8 @@
 package net.thucydides.core.webdriver;
 
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -36,6 +39,13 @@ public class WebdriverInstanceFactory {
         return new ChromeDriver(capabilities);
     }
 
+    public WebDriver newAppiumDriver(URL hub, Capabilities capabilities, MobilePlatform platform) {
+        switch (platform) {
+            case ANDROID: return new AndroidDriver(hub, capabilities);
+            case IOS: return new IOSDriver(hub, capabilities);
+        }
+        throw new UnsupportedDriverException(platform.name());
+    }
     public WebDriver newSafariDriver(Capabilities capabilities) {
         return new SafariDriver(capabilities);
     }
