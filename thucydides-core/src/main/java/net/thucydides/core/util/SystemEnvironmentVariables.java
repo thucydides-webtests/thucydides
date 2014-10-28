@@ -1,11 +1,12 @@
 package net.thucydides.core.util;
 
+import ch.lambdaj.Lambda;
+import ch.lambdaj.function.convert.DefaultStringConverter;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Return system environment variable values.
@@ -28,6 +29,9 @@ public class SystemEnvironmentVariables implements EnvironmentVariables {
         return getValue(name, null);
     }
 
+    public List<String> getKeys() {
+        return Lambda.convert(systemProperties.keySet(), new DefaultStringConverter());
+    }
     
     public String getValue(Enum<?> property) {
         return getValue(property.toString());

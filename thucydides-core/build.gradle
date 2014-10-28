@@ -15,16 +15,16 @@ dependencies {
     compile "commons-codec:commons-codec:1.9"
     compile "commons-io:commons-io:2.4"
 
-    compile ("com.opera:operadriver:1.5") {
-        exclude group: 'org.seleniumhq.selenium'
-        exclude module: 'guava'
-    }
-
     compile ("org.seleniumhq.selenium:selenium-server:2.43.1") {
         exclude group: 'cglib'
         exclude module: 'guava'
         exclude module: 'commons-io'
     }
+    compile ("com.opera:operadriver:1.5") {
+        exclude group: 'org.seleniumhq.selenium'
+        exclude module: 'guava'
+    }
+    compile 'io.appium:java-client:2.0.0'
 
     compile("com.github.detro.ghostdriver:phantomjsdriver:1.1.0") {
         exclude group: 'org.seleniumhq.selenium'

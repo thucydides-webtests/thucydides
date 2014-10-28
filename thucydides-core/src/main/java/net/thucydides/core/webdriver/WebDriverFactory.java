@@ -1,6 +1,7 @@
 package net.thucydides.core.webdriver;
 
 import com.google.common.base.Preconditions;
+import io.appium.java_client.AppiumDriver;
 import net.thucydides.core.Thucydides;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.fixtureservices.FixtureException;
@@ -11,6 +12,7 @@ import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.steps.FilePathParser;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
+import net.thucydides.core.webdriver.appium.AppiumConfiguration;
 import net.thucydides.core.webdriver.chrome.OptionsSplitter;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
 import net.thucydides.core.webdriver.phantomjs.PhantomJSCapabilityEnhancer;
@@ -163,8 +165,10 @@ public class WebDriverFactory {
     protected synchronized WebDriver newWebdriverInstance(final Class<? extends WebDriver> driverClass) {
         try {
             WebDriver driver;
-            if (isARemoteDriver(driverClass) || shouldUseARemoteDriver() || saucelabsUrlIsDefined()) {
+            if (saucelabsUrlIsDefined() || shouldUseARemoteDriver()) {
                 driver = newRemoteDriver();
+            } else if (isAnAppiumDriver(driverClass)) {
+                driver = appiumDriver();
             } else if (isAFirefoxDriver(driverClass)) {
                 driver = firefoxDriver();
             } else if (isAnHtmlUnitDriver(driverClass)) {
@@ -178,6 +182,8 @@ public class WebDriverFactory {
                 driver = safariDriver();
             } else if (isAnInternetExplorerDriver(driverClass)) {
                 driver = internetExplorerDriver();
+            } else if (isARemoteDriver(driverClass)) {
+                driver = newRemoteDriver();
             } else if (isAProvidedDriver(driverClass)) {
                 driver = providedDriver();
             } else {
@@ -462,6 +468,10 @@ public class WebDriverFactory {
                 capabilities = DesiredCapabilities.internetExplorer();
                 break;
 
+            case APPIUM:
+                capabilities = appiumCapabilities();
+                break;
+
             default:
                 capabilities = new DesiredCapabilities();
                 capabilities.setJavascriptEnabled(true);
@@ -542,7 +552,24 @@ public class WebDriverFactory {
         DesiredCapabilities capabilities = chromeCapabilities();
         updateChromePathIfSpecifiedIn(environmentVariables);
         return webdriverInstanceFactory.newChromeDriver(enhancedCapabilities(capabilities));
+    }
 
+    private WebDriver appiumDriver() {
+        return webdriverInstanceFactory.newAppiumDriver(appiumUrl(),
+                                                        enhancedCapabilities(appiumCapabilities()),
+                                                        appiumTargetPlatform());
+    }
+
+    private MobilePlatform appiumTargetPlatform() {
+        return AppiumConfiguration.from(environmentVariables).getTargetPlatform();
+    }
+
+    private URL appiumUrl() {
+        return AppiumConfiguration.from(environmentVariables).getUrl();
+    }
+
+    private DesiredCapabilities appiumCapabilities() {
+        return AppiumConfiguration.from(environmentVariables).getCapabilities();
     }
 
     private void updateChromePathIfSpecifiedIn(EnvironmentVariables environmentVariables) {
@@ -647,6 +674,11 @@ public class WebDriverFactory {
     private boolean isAnInternetExplorerDriver(Class<? extends WebDriver> driverClass) {
         return (InternetExplorerDriver.class.isAssignableFrom(driverClass));
     }
+
+    private boolean isAnAppiumDriver(Class<? extends WebDriver> driverClass) {
+        return (AppiumDriver.class.isAssignableFrom(driverClass));
+    }
+
 
     private boolean usesFirefox(WebDriver driver) {
         return (FirefoxDriver.class.isAssignableFrom(getDriverClass(driver)));
