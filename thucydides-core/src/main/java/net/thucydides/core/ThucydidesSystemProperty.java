@@ -382,6 +382,76 @@ public enum ThucydidesSystemProperty {
     SAUCELABS_RECORD_SCREENSHOTS,
 
     /**
+     * BrowserStack Hub URL if running the tests on BrowserStack Cloud
+     */
+    BROWSERSTACK_URL,
+
+    BROWSERSTACK_OS,
+    
+    BROWSERSTACK_OS_VERSION,
+
+    BROWSERSTACK_BROWSER,
+
+    BROWSERSTACK_BROWSER_VERSION,
+
+    /**
+     * BrowserStack mobile device name on which tests should be run
+     */
+    BROWSERSTACK_DEVICE,
+
+    /**
+     * Set the screen orientation of BrowserStack mobile device
+     */
+    BROWSERSTACK_DEVICE_ORIENTATION,
+
+    /**
+     * Specify a name for a logical group of builds on BrowserStack
+     */
+    BROWSERSTACK_PROJECT,
+
+    /**
+     * Specify a name for a logical group of tests on BrowserStack
+     */
+    BROWSERSTACK_BUILD,
+
+    /**
+     * Specify an identifier for the test run on BrowserStack
+     */
+    BROWSERSTACK_SESSION_NAME,
+
+    /**
+     * For Testing against internal/local servers on BrowserStack
+     */
+    BROWSERSTACK_LOCAL,
+
+    /**
+     * Generates screenshots at various steps in tests on BrowserStack
+     */
+    BROWSERSTACK_DEBUG,
+
+    /**
+     * Sets resolution of VM on BrowserStack
+     */
+    BROWSERSTACK_RESOLUTION,
+
+    BROWSERSTACK_SELENIUM_VERSION,
+
+    /**
+     * Disable flash on Internet Explorer on BrowserStack
+     */
+    BROWSERSTACK_IE_NO_FLASH,
+
+    /**
+     * Specify the Internet Explorer webdriver version on BrowserStack
+     */
+    BROWSERSTACK_IE_DRIVER,
+
+    /**
+     *  Enable the popup blocker in Internet Explorer on BrowserStack
+     */
+    BROWSERSTACK_IE_ENABLE_POPUPS,
+
+    /**
      * Timeout (in seconds) for retrying file I/O.
      * Used in net.thucydides.core.resources.FileResources.copyResourceTo().
      * Sometimes, file I/O fails on Windows machine due to the way Windows handles memory-mapped

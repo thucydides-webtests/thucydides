@@ -11,6 +11,8 @@ import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.steps.FilePathParser;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.NameConverter;
+import net.thucydides.core.webdriver.capabilities.BrowserStackRemoteDriverCapabilities;
+import net.thucydides.core.webdriver.capabilities.SauceRemoteDriverCapabilities;
 import net.thucydides.core.webdriver.chrome.OptionsSplitter;
 import net.thucydides.core.webdriver.firefox.FirefoxProfileEnhancer;
 import net.thucydides.core.webdriver.phantomjs.PhantomJSCapabilityEnhancer;
@@ -39,10 +41,8 @@ import org.openqa.selenium.safari.SafariDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -77,6 +77,8 @@ public class WebDriverFactory {
     private final FirefoxProfileEnhancer firefoxProfileEnhancer;
     private final FixtureProviderService fixtureProviderService;
     private final ElementProxyCreator proxyCreator;
+    private final BrowserStackRemoteDriverCapabilities browserStackRemoteDriverCapabilities;
+    private final SauceRemoteDriverCapabilities sauceRemoteDriverCapabilities;
 
     private final Integer EXTRA_TIME_TO_TAKE_SCREENSHOTS = 180;
 
@@ -121,6 +123,8 @@ public class WebDriverFactory {
         this.firefoxProfileEnhancer = firefoxProfileEnhancer;
         this.fixtureProviderService = fixtureProviderService;
         this.proxyCreator = proxyCreator;
+        this.browserStackRemoteDriverCapabilities = new BrowserStackRemoteDriverCapabilities(environmentVariables);
+        this.sauceRemoteDriverCapabilities = new SauceRemoteDriverCapabilities(environmentVariables);
     }
 
     protected ProfilesIni getAllProfiles() {
@@ -149,9 +153,13 @@ public class WebDriverFactory {
     }
 
     public boolean usesSauceLabs() {
-        return StringUtils.isNotEmpty(ThucydidesSystemProperty.SAUCELABS_URL.from(environmentVariables));
+        return StringUtils.isNotEmpty(sauceRemoteDriverCapabilities.getUrl());
     }
-
+    
+    public boolean usesBrowserStack() {
+        return StringUtils.isNotEmpty(browserStackRemoteDriverCapabilities.getUrl());
+    }
+    
     /**
      * This method is synchronized because multiple webdriver instances can be created in parallel.
      * However, they may use common system resources such as ports, so may potentially interfere
@@ -163,8 +171,8 @@ public class WebDriverFactory {
     protected synchronized WebDriver newWebdriverInstance(final Class<? extends WebDriver> driverClass) {
         try {
             WebDriver driver;
-            if (isARemoteDriver(driverClass) || shouldUseARemoteDriver() || saucelabsUrlIsDefined()) {
-                driver = newRemoteDriver();
+            if (isARemoteDriver(driverClass) || shouldUseARemoteDriver() || saucelabsUrlIsDefined() || browserStackUrlIsDefined()) {
+            	driver = newRemoteDriver();
             } else if (isAFirefoxDriver(driverClass)) {
                 driver = firefoxDriver();
             } else if (isAnHtmlUnitDriver(driverClass)) {
@@ -258,9 +266,12 @@ public class WebDriverFactory {
     }
 
     private WebDriver  newRemoteDriver() throws MalformedURLException {
+
         WebDriver driver = null;
         if (saucelabsUrlIsDefined()) {
             driver = buildSaucelabsDriver();
+        } else if (browserStackUrlIsDefined()){
+        	driver = buildBrowserStackDriver();
         } else {
             driver = buildRemoteDriver();
         }
@@ -274,11 +285,15 @@ public class WebDriverFactory {
     }
 
     private boolean saucelabsUrlIsDefined() {
-        return ThucydidesSystemProperty.SAUCELABS_URL.isDefinedIn(environmentVariables);
+        return StringUtils.isNotEmpty(sauceRemoteDriverCapabilities.getUrl());
     }
 
+    private boolean browserStackUrlIsDefined() {
+        return StringUtils.isNotEmpty(browserStackRemoteDriverCapabilities.getUrl());
+    }
+    
     private WebDriver buildSaucelabsDriver() throws MalformedURLException {
-        String saucelabsUrl = ThucydidesSystemProperty.SAUCELABS_URL.from(environmentVariables);
+        String saucelabsUrl = sauceRemoteDriverCapabilities.getUrl();
         WebDriver driver = webdriverInstanceFactory.newRemoteDriver(new URL(saucelabsUrl), findSaucelabsCapabilities());
 
         if (isNotEmpty(ThucydidesSystemProperty.SAUCELABS_IMPLICIT_TIMEOUT.from(environmentVariables))) {
@@ -288,6 +303,13 @@ public class WebDriverFactory {
         }
         return driver;
     }
+    
+    private WebDriver buildBrowserStackDriver() throws MalformedURLException{
+    	String browserStackUrl = browserStackRemoteDriverCapabilities.getUrl();
+        WebDriver driver = webdriverInstanceFactory.newRemoteDriver(new URL(browserStackUrl), findbrowserStackCapabilities());
+        return driver;
+    }
+    
 
     public static String getDriverFrom(EnvironmentVariables environmentVariables, String defaultDriver) {
         String driver = getDriverFrom(environmentVariables);
@@ -307,95 +329,17 @@ public class WebDriverFactory {
         String driver = getDriverFrom(environmentVariables);
         DesiredCapabilities capabilities = capabilitiesForDriver(driver);
 
-        configureBrowserVersion(capabilities);
-
-        configureTargetPlatform(capabilities);
-
-        configureTestName(capabilities);
-
-        capabilities.setJavascriptEnabled(true);
-
-        return capabilities;
+        return sauceRemoteDriverCapabilities.getCapabilities(capabilities);
     }
+    
+    
+    private Capabilities findbrowserStackCapabilities() {
 
-    private void configureBrowserVersion(DesiredCapabilities capabilities) {
-        String driverVersion = ThucydidesSystemProperty.SAUCELABS_DRIVER_VERSION.from(environmentVariables);
-        if (isNotEmpty(driverVersion)) {
-            capabilities.setCapability("version", driverVersion);
-        }
-    }
+    	String driver = getDriverFrom(environmentVariables);
+    	DesiredCapabilities capabilities = capabilitiesForDriver(driver);
+    	
+        return browserStackRemoteDriverCapabilities.getCapabilities(capabilities);
 
-    private void configureTargetPlatform(DesiredCapabilities capabilities) {
-        String platformValue = ThucydidesSystemProperty.SAUCELABS_TARGET_PLATFORM.from(environmentVariables);
-        if (isNotEmpty(platformValue)) {
-            capabilities.setCapability("platform", platformFrom(platformValue));
-        }
-        if (capabilities.getBrowserName().equals("safari"))
-        {
-            setAppropriateSaucelabsPlatformVersionForSafari(capabilities);
-        }
-    }
-
-    private void setAppropriateSaucelabsPlatformVersionForSafari(DesiredCapabilities capabilities)
-    {
-        if (ThucydidesSystemProperty.SAUCELABS_DRIVER_VERSION.from(environmentVariables).equalsIgnoreCase("mac"))
-        {
-            String browserVersion = ThucydidesSystemProperty.SAUCELABS_DRIVER_VERSION.from(environmentVariables);
-            if (browserVersion.equals("5"))
-            {
-                capabilities.setCapability("platform", "OS X 10.6");
-            }
-            else if (browserVersion.equals("6"))
-            {
-                capabilities.setCapability("platform", "OS X 10.8");
-            }
-            else if (browserVersion.equals("7"))
-            {
-                capabilities.setCapability("platform", "OS X 10.9");
-            }
-        }
-    }
-
-    private void configureTestName(DesiredCapabilities capabilities) {
-        String testName = ThucydidesSystemProperty.SAUCELABS_TEST_NAME.from(environmentVariables);
-        if (isNotEmpty(testName)) {
-            capabilities.setCapability("name", testName);
-        } else {
-            String guessedTestName = bestGuessOfTestName();
-            if (guessedTestName != null) {
-                capabilities.setCapability("name", bestGuessOfTestName());
-            }
-        }
-    }
-
-    private String bestGuessOfTestName() {
-        for (StackTraceElement elt : Thread.currentThread().getStackTrace()) {
-            try {
-                Class callingClass = Class.forName(elt.getClassName());
-                Method callingMethod = callingClass.getMethod(elt.getMethodName());
-                if (isATestMethod(callingMethod)) {
-                    return NameConverter.humanize(elt.getMethodName());
-                } else if (isASetupMethod(callingMethod)) {
-                    return NameConverter.humanize(callingClass.getSimpleName());
-                }
-            } catch (ClassNotFoundException e) {
-            } catch (NoSuchMethodException e) {
-            }
-        }
-        return null;
-    }
-
-    private boolean isATestMethod(Method callingMethod) {
-        return callingMethod.getAnnotation(Test.class) != null;
-    }
-
-    private boolean isASetupMethod(Method callingMethod) {
-        return (callingMethod.getAnnotation(Before.class) != null)
-                || (callingMethod.getAnnotation(BeforeClass.class) != null);
-    }
-
-    private Platform platformFrom(String platformValue) {
-        return Platform.valueOf(platformValue.toUpperCase());
     }
 
     private Capabilities buildRemoteCapabilities() {
