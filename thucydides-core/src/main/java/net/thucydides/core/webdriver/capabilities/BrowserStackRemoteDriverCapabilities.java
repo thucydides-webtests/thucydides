@@ -4,8 +4,11 @@ import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import java.net.URL;
-
+/**
+ * Provides BrowserStack specific capabilities
+ *
+ * @author Imran Khan
+ */
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class BrowserStackRemoteDriverCapabilities implements RemoteDriverCapabilities {
