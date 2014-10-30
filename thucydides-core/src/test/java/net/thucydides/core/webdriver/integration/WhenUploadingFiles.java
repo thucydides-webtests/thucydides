@@ -3,6 +3,7 @@ package net.thucydides.core.webdriver.integration;
 import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.pages.components.FileToUpload;
+import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -11,15 +12,18 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.FindBy;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Matchers.isNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -37,6 +41,15 @@ public class WhenUploadingFiles {
         public void uploadFile(String filename) {
             upload(filename).to(uploadField);
         }
+
+        public void uploadFileData(String data) throws IOException {
+            uploadData(data).to(uploadField);
+        }
+
+        public void uploadFileData(byte[] data) throws IOException {
+            uploadData(data).to(uploadField);
+        }
+
     }
 
     private static WebDriver driver;
@@ -78,6 +91,25 @@ public class WhenUploadingFiles {
         uploadPage.uploadFile("/report-resources/css/core.css");
 
         assertThat(uploadPage.uploadField.getAttribute("value"), containsString("core.css"));
+
+    }
+
+    @Test
+    public void should_upload_a_file_data_in_string_form() throws IOException, URISyntaxException {
+        UploadPage uploadPage = pageFactory.get(UploadPage.class);
+
+        uploadPage.uploadFileData("data data data");
+
+        assertThat(uploadPage.uploadField.getAttribute("value"), not(isEmptyString()));
+    }
+
+    @Test
+    public void should_upload_a_byte_array() throws IOException {
+        UploadPage uploadPage = pageFactory.get(UploadPage.class);
+
+        uploadPage.uploadFileData("data data data".getBytes());
+
+        assertThat(uploadPage.uploadField.getAttribute("value"), not(isEmptyString()));
 
     }
 

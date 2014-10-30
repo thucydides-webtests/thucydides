@@ -116,10 +116,6 @@ public class WhenManagingWebdriverInstances {
         assertThat(config.getOutputDirectory().getName(), is("out"));
     }
 
-    private String staticSiteUrl() {
-        return "file://" + Thread.currentThread().getContextClassLoader().getResource("static-site/index.html").toString();
-    }
-
 
     @Test
     public void should_close_drivers_in_current_thread() {

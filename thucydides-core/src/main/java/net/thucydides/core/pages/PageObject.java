@@ -40,10 +40,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -144,6 +148,18 @@ public abstract class PageObject {
 
     public FileToUpload upload(final String filename) {
         return new FileToUpload(filename).useRemoteDriver(isDefinedRemoteUrl());
+    }
+
+    public FileToUpload uploadData(String data) throws IOException {
+        Path datafile = Files.createTempFile("upload","data");
+        Files.write(datafile, data.getBytes());
+        return new FileToUpload(datafile.toAbsolutePath().toString()).useRemoteDriver(isDefinedRemoteUrl());
+    }
+
+    public FileToUpload uploadData(byte[] data) throws IOException {
+        Path datafile = Files.createTempFile("upload","data");
+        Files.write(datafile, data);
+        return new FileToUpload(datafile.toAbsolutePath().toString()).useRemoteDriver(isDefinedRemoteUrl());
     }
 
     private boolean isDefinedRemoteUrl() {
