@@ -898,14 +898,14 @@ public abstract class PageObject {
     }
 
     public ThucydidesFluentWait<WebDriver> waitForWithRefresh() {
-        return new FluentWaitWithRefresh<WebDriver>(driver, webdriverClock, sleeper)
+        return new FluentWaitWithRefresh<>(driver, webdriverClock, sleeper)
                 .withTimeout(waitForTimeoutInMilliseconds, TimeUnit.MILLISECONDS)
                 .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
                 .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
     }
 
     public ThucydidesFluentWait<WebDriver> waitForCondition() {
-        return new NormalFluentWait<WebDriver>(driver, webdriverClock, sleeper)
+        return new NormalFluentWait<>(driver, webdriverClock, sleeper)
                 .withTimeout(waitForTimeoutInMilliseconds, TimeUnit.MILLISECONDS)
                 .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
                 .ignoring(NoSuchElementException.class, NoSuchFrameException.class);

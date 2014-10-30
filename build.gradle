@@ -51,13 +51,23 @@ allprojects {
 
     test {
         afterTest { desc, result ->
-            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
+            println "  - Test ${desc.name} [${desc.className}]"
+            if (result.resultType == TestResult.ResultType.FAILURE) {
+                println "TEST FAILURE"
+                println result.exception.message
+                println result.exception.stacktrace
+            }
         }
     }
 
     integrationTests {
         afterTest { desc, result ->
-            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
+            println "  - Test ${desc.name} [${desc.className}]"
+            if (result.resultType == TestResult.ResultType.FAILURE) {
+                println "TEST FAILURE"
+                println result.exception.message
+                println result.exception.stacktrace
+            }
         }
     }
 
