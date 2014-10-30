@@ -22,8 +22,12 @@ public class ThucydidesStatement extends Statement {
     public void evaluate() throws Throwable {
         try {
             statement.evaluate();
-        } catch (AssumptionViolatedException e) {
-            StepEventBus.getEventBus().assumptionViolated(e.getMessage());
+        } catch (AssumptionViolatedException assumptionViolated) {
+            StepEventBus.getEventBus().assumptionViolated(assumptionViolated.getMessage());
+        } catch (AssertionError assertionError) {
+            if (!StepEventBus.getEventBus().aStepInTheCurrentTestHasFailed()) {
+                throw assertionError;
+            }
         }
         checkForStepFailures();
         checkForAssumptionViolations();

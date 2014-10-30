@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>thucydides</groupId>
   <artifactId>maven-thucydides-plugin</artifactId>
-  <version>0.9.273-SNAPSHOT</version>
+  <version>0.9.276-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <inceptionYear>2014</inceptionYear>
   <licenses>
@@ -42,7 +42,7 @@
     <dependency>
       <groupId>thucydides</groupId>
       <artifactId>thucydides-core</artifactId>
-      <version>0.9.273-SNAPSHOT</version>
+      <version>0.9.276-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
