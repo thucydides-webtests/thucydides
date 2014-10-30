@@ -10,6 +10,7 @@ allprojects {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
     apply plugin: 'maven'
+    apply plugin: 'maven-publish'
 
 //    apply plugin: 'maven-publish'
 //    apply plugin: 'com.jfrog.bintray'
@@ -49,17 +50,27 @@ allprojects {
         jvmArgs '-XX:MaxPermSize=256m'
     }
 
-//    test {
-//        afterTest { desc, result ->
-//            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
-//        }
-//    }
-//
-//    integrationTests {
-//        afterTest { desc, result ->
-//            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
-//        }
-//    }
+    test {
+        afterTest { desc, result ->
+            println "  - Test ${desc.name} [${desc.className}]"
+            if (result.resultType == TestResult.ResultType.FAILURE) {
+                println "TEST FAILURE"
+                println result.exception.message
+                println result.exception.stacktrace
+            }
+        }
+    }
+
+    integrationTests {
+        afterTest { desc, result ->
+            println "  - Test ${desc.name} [${desc.className}]"
+            if (result.resultType == TestResult.ResultType.FAILURE) {
+                println "TEST FAILURE"
+                println result.exception.message
+                println result.exception.stacktrace
+            }
+        }
+    }
 
     task browserTests(type: Test) {
         exclude '**/*$*'

@@ -4,7 +4,7 @@
     <parent>
         <artifactId>thucydides</artifactId>
         <groupId>net.thucydides</groupId>
-        <version>.0.9.273-SNAPSHOT</version>
+        <version>0.9.276-SNAPSHOT</version>
     </parent>
     <artifactId>thucydides-core</artifactId>
     <name>thucydides-core</name>
@@ -120,6 +120,11 @@
                     <artifactId>selenium-java</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
