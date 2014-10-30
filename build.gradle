@@ -10,8 +10,8 @@ allprojects {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
     apply plugin: 'maven'
+    apply plugin: 'maven-publish'
 
-//    apply plugin: 'maven-publish'
 //    apply plugin: 'com.jfrog.bintray'
 //    apply plugin: 'release'
 
@@ -27,7 +27,7 @@ allprojects {
     }
 
     task wrapper(type: Wrapper) {
-        gradleVersion = '1.11'
+        gradleVersion = '2.1'
     }
 
     test {
@@ -49,17 +49,17 @@ allprojects {
         jvmArgs '-XX:MaxPermSize=256m'
     }
 
-//    test {
-//        afterTest { desc, result ->
-//            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
-//        }
-//    }
-//
-//    integrationTests {
-//        afterTest { desc, result ->
-//            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
-//        }
-//    }
+    test {
+        afterTest { desc, result ->
+            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
+        }
+    }
+
+    integrationTests {
+        afterTest { desc, result ->
+            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
+        }
+    }
 
     task browserTests(type: Test) {
         exclude '**/*$*'
