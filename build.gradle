@@ -52,24 +52,31 @@ allprojects {
     test {
         afterTest { desc, result ->
             println "  - ${desc.name}"
-            if (result.resultType == TestResult.ResultType.FAILURE) {
-                println "TEST FAILURE"
-                println result.exception.message
-                println result.exception.stacktrace
-            }
+//            if (result.resultType == TestResult.ResultType.FAILURE) {
+//                println "TEST FAILURE"
+//                println desc.className
+//                println result.exception.message
+//            }
+        }
+        testLogging {
+            exceptionFormat = 'full'
         }
     }
 
     integrationTests {
         afterTest { desc, result ->
             println "  - ${desc.name}"
-            if (result.resultType == TestResult.ResultType.FAILURE) {
-                println "TEST FAILURE"
-                println result.exception.message
-                println result.exception.stacktrace
-            }
+//            if (result.resultType == TestResult.ResultType.FAILURE) {
+//                println "TEST FAILURE"
+//                println desc.className
+//                println result.exception.message
+//            }
+        }
+        testLogging {
+            exceptionFormat = 'full'
         }
     }
+
 
     task browserTests(type: Test) {
         exclude '**/*$*'
@@ -80,7 +87,7 @@ allprojects {
     }
 
     integrationTests.dependsOn test
-    check.dependsOn integrationTests
+    check.dependsOn -= integrationTests
 
 
     dependencies {
@@ -115,7 +122,7 @@ allprojects {
         from sourceSets.main.allJava
     }
 
-    task javadocJar (type: Jar, dependsOn: javadoc) {
+    task javadocJar(type: Jar, dependsOn: javadoc) {
         classifier = 'javadoc'
         from javadoc.destinationDir
     }

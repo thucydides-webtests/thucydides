@@ -4,6 +4,8 @@ import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import io.appium.java_client.FindsByAccessibilityId;
+import io.appium.java_client.MobileElement;
 import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.pages.jquery.JQueryEnabledPage;
@@ -24,6 +26,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.internal.Coordinates;
 import org.openqa.selenium.internal.Locatable;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.pagefactory.ElementLocator;
 import org.openqa.selenium.support.ui.Clock;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -46,7 +49,7 @@ import static ch.lambdaj.Lambda.convert;
 /**
  * A proxy class for a web element, providing some more methods.
  */
-public class WebElementFacadeImpl implements WebElementFacade {
+public class WebElementFacadeImpl extends MobileElement implements WebElementFacade {
 
     private final WebElement webElement;
     private final WebDriver driver;
@@ -351,6 +354,16 @@ public class WebElementFacadeImpl implements WebElementFacade {
             results = getElement().findElements(By.tagName("option"));
         }
         return convert(results, new ExtractText());
+    }
+
+    @Override
+    public WebElement findElementByAccessibilityId(String id) {
+        return ((FindsByAccessibilityId) getElement()).findElementByAccessibilityId(id);
+    }
+
+    @Override
+    public List<WebElement> findElementsByAccessibilityId(String id) {
+        return ((FindsByAccessibilityId) getElement()).findElementsByAccessibilityId(id);
     }
 
     class ExtractText implements Converter<WebElement, String> {
@@ -883,7 +896,7 @@ public class WebElementFacadeImpl implements WebElementFacade {
         return " " + attribute + "='" + webElement.getAttribute(attribute) + "'";
     }
 	/*
-	 * WebDirver default 
+	 * WebDriver default
 	 * 
 	 */
 	
