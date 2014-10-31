@@ -7,6 +7,7 @@ import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -123,5 +124,9 @@ public class ThucydidesWebDriverSupport {
      */
     protected static void injectAnnotatedPagesObjectInto(final Object testCase) {
         StepAnnotations.injectOptionalAnnotatedPagesObjectInto(testCase, getPages());
+    }
+
+    public static <T extends WebDriver> T getProxiedDriver() {
+        return (T) ((WebDriverFacade) getDriver()).getProxiedDriver();
     }
 }

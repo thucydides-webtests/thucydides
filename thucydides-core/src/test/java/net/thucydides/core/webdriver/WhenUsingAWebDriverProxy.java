@@ -17,10 +17,9 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import java.lang.reflect.InvocationTargetException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.isNotNull;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -329,5 +328,13 @@ public class WhenUsingAWebDriverProxy {
 
         assertThat(proxiedDriver, is(notNullValue()));
         assertThat(HtmlUnitDriver.class.isAssignableFrom(proxiedDriver.getClass()), is(true));
+    }
+
+    @Test
+    public void should_return_proxied_driver_without_lots_of_ugly_casts() {
+        ThucydidesWebDriverSupport.initialize("htmlunit");
+        HtmlUnitDriver proxiedDriver = ThucydidesWebDriverSupport.getProxiedDriver();
+        assertThat(proxiedDriver, is(instanceOf(HtmlUnitDriver.class)));
+
     }
 }
