@@ -1,14 +1,15 @@
 package net.thucydides.core.webdriver;
 
 import com.google.inject.Inject;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import static net.thucydides.core.webdriver.WebdriverTools.prepareDriverToClose;
+import static net.thucydides.core.webdriver.WebdriverTools.prepareDriverToQuit;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.SessionId;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Manage WebDriver instances.
@@ -85,8 +86,8 @@ public class ThucydidesWebdriverManager implements WebdriverManager {
 
     private void closeSafely(WebDriver driver) {
         try {
-            driver.close();
-            driver.quit();
+            prepareDriverToClose(driver).close();
+            prepareDriverToQuit(driver).quit();
         } catch(Throwable ignored) {}
     }
 

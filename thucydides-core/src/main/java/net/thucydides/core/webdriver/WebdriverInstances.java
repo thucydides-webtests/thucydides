@@ -1,13 +1,13 @@
 package net.thucydides.core.webdriver;
 
-import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.WebDriver;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import static net.thucydides.core.webdriver.WebdriverTools.prepareDriverToQuit;
+import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.WebDriver;
 
 /**
  * One or more WebDriver drivers that are being used in a test.
@@ -47,7 +47,7 @@ public class WebdriverInstances {
 
     private void closeAndQuit(WebDriver driver) {
     	//close is not necessary when quitting
-        driver.quit();
+        prepareDriverToQuit(driver).quit();
     }
 
     public void resetCurrentDriver() {
