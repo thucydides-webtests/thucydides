@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A page view that handles checking and waiting for element visibility.
  */
-class RenderedPageObjectView {
+public class RenderedPageObjectView {
 
     private final transient WebDriver driver;
     private transient long waitForTimeoutInMilliseconds;
@@ -302,5 +302,9 @@ class RenderedPageObjectView {
 
     public void setWaitForTimeoutInMilliseconds(long waitForTimeoutInMilliseconds) {
         this.waitForTimeoutInMilliseconds = waitForTimeoutInMilliseconds;
+    }
+
+    public long getWaitForTimeoutInMilliseconds() {
+        return waitForTimeoutInMilliseconds;
     }
 }

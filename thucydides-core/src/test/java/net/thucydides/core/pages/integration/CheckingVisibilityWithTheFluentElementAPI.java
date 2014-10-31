@@ -15,6 +15,8 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItems;
@@ -98,6 +100,16 @@ public class CheckingVisibilityWithTheFluentElementAPI extends FluentElementAPIT
     @Test
     public void should_wait_for_hidden_elements_using_shortened_form() {
         page.waitFor("#city");
+    }
+
+    @Test
+    public void should_wait_for_hidden_elements_using_shortened_form_with_custom_timeout() {
+        page.withTimeoutOf(10, TimeUnit.SECONDS).waitFor(By.cssSelector("#city"));
+    }
+
+    @Test
+    public void should_be_able_to_set_the_timeout_for_waits() {
+        assertThat(page.withTimeoutOf(10, TimeUnit.SECONDS).getWaitForTimeoutInMilliseconds(), is(10000L));
     }
 
     @Test

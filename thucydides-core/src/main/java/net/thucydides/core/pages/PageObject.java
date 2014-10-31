@@ -234,6 +234,12 @@ public abstract class PageObject {
         return this;
     }
 
+    public RenderedPageObjectView withTimeoutOf(int timeout, TimeUnit units) {
+        RenderedPageObjectView renderedPageObjectView = getRenderedView();
+        renderedPageObjectView.setWaitForTimeoutInMilliseconds(TimeUnit.MILLISECONDS.convert(timeout,units));
+        return renderedPageObjectView;
+    }
+
     public PageObject waitFor(String xpathOrCssSelector) {
         return waitForRenderedElements(xpathOrCssSelector(xpathOrCssSelector));
     }
