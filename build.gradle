@@ -51,7 +51,7 @@ allprojects {
 
     test {
         afterTest { desc, result ->
-            println "  - Test ${desc.name} [${desc.className}]"
+            println "  - ${desc.name}"
             if (result.resultType == TestResult.ResultType.FAILURE) {
                 println "TEST FAILURE"
                 println result.exception.message
@@ -62,7 +62,7 @@ allprojects {
 
     integrationTests {
         afterTest { desc, result ->
-            println "  - Test ${desc.name} [${desc.className}]"
+            println "  - ${desc.name}"
             if (result.resultType == TestResult.ResultType.FAILURE) {
                 println "TEST FAILURE"
                 println result.exception.message
@@ -115,6 +115,28 @@ allprojects {
         from sourceSets.main.allJava
     }
 
+    task javadocJar (type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    def pomConfig = {
+        licenses {
+            license {
+                name "The Apache Software License, Version 2.0"
+                url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution "repo"
+            }
+        }
+        developers {
+            developer {
+                id "wakaleo"
+                name "John Ferguson Smart"
+                email "john.smart@wakaleo.com"
+            }
+        }
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
@@ -122,6 +144,9 @@ allprojects {
 
                 artifact sourceJar {
                     classifier "sources"
+                }
+                artifact javadocJar {
+                    classifier "javadoc"
                 }
             }
         }
