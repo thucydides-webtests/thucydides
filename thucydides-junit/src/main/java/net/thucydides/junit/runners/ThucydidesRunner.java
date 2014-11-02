@@ -42,7 +42,6 @@ import static net.thucydides.core.Thucydides.initializeTestSession;
  * A test runner for WebDriver-based web tests. This test runner initializes a
  * WebDriver instance before running the tests in their order of appearance. At
  * the end of the tests, it closes and quits the WebDriver instance.
- * <p/>
  * The test runner will by default produce output in XML and HTML. This
  * can extended by subscribing more reporter implementations to the test runner.
  *

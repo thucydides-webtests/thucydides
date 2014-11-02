@@ -22,7 +22,6 @@ import java.util.Set;
  * <p>You may also need to retrieve the list of test methods for a particular category of class. You can do this using the
  * getTestMethodsFrom() method, e.g.
  * <pre>new TestFinder("my.package").getTestMethodsFrom().normalTestClasses()</pre>
- * </p>
  */
 public abstract class TestFinder {
 
