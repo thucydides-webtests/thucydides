@@ -28,7 +28,14 @@ allprojects {
         bintrayRepository = 'maven'
         bintrayPackage = 'thucydides-core-libraries'
         projectDescription = 'Thucydides core libraries'
+        if (!project.hasProperty("bintrayUsername")) {
+           bintrayUsername = 'wakaleo'
+        }
+        if (!project.hasProperty("bintrayApiKey")) {
+            bintrayApiKey = ''
+        }
     }
+    println "bintray API Key = $bintrayApiKey"
 
     repositories {
         mavenLocal()
