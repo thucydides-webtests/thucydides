@@ -28,8 +28,6 @@ allprojects {
         bintrayRepository = 'maven'
         bintrayPackage = 'thucydides-core-libraries'
         projectDescription = 'Thucydides core libraries'
-        currentBranch = getCurrentBranch()
-        releaseBranch = "v${version}"
     }
 
     repositories {
@@ -198,54 +196,4 @@ subprojects {
     tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:-options"
     }
-}
-
-task pushNewBranch {
-    executeOnShell "git commit -a -m '[Release version ${version}]'"
-    executeOnShell "git tag -f v${version}"
-    executeOnShell "git push origin ${project.ext.releaseBranch}"
-    executeOnShell "git push origin --tags"
-}
-
-task checkoutOriginalBranch {
-    executeOnShell "git checkout ${project.ext.currentBranch}"
-}
-
-task release {
-    dependsOn bintrayUpload, pushNewBranch, checkoutOriginalBranch
-    println "RELEASING THUCYDIDES VERSION ${version}"
-}
-
-
-
-def getCurrentBranch() {
-    def branches = executeOnShell('git branch', true)
-    def branch = branches.readLines().find { it.startsWith('*') }
-    branch.stripIndent(2)
-}
-
-def executeOnShell(String command, boolean failOnError) {
-    println "EXECUTING $command"
-    def output = new StringBuffer();
-    def process = new ProcessBuilder(addShellPrefix(command))
-            .redirectErrorStream(true)
-            .start()
-    process.inputStream.eachLine {println it; output.append(it).append("\n")}
-    process.waitFor();
-    if (failOnError && process.exitValue() != 0) {
-        throw new GradleException("$command failed to execute")
-    }
-    return output.toString()
-}
-
-def executeOnShell(String command) {
-    return executeOnShell(command, false)
-}
-
-def addShellPrefix(String command) {
-    def commandArray = new String[3]
-    commandArray[0] = "sh"
-    commandArray[1] = "-c"
-    commandArray[2] = command
-    return commandArray
 }
