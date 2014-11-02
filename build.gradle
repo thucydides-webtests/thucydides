@@ -1,9 +1,13 @@
-//buildscript {
-//    dependencies {
-//        project(':thucydides-test-utils')
-//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.6'
-//    }
-//}
+import net.thucydides.builds.ProjectVersion
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.6'
+    }
+}
 allprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
@@ -11,15 +15,22 @@ allprojects {
     apply plugin: 'idea'
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
-
-//    apply plugin: 'com.jfrog.bintray'
-//    apply plugin: 'release'
-
+    apply plugin: 'com.jfrog.bintray'
+    apply from: "$rootDir/gradle/versioning.gradle"
 
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
     group = 'net.thucydides'
-    version = '0.9.280-SNAPSHOT'
+    version = new ProjectVersion(ext.majorVersion, ext.minorVersion, System.env.SOURCE_BUILD_NUMBER)
+
+    ext {
+        bintrayBaseUrl = 'https://api.bintray.com/maven'
+        bintrayRepository = 'maven'
+        bintrayPackage = 'thucydides-core-libraries'
+        projectDescription = 'Thucydides core libraries'
+        currentBranch = getCurrentBranch()
+        releaseBranch = "v${version}"
+    }
 
     repositories {
         mavenLocal()
@@ -51,15 +62,22 @@ allprojects {
 
     test {
         afterTest { desc, result ->
-            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
+            println "  - ${desc.name}"
+        }
+        testLogging {
+            exceptionFormat = 'full'
         }
     }
 
     integrationTests {
         afterTest { desc, result ->
-            println "Test ${desc.name} [${desc.className}] => ${result.resultType}"
+            println "  - ${desc.name}"
+        }
+        testLogging {
+            exceptionFormat = 'full'
         }
     }
+
 
     task browserTests(type: Test) {
         exclude '**/*$*'
@@ -70,7 +88,7 @@ allprojects {
     }
 
     integrationTests.dependsOn test
-    check.dependsOn integrationTests
+    check.dependsOn -= integrationTests
 
 
     dependencies {
@@ -94,27 +112,137 @@ allprojects {
         testCompile("org.easytesting:fest-assert:1.4")
     }
 
-    subprojects {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:-options"
+    bintray {
+        println "Bintray deploy using $rootProject.bintrayUsername and $rootProject.bintrayApiKey   "
 
+        user = bintrayUsername //this usually comes form gradle.properties file in ~/.gradle
+        key = bintrayApiKey //this usually comes form gradle.properties file in ~/.gradle
+        publications = ['mavenJava'] // see publications closure
+        pkg {
+            repo = 'maven'
+            userOrg = 'thucydides'
+            name = 'thucydides-core-libraries'
+            desc = 'Thucydides core libraries'
+            licenses = ['Apache-2.0']
+            labels = ['thucydides','bdd']
         }
     }
+}
 
-    task sourceJar(type: Jar) {
-        from sourceSets.main.allJava
+subprojects {
+//    project.version = new ProjectVersion(ext.majorVersion, ext.minorVersion, System.env.SOURCE_BUILD_NUMBER)
+
+    println "Processing $project.name : version $project.version"
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
     }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives sourcesJar, javadocJar
+    }
+
 
     publishing {
         publications {
             mavenJava(MavenPublication) {
                 from components.java
 
-                artifact sourceJar {
+                artifact sourcesJar {
                     classifier "sources"
+                }
+
+                artifact javadocJar {
+                    classifier "javadoc"
+                }
+
+                println "Generation pom for $project.name"
+
+                pom.withXml {
+                    asNode().children().last() + {
+                        resolveStrategy = Closure.DELEGATE_FIRST
+                        name "$project.name"
+                        description "$projectDescription"
+                        url 'https://github.com/thucydides-webtests/$project.name'
+                        scm {
+                            url 'scm:git:git@github.com:thucydides-webtests/$project.name.git'
+                            connection 'scm:git:git@github.com:thucydides-webtests/$project.name.git'
+                            developerConnection 'scm:git:git@github.com:thucydides-webtests/$project.name.git'
+                        }
+                        licenses {
+                            license {
+                                name 'The Apache Software License, Version 2.0'
+                                url 'http://www.apache.org/license/LICENSE-2.0.txt'
+                                distribution 'repo'
+                            }
+                        }
+                        developers {
+                            developer {
+                                id 'johnsmart'
+                                name 'John Ferguson Smart'
+                                email 'john.smart@wakaleo.com'
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:-options"
+    }
+}
+
+
+task release {
+    dependsOn bintrayUpload, pushNewBranch, checkoutOriginalBranch
+    println "RELEASING THUCYDIDES VERSION ${versionNumber}"
+}
+
+
+task pushNewBranch {
+    executeOnShell "git commit -a -m '[Release version ${versionNumber}]'"
+    executeOnShell "git tag -f v${versionNumber}"
+    executeOnShell "git push origin ${project.ext.releaseBranch}"
+    executeOnShell "git push origin --tags"
+}
+
+task checkoutOriginalBranch {
+    executeOnShell "git checkout ${project.ext.currentBranch}"
+}
+
+def getCurrentBranch() {
+    def branches = executeOnShell('git branch', true)
+    def branch = branches.readLines().find { it.startsWith('*') }
+    branch.stripIndent(2)
+}
+
+def executeOnShell(String command, boolean failOnError) {
+    println "EXECUTING $command"
+    def output = new StringBuffer();
+    def process = new ProcessBuilder(addShellPrefix(command))
+            .redirectErrorStream(true)
+            .start()
+    process.inputStream.eachLine {println it; output.append(it).append("\n")}
+    process.waitFor();
+    if (failOnError && process.exitValue() != 0) {
+        throw new GradleException("$command failed to execute")
+    }
+    return output.toString()
+}
+
+private def addShellPrefix(String command) {
+    def commandArray = new String[3]
+    commandArray[0] = "sh"
+    commandArray[1] = "-c"
+    commandArray[2] = command
+    return commandArray
 }
 

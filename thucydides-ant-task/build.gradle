@@ -1,3 +1,8 @@
+ext {
+    bintrayPackage = 'thucydides-ant-task'
+    projectDescription = 'Thucydides Ant Task'
+}
+
 dependencies {
     compile project(':thucydides-core')
     compile "org.apache.ant:ant:1.9.3"

@@ -59,6 +59,13 @@ task deployCurrentBuildArtifacts {
     }
 }
 
+
+def getCurrentBranch() {
+    def branches = executeOnShell('git branch',true)
+    def branch = branches.readLines().find { it.startsWith('*') }
+    branch.stripIndent(2)
+}
+
 task pushNewBranch {
     executeOnShell "git commit -a -m '[Release version ${versionNumber}]'"
     executeOnShell "git tag -f release-${versionNumber}"
@@ -102,12 +109,6 @@ def deployFiles(pomFilePath, artifactFilePath, sourceFile, javadocFile) {
     }
     executeOnShell deployCmd
 
-}
-
-def getCurrentBranch() {
-	def branches = executeOnShell('git branch',true)
-	def branch = branches.readLines().find { it.startsWith('*') }
-	branch.stripIndent(2)
 }
 
 def findParentArtifact() {

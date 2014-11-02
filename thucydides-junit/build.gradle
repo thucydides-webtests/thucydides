@@ -1,3 +1,8 @@
+ext {
+    bintrayPackage = 'thucydides-junit'
+    projectDescription = 'Thucydides JUnit integration'
+}
+
 dependencies {
     compile project(':thucydides-core')
 

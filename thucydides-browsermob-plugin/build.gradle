@@ -1,3 +1,8 @@
+ext {
+    bintrayPackage = 'thucydides-browsermob-plugin'
+    projectDescription = 'Thucydides Browsermob integration'
+}
+
 dependencies {
     compile project(':thucydides-core')
     compile("biz.neustar:browsermob-proxy:2.0-beta-7") {

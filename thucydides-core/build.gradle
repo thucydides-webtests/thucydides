@@ -1,3 +1,14 @@
+ext {
+    bintrayPackage = 'thucydides-core'
+}
+
+jar {
+    manifest {
+        attributes("Implementation-Title": "Thucydides JBehave Plugin",
+                   "Implementation-Version": project.version.toString())
+    }
+}
+
 dependencies {
 
     compile project(':thucydides-report-resources')
