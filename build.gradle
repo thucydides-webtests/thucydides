@@ -200,16 +200,9 @@ subprojects {
     }
 }
 
-
-task release {
-    dependsOn bintrayUpload, pushNewBranch, checkoutOriginalBranch
-    println "RELEASING THUCYDIDES VERSION ${versionNumber}"
-}
-
-
 task pushNewBranch {
-    executeOnShell "git commit -a -m '[Release version ${versionNumber}]'"
-    executeOnShell "git tag -f v${versionNumber}"
+    executeOnShell "git commit -a -m '[Release version ${version}]'"
+    executeOnShell "git tag -f v${version}"
     executeOnShell "git push origin ${project.ext.releaseBranch}"
     executeOnShell "git push origin --tags"
 }
@@ -217,6 +210,13 @@ task pushNewBranch {
 task checkoutOriginalBranch {
     executeOnShell "git checkout ${project.ext.currentBranch}"
 }
+
+task release {
+    dependsOn bintrayUpload, pushNewBranch, checkoutOriginalBranch
+    println "RELEASING THUCYDIDES VERSION ${version}"
+}
+
+
 
 def getCurrentBranch() {
     def branches = executeOnShell('git branch', true)
@@ -238,11 +238,14 @@ def executeOnShell(String command, boolean failOnError) {
     return output.toString()
 }
 
-private def addShellPrefix(String command) {
+def executeOnShell(String command) {
+    return executeOnShell(command, false)
+}
+
+def addShellPrefix(String command) {
     def commandArray = new String[3]
     commandArray[0] = "sh"
     commandArray[1] = "-c"
     commandArray[2] = command
     return commandArray
 }
-
