@@ -45,7 +45,7 @@ public class DataDrivenAnnotations {
     }
 
     DataDrivenAnnotations(final TestClass testClass) {
-        this(testClass, Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
+        this(testClass, Injectors.getInjector().getProvider(EnvironmentVariables.class).get());
     }
 
     DataDrivenAnnotations(final TestClass testClass, EnvironmentVariables environmentVariables) {
@@ -62,22 +62,22 @@ public class DataDrivenAnnotations {
         List<Map<String, String>> testData = testDataSource.getData();
         List<String> headers = testDataSource.getHeaders();
         return DataTable.withHeaders(headers)
-                        .andMappedRows(testData)
-                        .build();
+                .andMappedRows(testData)
+                .build();
     }
 
     public DataTable getParametersTableFromTestDataAnnotation() {
-        Method testDataMethod = null;
-        String columnNamesString = null;
-        List<Object[]> parametersList = null;
+        Method testDataMethod;
+        String columnNamesString;
+        List parametersList;
 
         try {
             testDataMethod = getTestDataMethod().getMethod();
             columnNamesString = testDataMethod.getAnnotation(TestData.class).columnNames();
-            parametersList = (List<Object[]>) testDataMethod.invoke(null);
-            } catch (Exception e) {
-               throw new RuntimeException("Could not obtain test data from the test class", e);
-            }
+            parametersList = (List) testDataMethod.invoke(null);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not obtain test data from the test class", e);
+        }
 
         return createParametersTableFrom(columnNamesString, convert(parametersList, toListOfObjects()));
     }
@@ -92,19 +92,19 @@ public class DataDrivenAnnotations {
     }
 
     private DataTable createParametersTableFrom(String columnNamesString, List<List<Object>> parametersList) {
-        int numberOfColumns =  parametersList.isEmpty() ? 0 : parametersList.get(0).size();
+        int numberOfColumns = parametersList.isEmpty() ? 0 : parametersList.get(0).size();
         List<String> columnNames = split(columnNamesString, numberOfColumns);
         return DataTable.withHeaders(columnNames)
-                                    .andRows(parametersList)
-                                    .build();
+                .andRows(parametersList)
+                .build();
     }
 
 
     private List<String> split(String columnNamesString, int numberOfColumns) {
         String[] columnNames = new String[numberOfColumns];
         if (columnNamesString.equals("")) {
-            for (int i =0; i < numberOfColumns; i++) {
-                columnNames[i] = "Parameter " + (i+1);
+            for (int i = 0; i < numberOfColumns; i++) {
+                columnNames[i] = "Parameter " + (i + 1);
             }
         } else {
             columnNames = StringUtils.split(columnNamesString, ",", numberOfColumns);
@@ -165,7 +165,7 @@ public class DataDrivenAnnotations {
         TestDataSource testdata = new CSVTestDataSource(findTestDataSource(), findTestDataSeparator());
         return testdata.getDataAsInstancesOf(clazz);
     }
-    
+
     public int countDataEntries() throws IOException {
         TestDataSource testdata = new CSVTestDataSource(findTestDataSource(), findTestDataSeparator());
         return testdata.getData().size();

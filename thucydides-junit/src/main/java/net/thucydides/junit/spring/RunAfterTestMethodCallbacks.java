@@ -50,12 +50,12 @@ public class RunAfterTestMethodCallbacks extends Statement {
 	}
 
 	/**
-	 * Invokes the next {@link Statement} in the execution chain (typically an
-	 * instance of {@link org.junit.internal.runners.statements.RunAfters
-	 * RunAfters}), catching any exceptions thrown, and then calls afterTestMethod(Object, Method)} with the first
+	 * Invokes the next Statement in the execution chain (typically an
+	 * instance org.junit.internal.runners.statements.RunAfters,
+     * catching any exceptions thrown, and then calls afterTestMethod(Object, Method) with the first
 	 * caught exception (if any). If the call to <code>afterTestMethod()</code>
 	 * throws an exception, it will also be tracked. Multiple exceptions will be
-	 * combined into a {@link MultipleFailureException}.
+	 * combined into a MultipleFailureException.
 	 */
 	@Override
 	public void evaluate() throws Throwable {

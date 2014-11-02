@@ -30,7 +30,6 @@ import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_TEST_ROOT;
 
 /**
  * A requirements Provider that reads requirement from class or package annotation.
- * <p/>
  * A class or package needs to be annotated with {@link net.thucydides.core.annotations.Narrative}
  * to be a requirement. All package above the class or package will also be considered requirement.
  * The root package is defined using {@link net.thucydides.core.ThucydidesSystemProperty#THUCYDIDES_TEST_ROOT}
@@ -70,7 +69,7 @@ public class PackageAnnotationBasedTagProvider extends AbstractRequirementsTagPr
 
     @Override
     public Set<TestTag> getTagsFor(TestOutcome testOutcome) {
-        Set<TestTag> result = new HashSet<TestTag>();
+        Set<TestTag> result = new HashSet<>();
         for (Requirement requirement : getAllRequirements()) {
             if (isMatchingRequirementFor(testOutcome, requirement)) {
                 result.add(TestTag.withName(humanReadableVersionOf(requirement.getName())).andType(requirement.getType()));

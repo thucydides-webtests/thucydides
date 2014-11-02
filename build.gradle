@@ -8,6 +8,7 @@ buildscript {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.6'
     }
 }
+
 allprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
@@ -23,6 +24,11 @@ allprojects {
     group = 'net.thucydides'
     version = new ProjectVersion(ext.majorVersion, ext.minorVersion, System.env.SOURCE_BUILD_NUMBER)
 
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+
     ext {
         bintrayBaseUrl = 'https://api.bintray.com/maven'
         bintrayRepository = 'maven'
@@ -34,12 +40,6 @@ allprojects {
         if (!project.hasProperty("bintrayApiKey")) {
             bintrayApiKey = ''
         }
-    }
-    println "bintray API Key = $bintrayApiKey"
-
-    repositories {
-        mavenLocal()
-        jcenter()
     }
 
     task wrapper(type: Wrapper) {
@@ -118,8 +118,6 @@ allprojects {
     }
 
     bintray {
-        println "Bintray deploy using $rootProject.bintrayUsername and $rootProject.bintrayApiKey   "
-
         user = bintrayUsername //this usually comes form gradle.properties file in ~/.gradle
         key = bintrayApiKey //this usually comes form gradle.properties file in ~/.gradle
         publications = ['mavenJava'] // see publications closure

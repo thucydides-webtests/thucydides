@@ -193,7 +193,6 @@ public class Pages implements Serializable {
      * The Page Object must have a constructor
      *
      * @param pageObjectClass
-     * @return
      * @throws IllegalArgumentException
      */
     @SuppressWarnings("unchecked")

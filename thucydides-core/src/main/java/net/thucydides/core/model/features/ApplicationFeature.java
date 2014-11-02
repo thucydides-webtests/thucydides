@@ -10,7 +10,7 @@ import net.thucydides.core.util.NameConverter;
  * API user to define the feature and the nested user stories, e.g.
  * <pre>
  *     <code>
- *         @Feature
+ *         &#064;Feature
  *         public class MyFeature {
  *             public class MyUserStory1() {}
  *             public class MyUserStory2() {}
@@ -21,8 +21,8 @@ import net.thucydides.core.util.NameConverter;
  * These classes are then used in the test cases and easyb stories to refer to the tested user stories, e.g.
  * <pre>
  *     <code>
- *         @Test
- *         @TestsStory(MyUserStory1.class)
+ *         &#064;Test
+ *         &#064;TestsStory(MyUserStory1.class)
  *         public void should_do_this() {...}
  *     </code>
  * </pre>

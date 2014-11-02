@@ -166,7 +166,6 @@ public class WebDriverFactory {
      * with each other.
      *
      * @param driverClass
-     * @return
      */
     protected synchronized WebDriver newWebdriverInstance(final Class<? extends WebDriver> driverClass) {
         try {

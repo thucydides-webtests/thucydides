@@ -20,7 +20,6 @@ import java.util.*;
  * You create a listener (e.g. an instance of BaseStepListener, or your own), register it using
  * 'registerListener', and then implement the various methods (testStarted(), stepStarted()). Thucydides
  * will call these events on your listener as they occur.
- * <p/>
  * You can register a new Thucydides listener by implementing the StepListener interface and
  * placing your class in the classpath. Thucydides will automatically detect the listener and add it to the
  * registered listeners. It will load custom listeners automatically when a test starts for the first time.

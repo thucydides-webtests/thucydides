@@ -19,13 +19,6 @@ import java.util.List;
 public class SmartAjaxElementLocator extends SmartElementLocator {
 	protected final int timeOutInSeconds;
 	private final Clock clock;
-	private static final List<String> QUICK_METHODS = Arrays.asList("isCurrentlyVisible",
-			"isCurrentlyEnabled",
-			"waitUntilVisible",
-			"waitUntilEnabled",
-			"shouldNotBeVisible");
-
-	private static final List<String> QUICK_CLASSES = Arrays.asList(WebElementFacadeImpl.class.getName(), PageObject.class.getName());
 
 	private final Field field;
 	private final WebDriver driver;
@@ -88,11 +81,8 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
 	}
 
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Will poll the interface on a regular basis until the element is present.
 	 */
-
 	public WebElement ajaxFindElement() {
 		SlowLoadingElement loadingElement = new SlowLoadingElement(clock, timeOutInSeconds);
 		try {
@@ -107,11 +97,8 @@ public class SmartAjaxElementLocator extends SmartElementLocator {
     private final static List<WebElement> EMPTY_LIST_OF_WEBELEMENTS = Lists.newArrayList();
 
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Will poll the interface on a regular basis until at least one element is present.
 	 */
-	@Override
 	public List<WebElement> findElements() {
         if (aPreviousStepHasFailed()) {
             return EMPTY_LIST_OF_WEBELEMENTS;

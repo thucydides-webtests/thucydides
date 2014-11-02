@@ -21,8 +21,6 @@ public class ErrorMessageFormatter {
     /**
      * Returns the first line only of the error message.
      * This avoids polluting the UI with unnecessary details such as browser versions and so forth.
-     *
-     * @return
      */
     public String getShortErrorMessage() {
         return escapedHtml((originalMessage.isPresent()) ? getUsefulMessageSummary() : "");

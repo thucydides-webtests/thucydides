@@ -7,16 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * This class specifies the list of ScenarioStep classes provided by a given test library.
- * It is experimental, and used for integration with other applications. An example of its use
- * is shown here:
- * <pre>
-    public class JobStepIndex extends StepIndex {
- 
-      @StepProvider
-      public Class<?>[] stepClasses = {JobScenarioSteps.class};
-
-    }
- * </pre>
+ * It is experimental, and used for integration with other applications.
  * @author johnsmart
  *
  */

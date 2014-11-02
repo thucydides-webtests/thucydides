@@ -41,7 +41,6 @@ public class JavascriptExecutorFacade {
     /**
      * Execute some Javascript in the underlying WebDriver driver.
      * @param script
-     * @return
      */
     public Object executeScript(final String script) {
         if (javascriptIsSupportedIn(driver)) {
@@ -127,7 +126,6 @@ public class JavascriptExecutorFacade {
      * 
      * @param classOfT Java Class to reflect on
      * @param script that returns JavaScript Object
-     * @param script params
      * @return deserialized as List of classOfT
      */
     public <T> List<T> deserializeScriptResultAsListOf(Class<T> classOfT, final String script, final Object... params){

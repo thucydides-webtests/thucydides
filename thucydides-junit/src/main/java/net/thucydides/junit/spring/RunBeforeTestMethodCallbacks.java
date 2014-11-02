@@ -50,8 +50,7 @@ public class RunBeforeTestMethodCallbacks extends Statement {
 	/**
 	 * Calls {@link TestContextManager#beforeTestMethod(Object, Method)} and
 	 * then invokes the next {@link Statement} in the execution chain (typically
-	 * an instance of {@link org.junit.internal.runners.statements.RunBefores
-	 * RunBefores}).
+	 * an instance of org.junit.internal.runners.statements.RunBefores).
 	 */
 	@Override
 	public void evaluate() throws Throwable {

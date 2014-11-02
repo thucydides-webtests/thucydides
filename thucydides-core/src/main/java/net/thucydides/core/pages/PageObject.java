@@ -588,7 +588,7 @@ public abstract class PageObject {
     }
 
     /**
-     * Opens page without checking URL patterns. Same as {@link #open(String...))} otherwise.
+     * Opens page without checking URL patterns. Same as open(String...)) otherwise.
      */
     public final void openUnchecked(final String... parameterValues) {
     	open(OpenMode.IGNORE_URL_PATTERNS, parameterValues);
@@ -631,21 +631,20 @@ public abstract class PageObject {
      * Open the webdriver browser to the base URL, determined by the DefaultUrl
      * annotation if present. If the DefaultUrl annotation is not present, the
      * default base URL will be used. If the DefaultUrl annotation is present, a
-     * URL based on the current base url from the system-wide defulat url
+     * URL based on the current base url from the system-wide default url
      * and the relative path provided in the DefaultUrl annotation will be used to
      * determine the URL to open. For example, consider the following class:
      * <pre>
      *     <code>
-     *         @DefaultUrl("http://localhost:8080/client/list")
+     *         &#064;DefaultUrl("http://localhost:8080/client/list")
      *         public class ClientList extends PageObject {
      *             ...
      *
-     *             @WhenPageOpens
+     *             &#064;WhenPageOpens
      *             public void waitUntilTitleAppears() {...}
      *         }
      *     </code>
      * </pre>
-     * <p/>
      * Suppose you are using a base URL of http://stage.acme.com. When you call open() for this class,
      * it will open http://stage.acme.com/client/list. It will then invoke the waitUntilTitleAppears() method.
      */
