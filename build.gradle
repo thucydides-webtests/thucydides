@@ -3,9 +3,13 @@ import net.thucydides.builds.ProjectVersion
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url 'https://geonet.artifactoryonline.com/geonet/public-releases'
+        }
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.6'
+        classpath 'nz.org.geonet:gradle-build-version-plugin:1.0.4'
     }
 }
 
@@ -17,12 +21,16 @@ allprojects {
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
     apply plugin: 'com.jfrog.bintray'
-    apply from: "$rootDir/gradle/versioning.gradle"
+//    apply from: "$rootDir/gradle/versioning.gradle"
+    apply plugin: 'build-version'
+
 
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
     group = 'net.thucydides'
-    version = new ProjectVersion(ext.majorVersion, ext.minorVersion, System.env.SOURCE_BUILD_NUMBER)
+    version = buildVersion.version
+
+//    version = new ProjectVersion(ext.majorVersion, ext.minorVersion, System.env.SOURCE_BUILD_NUMBER)
 
     repositories {
         mavenLocal()
