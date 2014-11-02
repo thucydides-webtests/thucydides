@@ -17,7 +17,6 @@ import net.thucydides.core.util.NameConverter;
  *         }
  *     </code>
  * </pre>
- * <p/>
  * These classes are then used in the test cases and easyb stories to refer to the tested user stories, e.g.
  * <pre>
  *     <code>
