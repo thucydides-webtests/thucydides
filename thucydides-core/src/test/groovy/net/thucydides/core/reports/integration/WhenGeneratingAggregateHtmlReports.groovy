@@ -9,6 +9,7 @@ import net.thucydides.core.reports.html.HtmlAggregateStoryReporter
 import net.thucydides.core.util.MockEnvironmentVariables
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.openqa.selenium.phantomjs.PhantomJSDriver
 import spock.lang.Specification
 
@@ -33,7 +34,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         environmentVariables.setProperty("output.formats","xml")
         reporter.formatConfiguration = new FormatConfiguration(environmentVariables)
 
-        driver = new PhantomJSDriver();
+        driver = new HtmlUnitDriver();
     }
 
     def cleanup() {
@@ -45,8 +46,8 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         given: "We generate reports from a directory containing features and stories only"
             reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
         when: "we view the report"
+            WebDriver driver = new PhantomJSDriver();
             driver.get reportHomePageUrl();
-            def tagTypeNames = driver.findElements(By.cssSelector(".tagTitle")).collect { it.text}
         then: "we can see all available tags and click on 'Grow New Potatoes' link"
             def anotherDifferentFeatureLink = driver.findElement(By.linkText("Grow New Potatoes"))
             anotherDifferentFeatureLink.click()
@@ -61,6 +62,8 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         and: "a single feature"
             def featureLink = driver.findElement(By.linkText("Grow cucumbers"))
             featureLink.enabled
+        and:
+            driver.quit()
 
     }
 
@@ -96,7 +99,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         given: "We generate reports from a directory containing features and stories only"
             reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
         when: "we view the report"
-            driver = new PhantomJSDriver();
+            WebDriver driver = new PhantomJSDriver();
             driver.get reportHomePageUrl();
         then: "we should see a Releases tab"
             def releasesLink = driver.findElement(By.linkText("Releases"))
@@ -111,7 +114,7 @@ public class WhenGeneratingAggregateHtmlReports extends Specification {
         given: "We generate reports from a directory containing features and stories only"
             reporter.generateReportsForTestResultsFrom directory("/test-outcomes/containing-features-and-stories")
         when: "we view the release report"
-            driver = new PhantomJSDriver();
+            WebDriver driver = new PhantomJSDriver();
             driver.get reportHomePageUrl();
             def releasesLink = driver.findElement(By.linkText("Releases"))
             releasesLink.click();

@@ -7,8 +7,7 @@ import net.thucydides.core.webdriver.WebDriverFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
@@ -26,18 +25,21 @@ import static org.hamcrest.Matchers.is;
 
 public class ReadingTableData extends FluentElementAPITestsBaseClass {
 
-    WebDriver driver;
-    StaticSitePage page;
+    static WebDriver driver;
+    static StaticSitePage page;
 
-    @Before
-    public void openStaticPage() {
+    @BeforeClass
+    public static void openStaticPage() {
         driver = new WebDriverFacade(PhantomJSDriver.class, new WebDriverFactory());
         page = new StaticSitePage(driver, 1);
         page.setWaitForTimeout(500);
         page.open();
     }
 
-
+    @AfterClass
+    public static void closeDriver() {
+        driver.quit();
+    }
 
     @Test
     public void should_read_table_headings() {

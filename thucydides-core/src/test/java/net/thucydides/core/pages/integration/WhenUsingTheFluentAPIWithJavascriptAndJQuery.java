@@ -33,7 +33,6 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
 
     @AfterClass
     public static void shutdownDriver() {
-        driver.close();
         driver.quit();
     }
 
@@ -48,7 +47,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
         Boolean jqueryInjected = (Boolean) getPage().evaluateJavascript("return (typeof jQuery === 'function')");
         assertThat(jqueryInjected, is(true));
 
-        driver.close();
+        driver.quit();
     }
 
     @Test

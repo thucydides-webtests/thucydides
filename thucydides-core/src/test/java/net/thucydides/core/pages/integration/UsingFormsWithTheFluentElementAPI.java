@@ -3,9 +3,7 @@ package net.thucydides.core.pages.integration;
 
 import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.WebDriverFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
@@ -16,20 +14,24 @@ import static org.hamcrest.Matchers.is;
 
 public class UsingFormsWithTheFluentElementAPI extends FluentElementAPITestsBaseClass {
 
-    WebDriver localDriver;
+    static WebDriver localDriver;
     StaticSitePage page;
 
-    @Before
-    public void openStaticPage() {
+    @BeforeClass
+    public static void openDriver() {
         localDriver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
+    }
+
+    @AfterClass
+    public static void closeDriver() {
+        localDriver.quit();
+    }
+
+    @Before
+    public void openPage() {
         page = new StaticSitePage(localDriver, 1);
         page.setWaitForTimeout(750);
         page.open();
-    }
-
-    @After
-    public void closeDriver() {
-        localDriver.quit();
     }
 
     @Test

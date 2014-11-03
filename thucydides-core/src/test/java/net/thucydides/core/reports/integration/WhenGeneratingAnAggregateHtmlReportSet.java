@@ -36,7 +36,7 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
 
     private static File outputDirectory;
 
-    WebDriver driver;
+    static WebDriver driver;
 
     private static EnvironmentVariables environmentVariables = new MockEnvironmentVariables();
 
@@ -52,10 +52,12 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
 
         File sourceDirectory = directoryInClasspathCalled("/test-outcomes/containing-nostep-errors");
         reporter.generateReportsForTestResultsFrom(sourceDirectory);
+        driver = new PhantomJSDriver();
     }
 
     @AfterClass
     public static void deleteReportDirectory() {
+        driver.quit();
         outputDirectory.delete();
     }
 
@@ -69,13 +71,8 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
     @Before
     public void setupTestReporter() {
         MockitoAnnotations.initMocks(this);
-        driver = new PhantomJSDriver();
     }
 
-    @After
-    public void closeDriver() {
-        driver.quit();
-    }
     @Test
     public void should_generate_an_aggregate_dashboard() throws Exception {
         assertThat(new File(outputDirectory,"index.html"), exists());
@@ -161,16 +158,6 @@ public class WhenGeneratingAnAggregateHtmlReportSet {
         Matcher<Iterable<? super WebElement>> skippedMatcher = hasItem(Matchers.<WebElement>hasProperty("text", containsString("0 skipped")));
         Matcher<Iterable<? super WebElement>> ignoredMatcher = hasItem(Matchers.<WebElement>hasProperty("text", containsString("0 ignored")));
         assertThat(testCounts, allOf(passedMatcher, pendingMatcher, failedMatcher, errorMatcher,skippedMatcher, ignoredMatcher));
-    }
-
-    @Test
-    public void nested_test_result_report_should_not_contain_result_links() throws Exception {
-
-        File report = new File(outputDirectory, digest("context_a_feature_result_success") + ".html");
-        driver.get(urlFor(report));
-
-        List<WebElement> passedLinks = driver.findElements(By.linkText("passed"));
-        assertThat(passedLinks.size(), is(0));
     }
 
     @Test

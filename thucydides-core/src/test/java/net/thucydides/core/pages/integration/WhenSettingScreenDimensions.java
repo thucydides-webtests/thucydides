@@ -5,6 +5,7 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.SupportedWebDriver;
 import net.thucydides.core.webdriver.WebDriverFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.JavascriptExecutor;
@@ -73,5 +74,10 @@ public class WhenSettingScreenDimensions {
             int width = ((Long)(((JavascriptExecutor)driver).executeScript("return window.innerWidth"))).intValue();
             assertThat(width, allOf(lessThanOrEqualTo(400), greaterThan(380)));
         }
+    }
+
+    @After
+    public void closeBrowser() {
+        driver.quit();
     }
 }

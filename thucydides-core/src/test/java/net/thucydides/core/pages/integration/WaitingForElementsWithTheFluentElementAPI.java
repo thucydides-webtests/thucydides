@@ -16,9 +16,6 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
     public ExpectedException expectedException = ExpectedException.none();
 
     private static WebDriver phantomDriver;
-    private static WebDriver driver;
-
-    private static StaticSitePage staticPage;
     private static StaticSitePage phantomPage;
 
     @BeforeClass
@@ -29,9 +26,6 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
 
     @AfterClass
     public static void quitBrowsers() {
-        if (driver != null) {
-            driver.quit();
-        }
         if (phantomDriver != null) {
             phantomDriver.quit();
         }
@@ -41,15 +35,6 @@ public class WaitingForElementsWithTheFluentElementAPI extends FluentElementAPIT
         return phantomPage;
     }
     
-    protected StaticSitePage getFirefoxPage() {
-        if (staticPage == null) {
-            driver = new  FirefoxDriver();
-            staticPage = new StaticSitePage(driver, 1000);
-            staticPage.open();
-        }
-        return staticPage;
-    }
-
     @Test
     public void should_obtain_text_value_from_input() {
         StaticSitePage page = getPhantomJSPage();
