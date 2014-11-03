@@ -3,7 +3,6 @@ package net.thucydides.browsermob.fixtureservices;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.core.fixtureservices.FixtureException;
 import net.thucydides.core.fixtureservices.FixtureService;
 import net.thucydides.core.guice.Injectors;

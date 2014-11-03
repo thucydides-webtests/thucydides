@@ -7,10 +7,11 @@ import net.thucydides.core.webdriver.WebDriverFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 import java.util.List;
@@ -19,9 +20,7 @@ import java.util.Map;
 import static net.thucydides.core.matchers.BeanMatchers.the;
 import static net.thucydides.core.pages.components.HtmlTable.inTable;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class ReadingTableData extends FluentElementAPITestsBaseClass {
 

@@ -4,9 +4,7 @@ import net.thucydides.ant.util.PathProcessor;
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.taskdefs.Java;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

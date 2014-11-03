@@ -1,6 +1,5 @@
 package net.thucydides.core.util;
 
-import com.google.inject.Inject;
 import net.thucydides.core.guice.Injectors;
 
 import java.io.IOException;

@@ -1,14 +1,9 @@
 package net.thucydides.core.pages
 
-import org.junit.Assert
-import org.junit.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import spock.lang.Specification
-
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.containsString
 
 class WhenCheckingElementState extends Specification {
 

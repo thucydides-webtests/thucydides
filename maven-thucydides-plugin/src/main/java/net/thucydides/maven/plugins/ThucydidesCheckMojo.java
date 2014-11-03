@@ -1,13 +1,12 @@
 package net.thucydides.maven.plugins;
 
+import net.thucydides.core.reports.ResultChecker;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
-
-import net.thucydides.core.reports.ResultChecker;
 
 /**
  * This plugin deletes existing history files for Thucydides for this project.

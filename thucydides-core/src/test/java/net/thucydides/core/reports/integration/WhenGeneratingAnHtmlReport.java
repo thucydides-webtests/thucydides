@@ -18,15 +18,9 @@ import org.mockito.MockitoAnnotations;
 import java.io.File;
 import java.io.IOException;
 
-import static net.thucydides.core.model.TestStepFactory.forABrokenTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.forAPendingTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.forASkippedTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.forASuccessfulTestStepCalled;
-import static net.thucydides.core.model.TestStepFactory.forAnIgnoredTestStepCalled;
+import static net.thucydides.core.model.TestStepFactory.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class WhenGeneratingAnHtmlReport extends AbstractReportGenerationTest {
 

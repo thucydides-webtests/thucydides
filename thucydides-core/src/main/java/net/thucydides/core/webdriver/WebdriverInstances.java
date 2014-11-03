@@ -3,11 +3,7 @@ package net.thucydides.core.webdriver;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * One or more WebDriver drivers that are being used in a test.

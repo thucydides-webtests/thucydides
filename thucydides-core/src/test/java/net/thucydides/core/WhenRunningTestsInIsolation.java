@@ -6,7 +6,6 @@ import net.thucydides.core.annotations.Step;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
 import net.thucydides.core.steps.ScenarioSteps;
-import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepListener;
 import org.junit.After;
 import org.junit.Before;

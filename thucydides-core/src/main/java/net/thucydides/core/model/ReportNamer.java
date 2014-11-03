@@ -4,9 +4,7 @@ import net.thucydides.core.digest.Digest;
 import net.thucydides.core.util.NameConverter;
 import org.apache.commons.lang3.StringUtils;
 
-import static net.thucydides.core.util.NameConverter.stripIndexesFrom;
-import static net.thucydides.core.util.NameConverter.withNoArguments;
-import static net.thucydides.core.util.NameConverter.withNoIssueNumbers;
+import static net.thucydides.core.util.NameConverter.*;
 
 /**
  * Determies the correct default name for test reports.

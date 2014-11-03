@@ -2,7 +2,6 @@ package net.thucydides.core.resources;
 
 import net.thucydides.core.util.ExtendedTemporaryFolder;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -18,9 +17,7 @@ import java.util.Date;
 import java.util.regex.Pattern;
 import java.util.zip.ZipFile;
 
-import static net.thucydides.core.matchers.FileMatchers.exists;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doThrow;

@@ -10,7 +10,6 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.openqa.selenium.ie.InternetExplorerDriver
 import org.openqa.selenium.phantomjs.PhantomJSDriver
 import org.openqa.selenium.remote.RemoteWebDriver
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class WhenConfiguringTheWebdriverInstance extends Specification {

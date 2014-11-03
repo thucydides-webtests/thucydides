@@ -14,12 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static ch.lambdaj.Lambda.convert;
-import static ch.lambdaj.Lambda.filter;
-import static ch.lambdaj.Lambda.join;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static ch.lambdaj.Lambda.*;
+import static org.hamcrest.Matchers.*;
 
 public class BeanMatcherAsserts {
     private static final String NEW_LINE = System.getProperty("line.separator");

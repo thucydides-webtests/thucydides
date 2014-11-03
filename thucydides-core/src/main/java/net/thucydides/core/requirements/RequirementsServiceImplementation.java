@@ -22,10 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static ch.lambdaj.Lambda.extract;
-import static ch.lambdaj.Lambda.on;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.EMPTY_LIST;
 
 public class RequirementsServiceImplementation implements RequirementsService {

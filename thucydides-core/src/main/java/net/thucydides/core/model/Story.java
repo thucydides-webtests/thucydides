@@ -2,9 +2,7 @@ package net.thucydides.core.model;
 
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.model.features.ApplicationFeature;
-import net.thucydides.core.util.EqualsUtils;
 import net.thucydides.core.util.NameConverter;
-import org.bouncycastle.cert.ocsp.Req;
 
 import static net.thucydides.core.model.ReportType.ROOT;
 

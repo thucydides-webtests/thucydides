@@ -16,7 +16,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
-import java.nio.file.*;
 import java.util.Map;
 
 /**

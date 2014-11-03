@@ -9,11 +9,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.json.JSONConverter;
 import net.thucydides.core.util.EnvironmentVariables;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ValidationException;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import javax.validation.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

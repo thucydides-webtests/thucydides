@@ -1,21 +1,13 @@
 package net.thucydides.core.steps;
 
-import net.thucydides.core.annotations.Pending;
-import net.thucydides.core.annotations.Step;
-import net.thucydides.core.annotations.StepGroup;
-import net.thucydides.core.annotations.TestsRequirement;
-import net.thucydides.core.annotations.TestsRequirements;
-import net.thucydides.core.annotations.Title;
-import net.thucydides.core.annotations.UserStoryCode;
+import net.thucydides.core.annotations.*;
 import net.thucydides.core.pages.Pages;
 import org.jbehave.core.annotations.Given;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 
 public class WhenDescribingStepsUsingAnnotations {

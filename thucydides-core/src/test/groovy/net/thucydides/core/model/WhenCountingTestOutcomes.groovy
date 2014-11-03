@@ -1,7 +1,6 @@
 package net.thucydides.core.model
 
 import net.thucydides.core.reports.TestOutcomes
-import spock.lang.Shared
 import spock.lang.Specification
 
 /**

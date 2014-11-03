@@ -5,17 +5,16 @@ import net.thucydides.core.issues.IssueTracking
 import net.thucydides.core.model.*
 import net.thucydides.core.reports.TestOutcomes
 import net.thucydides.core.reports.history.DateProvider
-
 import net.thucydides.core.reports.html.HtmlAggregateStoryReporter
 import net.thucydides.core.reports.html.HtmlRequirementsReporter
 import net.thucydides.core.requirements.FileSystemRequirementsTagProvider
 import net.thucydides.core.requirements.model.Requirement
+import net.thucydides.core.requirements.reportpages.ProgressReport
+import net.thucydides.core.requirements.reportpages.RequirementsReport
 import net.thucydides.core.requirements.reports.RequirementsOutcomes
 import net.thucydides.core.requirements.reports.RequirmentsOutcomeFactory
 import org.joda.time.DateTime
 import spock.lang.Specification
-import net.thucydides.core.requirements.reportpages.RequirementsReport
-import net.thucydides.core.requirements.reportpages.ProgressReport
 
 class WhenGeneratingRequirementsReports extends Specification {
 

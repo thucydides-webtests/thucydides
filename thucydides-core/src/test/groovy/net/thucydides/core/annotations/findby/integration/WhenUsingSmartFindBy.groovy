@@ -2,10 +2,7 @@ package net.thucydides.core.annotations.findby.integration
 
 import net.thucydides.core.annotations.findby.By
 import net.thucydides.core.pages.integration.StaticSitePageWithFacades
-import net.thucydides.core.webdriver.WebDriverFacade
-import net.thucydides.core.webdriver.WebDriverFactory
 import org.openqa.selenium.NoSuchElementException
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.openqa.selenium.phantomjs.PhantomJSDriver
 import spock.lang.Shared
 import spock.lang.Specification

@@ -1,12 +1,11 @@
 package net.thucydides.spock.acceptance
 
-import spock.lang.Specification
-import net.thucydides.core.annotations.Steps
 import net.thucydides.core.annotations.Step
-import net.thucydides.spock.ThucydidesEnabled
-import net.thucydides.core.steps.StepEventBus
-
+import net.thucydides.core.annotations.Steps
 import net.thucydides.core.model.TestOutcome
+import net.thucydides.core.steps.StepEventBus
+import net.thucydides.spock.ThucydidesEnabled
+import spock.lang.Specification
 
 /**
  * Examples of running Thucydides-enabled specifications for non-webtest tests.

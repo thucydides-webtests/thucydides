@@ -11,10 +11,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTag;
-import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagName;
-import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagType;
-import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.withResult;
+import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;

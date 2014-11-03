@@ -2,7 +2,6 @@ package net.thucydides.core.requirements
 
 import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
-import org.junit.Test
 import spock.lang.Specification
 
 class WhenLoadingRequirementsFromADirectoryStructure extends Specification {

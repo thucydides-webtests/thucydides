@@ -4,11 +4,7 @@ import com.github.goldin.spock.extensions.tempdir.TempDir
 import net.thucydides.core.annotations.*
 import net.thucydides.core.digest.Digest
 import net.thucydides.core.issues.IssueTracking
-import net.thucydides.core.model.DataTable
-import net.thucydides.core.model.TestOutcome
-import net.thucydides.core.model.TestResult
-import net.thucydides.core.model.TestStep
-import net.thucydides.core.model.TestTag
+import net.thucydides.core.model.*
 import net.thucydides.core.reports.AcceptanceTestLoader
 import net.thucydides.core.reports.AcceptanceTestReporter
 import net.thucydides.core.reports.TestOutcomes

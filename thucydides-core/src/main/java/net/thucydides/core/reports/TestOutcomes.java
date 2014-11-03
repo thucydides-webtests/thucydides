@@ -24,9 +24,7 @@ import java.util.Set;
 
 import static ch.lambdaj.Lambda.*;
 import static net.thucydides.core.model.TestResult.*;
-import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagName;
-import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.havingTagType;
-import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.withResult;
+import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.*;
 import static org.hamcrest.Matchers.is;
 
 //import net.thucydides.core.statistics.HibernateTestStatisticsProvider;

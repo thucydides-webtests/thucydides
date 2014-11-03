@@ -1,8 +1,6 @@
 package net.thucydides.core.statistics.service;
 
 import com.google.common.collect.Lists;
-import net.thucydides.core.requirements.CoreTagProvider;
-import net.thucydides.core.requirements.OverridableTagProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

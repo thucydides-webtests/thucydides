@@ -1,9 +1,9 @@
 package net.thucydides.junit.finder
 
-import spock.lang.Specification
-import net.thucydides.junit.sampletests.thucydidestests.SampleTestCase
 import net.thucydides.junit.sampletests.thucydidestests.SampleDataDrivenTestCase
 import net.thucydides.junit.sampletests.thucydidestests.SampleNonThucydidesTestCase
+import net.thucydides.junit.sampletests.thucydidestests.SampleTestCase
+import spock.lang.Specification
 
 class WhenFindingTestClassesInThePath extends Specification {
 

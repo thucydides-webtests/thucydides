@@ -2,17 +2,10 @@ package net.thucydides.core.reports.integration;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import net.thucydides.core.annotations.Feature;
-import net.thucydides.core.annotations.Issue;
-import net.thucydides.core.annotations.Issues;
+import net.thucydides.core.annotations.*;
 import net.thucydides.core.annotations.Story;
-import net.thucydides.core.annotations.WithTag;
 import net.thucydides.core.digest.Digest;
-import net.thucydides.core.model.DataTable;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
-import net.thucydides.core.model.TestStep;
-import net.thucydides.core.model.TestTag;
+import net.thucydides.core.model.*;
 import net.thucydides.core.reports.AcceptanceTestReporter;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.core.reports.xml.XMLTestOutcomeReporter;
@@ -34,11 +27,7 @@ import java.util.List;
 
 import static net.thucydides.core.hamcrest.XMLMatchers.isSimilarTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.*;
 
 public class WhenGeneratingAnXMLReport {
 

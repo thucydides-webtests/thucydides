@@ -1,10 +1,6 @@
 package net.thucydides.core.reports
 
-import net.thucydides.core.model.Story
-import net.thucydides.core.model.TestOutcome
-import net.thucydides.core.model.TestResult
-import net.thucydides.core.model.TestStep
-import net.thucydides.core.model.TestType
+import net.thucydides.core.model.*
 import spock.lang.Specification
 
 import static net.thucydides.core.util.TestResources.directoryInClasspathCalled

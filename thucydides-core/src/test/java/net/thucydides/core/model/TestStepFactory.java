@@ -4,11 +4,7 @@ import net.thucydides.core.screenshots.ScreenshotAndHtmlSource;
 
 import java.io.File;
 
-import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.IGNORED;
-import static net.thucydides.core.model.TestResult.PENDING;
-import static net.thucydides.core.model.TestResult.SKIPPED;
-import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.model.TestResult.*;
 
 public class TestStepFactory {
     public static TestStep forASuccessfulTestStepCalled(String description) {

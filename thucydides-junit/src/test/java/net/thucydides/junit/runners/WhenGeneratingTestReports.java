@@ -2,7 +2,6 @@ package net.thucydides.junit.runners;
 
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.reports.AcceptanceTestReporter;
-import net.thucydides.core.reports.ReportGenerationFailedError;
 import net.thucydides.core.reports.TestOutcomes;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.samples.AnnotatedSingleTestScenario;
@@ -18,10 +17,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Managing the WebDriver instance during a test run The instance should be

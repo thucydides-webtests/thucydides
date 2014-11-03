@@ -1,10 +1,8 @@
 package net.thucydides.core.webdriver.chrome;
 
 import ch.lambdaj.function.convert.Converter;
-import ch.lambdaj.function.convert.PropertyExtractor;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import java.util.List;

@@ -1,7 +1,6 @@
 package net.thucydides.core.util;
 
 import java.io.File;
-import java.nio.file.FileSystem;
 
 public class TestResources {
     public static File directoryInClasspathCalled(final String resourceName) {

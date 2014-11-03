@@ -1,10 +1,6 @@
 package net.thucydides.core.pages;
 
-import net.thucydides.core.annotations.At;
-import net.thucydides.core.annotations.DefaultUrl;
-import net.thucydides.core.annotations.NamedUrl;
-import net.thucydides.core.annotations.NamedUrls;
-import net.thucydides.core.annotations.WhenPageOpens;
+import net.thucydides.core.annotations.*;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.thucydides.core.webdriver.Configuration;
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration;

@@ -39,8 +39,6 @@ import net.thucydides.core.steps.di.DependencyInjectorService;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.SystemEnvironmentVariables;
 import net.thucydides.core.webdriver.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ThucydidesModule extends AbstractModule {
 

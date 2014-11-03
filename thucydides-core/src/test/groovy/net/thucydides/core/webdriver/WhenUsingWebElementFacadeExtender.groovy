@@ -2,7 +2,6 @@ package net.thucydides.core.webdriver
 
 import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import sample.page.TestPage
-import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 

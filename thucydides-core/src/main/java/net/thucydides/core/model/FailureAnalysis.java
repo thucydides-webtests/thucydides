@@ -1,14 +1,11 @@
 package net.thucydides.core.model;
 
-import junit.framework.TestFailure;
 import net.thucydides.core.PendingStepException;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepFailureException;
 import net.thucydides.core.webdriver.WebdriverAssertionError;
 
-import static net.thucydides.core.model.TestResult.ERROR;
-import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.PENDING;
+import static net.thucydides.core.model.TestResult.*;
 
 /**
  * Determine whether a given type of exception should result in a failure or an error.

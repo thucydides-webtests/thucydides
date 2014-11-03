@@ -1,8 +1,9 @@
 package net.thucydides.junit.runners;
 
-import net.thucydides.core.annotations.*;
+import net.thucydides.core.annotations.Managed;
+import net.thucydides.core.annotations.ManagedPages;
+import net.thucydides.core.annotations.Steps;
 import net.thucydides.core.pages.Pages;
-import net.thucydides.junit.runners.ThucydidesRunner;
 import net.thucydides.samples.IndexPage;
 import net.thucydides.samples.SampleScenarioSteps;
 import org.junit.Test;

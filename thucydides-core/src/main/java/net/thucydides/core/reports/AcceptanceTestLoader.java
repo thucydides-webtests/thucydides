@@ -4,7 +4,6 @@ import com.google.common.base.Optional;
 import net.thucydides.core.model.TestOutcome;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public interface AcceptanceTestLoader {

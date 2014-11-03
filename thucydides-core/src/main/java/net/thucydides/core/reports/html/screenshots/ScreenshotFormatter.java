@@ -6,7 +6,6 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 /**
  * Class designed to help resize and scale screenshots to a format that is compatible with the Thucydides reports.

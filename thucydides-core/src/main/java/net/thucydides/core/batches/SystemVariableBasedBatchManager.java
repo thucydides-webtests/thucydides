@@ -10,9 +10,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_BATCH_COUNT;
-import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_BATCH_NUMBER;
-import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_BATCH_SIZE;
+import static net.thucydides.core.ThucydidesSystemProperty.*;
 
 /**
  * Manages running test cases (i.e. test classes) in batches.

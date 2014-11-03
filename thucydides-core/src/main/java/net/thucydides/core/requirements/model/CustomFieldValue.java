@@ -1,7 +1,5 @@
 package net.thucydides.core.requirements.model;
 
-import com.google.common.base.Optional;
-
 public class CustomFieldValue {
 
     private String name;

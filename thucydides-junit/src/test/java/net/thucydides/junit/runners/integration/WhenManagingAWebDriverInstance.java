@@ -1,21 +1,12 @@
 package net.thucydides.junit.runners.integration;
 
 import net.thucydides.core.steps.StepEventBus;
-import net.thucydides.core.webdriver.Configuration;
-import net.thucydides.core.webdriver.SystemPropertiesConfiguration;
-import net.thucydides.core.webdriver.ThucydidesWebdriverManager;
-import net.thucydides.core.webdriver.UnsupportedDriverException;
-import net.thucydides.core.webdriver.WebDriverFactory;
-import net.thucydides.core.webdriver.WebdriverInstanceFactory;
+import net.thucydides.core.webdriver.*;
 import net.thucydides.junit.rules.QuietThucydidesLoggingRule;
 import net.thucydides.junit.rules.SaveWebdriverSystemPropertiesRule;
 import net.thucydides.junit.runners.AbstractTestStepRunnerTest;
 import net.thucydides.junit.runners.ThucydidesRunner;
-import net.thucydides.samples.MultipleTestScenario;
-import net.thucydides.samples.MultipleTestScenarioWithUniqueSession;
-import net.thucydides.samples.SamplePassingScenario;
-import net.thucydides.samples.SingleTestScenario;
-import net.thucydides.samples.SingleWikipediaTestScenario;
+import net.thucydides.samples.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,9 +20,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

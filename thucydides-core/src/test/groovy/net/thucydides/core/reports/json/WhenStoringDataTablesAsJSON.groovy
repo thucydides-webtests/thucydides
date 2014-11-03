@@ -2,17 +2,12 @@ package net.thucydides.core.reports.json
 
 import net.thucydides.core.model.DataTable
 import net.thucydides.core.model.DataTableRow
-import net.thucydides.core.model.TestResult
-import net.thucydides.core.model.TestStep
 import net.thucydides.core.reports.json.jackson.JacksonJSONConverter
 import net.thucydides.core.util.MockEnvironmentVariables
 import org.joda.time.DateTime
 import org.joda.time.LocalDateTime
-import org.skyscreamer.jsonassert.JSONCompare
-import org.skyscreamer.jsonassert.JSONCompareMode
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Unroll
 
 class WhenStoringDataTablesAsJSON extends Specification {
 

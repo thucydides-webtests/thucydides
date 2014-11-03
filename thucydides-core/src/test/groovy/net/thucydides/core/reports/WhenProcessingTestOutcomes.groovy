@@ -3,10 +3,8 @@ package net.thucydides.core.reports
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.model.TestResult
 import net.thucydides.core.model.TestTag
-import net.thucydides.core.statistics.model.TestStatistics
 import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.MockEnvironmentVariables
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import static net.thucydides.core.reports.matchers.TestOutcomeMatchers.*

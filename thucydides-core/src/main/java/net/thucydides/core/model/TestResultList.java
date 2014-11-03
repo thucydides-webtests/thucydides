@@ -5,12 +5,7 @@ import com.google.common.base.Preconditions;
 import java.util.Arrays;
 import java.util.List;
 
-import static net.thucydides.core.model.TestResult.ERROR;
-import static net.thucydides.core.model.TestResult.FAILURE;
-import static net.thucydides.core.model.TestResult.IGNORED;
-import static net.thucydides.core.model.TestResult.PENDING;
-import static net.thucydides.core.model.TestResult.SKIPPED;
-import static net.thucydides.core.model.TestResult.SUCCESS;
+import static net.thucydides.core.model.TestResult.*;
 
 /**
  * A list of test results, used to determine the overall test result.

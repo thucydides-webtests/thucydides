@@ -1,8 +1,6 @@
 package net.thucydides.core.model;
 
 import com.google.common.base.Optional;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;

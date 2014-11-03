@@ -1,8 +1,6 @@
 package net.thucydides.core.model
 
-import com.google.common.collect.Lists
 import spock.lang.Specification
-
 
 /**
  * Created by john on 4/07/2014.

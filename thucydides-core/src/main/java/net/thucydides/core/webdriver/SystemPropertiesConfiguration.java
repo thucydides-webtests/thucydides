@@ -10,9 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 
-import static net.thucydides.core.ThucydidesSystemProperty.WEBDRIVER_BASE_URL;
-import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_STORE_HTML_SOURCE;
-import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_TAKE_SCREENSHOTS;
+import static net.thucydides.core.ThucydidesSystemProperty.*;
 import static net.thucydides.core.webdriver.WebDriverFactory.getDriverFrom;
 
 /**

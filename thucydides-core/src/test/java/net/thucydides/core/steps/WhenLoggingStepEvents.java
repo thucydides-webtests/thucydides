@@ -12,10 +12,7 @@ import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 
 import static org.mockito.Matchers.contains;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class WhenLoggingStepEvents {
 

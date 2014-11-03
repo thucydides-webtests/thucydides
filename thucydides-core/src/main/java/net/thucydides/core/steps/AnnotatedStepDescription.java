@@ -3,14 +3,8 @@ package net.thucydides.core.steps;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import net.thucydides.core.annotations.Step;
-import net.thucydides.core.annotations.StepGroup;
-import net.thucydides.core.annotations.TestsRequirement;
-import net.thucydides.core.annotations.TestsRequirements;
-import net.thucydides.core.annotations.Title;
-import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.annotations.*;
 import net.thucydides.core.reflection.MethodFinder;
-import net.thucydides.core.reports.html.Formatter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;

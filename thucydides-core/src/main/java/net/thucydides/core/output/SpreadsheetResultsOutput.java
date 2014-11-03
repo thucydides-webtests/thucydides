@@ -6,12 +6,7 @@ import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.format.Colour;
 import jxl.read.biff.BiffException;
-import jxl.write.Label;
-import jxl.write.WritableCellFormat;
-import jxl.write.WritableFont;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
-import jxl.write.WriteException;
+import jxl.write.*;
 import net.thucydides.core.matchers.SimpleValueMatcher;
 
 import java.io.File;

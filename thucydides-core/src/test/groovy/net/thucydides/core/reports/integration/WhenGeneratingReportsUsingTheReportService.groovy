@@ -5,7 +5,6 @@ import net.thucydides.core.model.Story
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.util.MockEnvironmentVariables
 import net.thucydides.core.webdriver.SystemPropertiesConfiguration
-import org.openqa.selenium.WebDriver
 import spock.lang.Specification
 
 import java.nio.file.Files

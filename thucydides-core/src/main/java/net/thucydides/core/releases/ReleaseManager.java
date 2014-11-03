@@ -16,7 +16,6 @@ import net.thucydides.core.reports.html.ReportNameProvider;
 import net.thucydides.core.requirements.RequirementsService;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.reports.RequirementOutcome;
-import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.hamcrest.Matcher;
 import org.slf4j.Logger;

@@ -1,6 +1,5 @@
 package net.thucydides.samples;
 
-import net.thucydides.core.Thucydides;
 import net.thucydides.core.annotations.Managed;
 import net.thucydides.core.annotations.ManagedPages;
 import net.thucydides.core.annotations.Steps;

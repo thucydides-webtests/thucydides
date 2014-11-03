@@ -9,14 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static net.thucydides.core.matchers.BeanMatcherAsserts.filterElements;
-import static net.thucydides.core.matchers.BeanMatcherAsserts.matches;
-import static net.thucydides.core.matchers.BeanMatcherAsserts.shouldMatch;
-import static net.thucydides.core.matchers.BeanMatchers.each;
-import static net.thucydides.core.matchers.BeanMatchers.max;
-import static net.thucydides.core.matchers.BeanMatchers.min;
-import static net.thucydides.core.matchers.BeanMatchers.the;
-import static net.thucydides.core.matchers.BeanMatchers.the_count;
+import static net.thucydides.core.matchers.BeanMatcherAsserts.*;
+import static net.thucydides.core.matchers.BeanMatchers.*;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;

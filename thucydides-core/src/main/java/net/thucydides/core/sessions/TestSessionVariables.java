@@ -2,8 +2,6 @@ package net.thucydides.core.sessions;
 
 import com.google.common.collect.ImmutableMap;
 import net.thucydides.core.SessionMap;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.WebDriver;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

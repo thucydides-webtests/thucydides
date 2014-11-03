@@ -7,7 +7,6 @@ import net.thucydides.core.util.EnvironmentVariables
 import net.thucydides.core.util.FileSystemUtils
 import net.thucydides.core.util.MockEnvironmentVariables
 import spock.lang.Specification
-import spock.lang.Timeout
 
 class WhenProcessingScreenshots extends Specification {
 

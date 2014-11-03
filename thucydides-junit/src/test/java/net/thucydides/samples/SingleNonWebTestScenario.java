@@ -1,6 +1,5 @@
 package net.thucydides.samples;
 
-import junit.framework.Assert;
 import net.thucydides.core.annotations.Steps;
 import net.thucydides.junit.runners.ThucydidesRunner;
 import org.junit.Test;
