@@ -25,6 +25,10 @@ allprojects {
     apply plugin: 'build-version'
 
 
+    buildVersion {
+        releaseTagPattern = "^v(\\d+\\.\\d+\\.\\d+)"
+    }
+
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
     group = 'net.thucydides'
