@@ -82,18 +82,18 @@ allprojects {
     }
 
     test {
-        afterTest { desc, result ->
-            println "  - ${desc.name}"
-        }
+//        afterTest { desc, result ->
+//            println "  - ${desc.name}"
+//        }
         testLogging {
             exceptionFormat = 'full'
         }
     }
 
     integrationTests {
-        afterTest { desc, result ->
-            println "  - ${desc.name}"
-        }
+//        afterTest { desc, result ->
+//            println "  - ${desc.name}"
+//        }
         testLogging {
             exceptionFormat = 'full'
         }
