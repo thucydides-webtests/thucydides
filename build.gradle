@@ -63,6 +63,8 @@ allprojects {
         exclude '**/integration/**'
         exclude '**/samples/**'
         exclude '**/*Sample*'
+        minHeapSize = "128m"
+        maxHeapSize = "512m"
         jvmArgs '-XX:MaxPermSize=256m'
     }
 
@@ -74,6 +76,8 @@ allprojects {
         include '**/integration/**'
         reports.junitXml.destination = "${buildDir}/reports/integration-tests"
         reports.html.destination = "${buildDir}/reports/integration-tests"
+        minHeapSize = "128m"
+        maxHeapSize = "512m"
         jvmArgs '-XX:MaxPermSize=256m'
     }
 
