@@ -21,27 +21,16 @@ import net.thucydides.core.webdriver.WebDriverFacade;
 import net.thucydides.core.webdriver.javascript.JavascriptExecutorFacade;
 import net.thucydides.core.webelements.Checkbox;
 import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.NoSuchFrameException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.Clock;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Sleeper;
+import org.openqa.selenium.support.ui.*;
 import org.openqa.selenium.support.ui.SystemClock;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -239,7 +228,7 @@ public abstract class PageObject {
 
     public RenderedPageObjectView withTimeoutOf(int timeout, TimeUnit units) {
         RenderedPageObjectView renderedPageObjectView = getRenderedView();
-        renderedPageObjectView.setWaitForTimeoutInMilliseconds(TimeUnit.MILLISECONDS.convert(timeout,units));
+        renderedPageObjectView.setWaitForTimeoutInMilliseconds(TimeUnit.MILLISECONDS.convert(timeout, units));
         return renderedPageObjectView;
     }
 
@@ -736,7 +725,7 @@ public abstract class PageObject {
 
     private List<Method> methodsAnnotatedWithWhenPageOpens() {
         List<Method> methods = MethodFinder.inClass(this.getClass()).getAllMethods();
-        List<Method> annotatedMethods = new ArrayList<Method>();
+        List<Method> annotatedMethods = new ArrayList<>();
         for (Method method : methods) {
             if (method.getAnnotation(WhenPageOpens.class) != null) {
                 if (method.getParameterTypes().length == 0) {
@@ -900,14 +889,14 @@ public abstract class PageObject {
     }
 
     public ThucydidesFluentWait<WebDriver> waitForWithRefresh() {
-        return new FluentWaitWithRefresh<WebDriver>(driver, webdriverClock, sleeper)
+        return new FluentWaitWithRefresh<>(driver, webdriverClock, sleeper)
                 .withTimeout(waitForTimeoutInMilliseconds, TimeUnit.MILLISECONDS)
                 .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
                 .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
     }
 
     public ThucydidesFluentWait<WebDriver> waitForCondition() {
-        return new NormalFluentWait<WebDriver>(driver, webdriverClock, sleeper)
+        return new NormalFluentWait<>(driver, webdriverClock, sleeper)
                 .withTimeout(waitForTimeoutInMilliseconds, TimeUnit.MILLISECONDS)
                 .pollingEvery(WAIT_FOR_ELEMENT_PAUSE_LENGTH, TimeUnit.MILLISECONDS)
                 .ignoring(NoSuchElementException.class, NoSuchFrameException.class);
