@@ -78,6 +78,8 @@ public class WhenSettingScreenDimensions {
 
     @After
     public void closeBrowser() {
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
