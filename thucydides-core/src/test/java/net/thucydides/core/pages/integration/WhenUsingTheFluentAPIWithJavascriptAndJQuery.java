@@ -11,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.remote.UnreachableBrowserException;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
 
     @AfterClass
     public static void shutdownDriver() {
+        driver.close();
         driver.quit();
     }
 
@@ -39,11 +41,11 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
     public void should_inject_jquery_into_the_page() {
         WebDriver driver = new PhantomJSDriver();
         StaticSitePage page = new StaticSitePage(driver, 1000);
-        page.open();
+        getPage().open();
 
-        page.evaluateJavascript("$('#firstname').focus();");
+        getPage().evaluateJavascript("$('#firstname').focus();");
 
-        Boolean jqueryInjected = (Boolean) page.evaluateJavascript("return (typeof jQuery === 'function')");
+        Boolean jqueryInjected = (Boolean) getPage().evaluateJavascript("return (typeof jQuery === 'function')");
         assertThat(jqueryInjected, is(true));
 
         driver.close();
@@ -51,86 +53,74 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
 
     @Test
     public void should_be_able_to_use_the_javascript_executor_with_parameters() {
-        StaticSitePage page = getPage();
+        getPage().evaluateJavascript("$('#firstname').focus();", "#firstname");
 
-        page.evaluateJavascript("$('#firstname').focus();", "#firstname");
-
-        assertThat(page.element(page.firstName).hasFocus(), is(true));
+        assertThat(getPage().element(getPage().firstName).hasFocus(), is(true));
     }
 
     @Test
     public void should_be_able_to_set_focus_directly() {
-        StaticSitePage page = getPage();
-
-        JavascriptExecutorFacade js = new JavascriptExecutorFacade(page.getDriver());
+        JavascriptExecutorFacade js = new JavascriptExecutorFacade(getPage().getDriver());
         js.executeScript("$('#firstname').focus();");
 
-        assertThat(page.element(page.firstName).hasFocus(), is(true));
+        assertThat(getPage().element(getPage().firstName).hasFocus(), is(true));
     }
 
     @Test
     public void should_support_jquery_queries_in_the_page() {
 
         StaticSitePage page = getPage();
-        page.evaluateJavascript("$('#firstname').focus();");
+        getPage().evaluateJavascript("$('#firstname').focus();");
 
-        assertThat(page.element(page.firstName).hasFocus(), is(true));
+        assertThat(getPage().element(getPage().firstName).hasFocus(), is(true));
 
-        page.evaluateJavascript("$('#lastname').focus();");
+        getPage().evaluateJavascript("$('#lastname').focus();");
 
-        assertThat(page.element(page.lastName).hasFocus(), is(true));
+        assertThat(getPage().element(getPage().lastName).hasFocus(), is(true));
     }
 
     @Test
     public void should_support_jquery_queries_that_return_values_in_the_page() {
 
-        StaticSitePage page = getPage();
-        Object result = page.evaluateJavascript("return $('#country').val();");
+        Object result = getPage().evaluateJavascript("return $('#country').val();");
 
         assertThat(result.toString(), is("Australia"));
     }
 
     @Test
     public void should_be_able_to_find_an_element_using_a_jquery_expression() {
-        StaticSitePage page = getPage();
-
-        WebElement link = page.getDriver().findElement(ByJQuery.selector("a[title='Click Me']"));
+        WebElement link = getPage().getDriver().findElement(ByJQuery.selector("a[title='Click Me']"));
         assertThat(link.isDisplayed(), is(true));
     }
 
     @Test
     public void should_be_able_to_find_multiple_elements_using_a_jquery_expression() {
-        StaticSitePage page = getPage();
-        List<WebElement> links = page.getDriver().findElements(ByJQuery.selector("h2"));
+        List<WebElement> links = getPage().getDriver().findElements(ByJQuery.selector("h2"));
         assertThat(links.size(), is(2));
     }
 
     @Test(expected = WebDriverException.class)
     public void should_fail_gracefully_if_no_jquery_element_is_found() {
-        StaticSitePage page = getPage();
-        page.getDriver().findElement(ByJQuery.selector("a[title='Does Not Exist']"));
+        getPage().getDriver().findElement(ByJQuery.selector("a[title='Does Not Exist']"));
     }
 
     @Test(expected = WebDriverException.class)
     public void should_fail_gracefully_if_jquery_selector_is_invalid() {
-        StaticSitePage page = getPage();
-        page.getDriver().findElement(ByJQuery.selector("a[title='Does Not Exist'"));
+        getPage().getDriver().findElement(ByJQuery.selector("a[title='Does Not Exist'"));
     }
 
     @Test
     public void should_evaluate_javascript_within_browser() {
-        StaticSitePage page = getPage();
-        String result = (String) page.evaluateJavascript("return document.title");
+        String result = (String) getPage().evaluateJavascript("return document.title");
         assertThat(result, is("Thucydides Test Site"));
     }
 
     @Test
     public void should_execute_javascript_within_browser() {
-        StaticSitePage page = getPage();
-        page.open();
-        assertThat(page.element(page.firstName).hasFocus(), is(false));
-        page.evaluateJavascript("document.getElementById('firstname').focus()");
-        assertThat(page.element(page.firstName).hasFocus(), is(true));
+        getPage().open();
+        assertThat(getPage().element(getPage().firstName).hasFocus(), is(false));
+        getPage().evaluateJavascript("document.getElementById('firstname').focus()");
+        assertThat(getPage().element(getPage().firstName).hasFocus(), is(true));
     }
 
 
@@ -142,6 +132,12 @@ public class WhenUsingTheFluentAPIWithJavascriptAndJQuery {
     }
 
     public StaticSitePage getPage() {
+        try {
+            page.getTitle();
+        } catch (UnreachableBrowserException e) {
+            driver = new PhantomJSDriver();
+            page = new StaticSitePage(driver, 1000);            
+        }
         return page;
     }
 }

@@ -7,7 +7,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -19,7 +19,7 @@ public class UsingTheWebElementFacade extends FluentElementAPITestsBaseClass {
 
     @BeforeClass
     public static void openStaticPage() {
-        localDirver = new WebDriverFacade(PhantomJSDriver.class, new WebDriverFactory());
+        localDirver = new WebDriverFacade(HtmlUnitDriver.class, new WebDriverFactory());
         page = new StaticSitePageWithFacades(localDirver, 1);
         page.setWaitForTimeout(750);
         page.open();
