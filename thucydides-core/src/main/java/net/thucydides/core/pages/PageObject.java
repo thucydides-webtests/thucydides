@@ -163,7 +163,10 @@ public abstract class PageObject {
     }
 
     private boolean isDefinedRemoteUrl() {
-        return ThucydidesSystemProperty.WEBDRIVER_REMOTE_URL.isDefinedIn(pages.getConfiguration().getEnvironmentVariables());
+        boolean isRemoteUrl = ThucydidesSystemProperty.WEBDRIVER_REMOTE_URL.isDefinedIn(pages.getConfiguration().getEnvironmentVariables());
+        boolean isSaucelabsUrl = ThucydidesSystemProperty.SAUCELABS_URL.isDefinedIn(pages.getConfiguration().getEnvironmentVariables());
+        boolean isBrowserStack = ThucydidesSystemProperty.BROWSERSTACK_URL.isDefinedIn(pages.getConfiguration().getEnvironmentVariables());
+        return isRemoteUrl || isSaucelabsUrl || isBrowserStack;
     }
 
     private void setupPageUrls() {
