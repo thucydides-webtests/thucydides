@@ -66,7 +66,6 @@ allprojects {
         minHeapSize = "128m"
         maxHeapSize = "512m"
         jvmArgs '-XX:MaxPermSize=256m'
-        maxParallelForks=4
     }
 
     task integrationTests(type: Test) {
