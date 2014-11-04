@@ -7,6 +7,8 @@ import net.thucydides.core.reports.html.HtmlAggregateStoryReporter;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,69 +16,60 @@ import java.util.Locale;
 
 /**
  * Generate aggregate XML acceptance test reports.
- * 
- * @goal aggregate
- * @requiresProject false
+x *
  */
+@Mojo(name = "aggregate", requiresProject = false)
 public class ThucydidesAggregatorMojo extends AbstractMojo {
 
     /**
      * Aggregate reports are generated here
-     * @parameter expression="${thucydides.outputDirectory}" default-value="${project.build.directory}/site/thucydides/"
-     * @required
      */
+    @Parameter(property = "thucydides.outputDirectory", defaultValue = "${project.build.directory}/site/thucydides", required=true)
     public File outputDirectory;
 
     /**
      * Thucydides test reports are read from here
-     *
-     * @parameter expression="${thucydides.source}" default-value="${project.build.directory}/site/thucydides/"
-     * @required
      */
+    @Parameter(property = "thucydides.source", defaultValue = "${project.build.directory}/site/thucydides", required=true)
     public File sourceDirectory;
 
     /**
      * URL of the issue tracking system to be used to generate links for issue numbers.
-     * @parameter
      */
+    @Parameter
     public String issueTrackerUrl;
 
     /**
      * Base URL for JIRA, if you are using JIRA as your issue tracking system.
      * If you specify this property, you don't need to specify the issueTrackerUrl.
-     * @parameter
      */
+    @Parameter
     public String jiraUrl;
 
-    /**
-     * @parameter
-     */
+    @Parameter
     public String jiraUsername;
 
-    /**
-     * @parameter
-     */
+    @Parameter
     public String jiraPassword;
 
     /**
      * JIRA project key, which will be prepended to the JIRA issue numbers.
-     * @parameter
      */
+    @Parameter
     public String jiraProject;
 
     /**
      * Base directory for requirements.
-     * @parameter
      */
+    @Parameter
     public String requirementsBaseDir;
 
     EnvironmentVariables environmentVariables;
 
     /**
      * Thucydides project key
-     * @parameter expression="${thucydides.project.key}" default-value="default"
-     *
      */
+    @Parameter(property = "thucydides.project.key", defaultValue = "default")
     public String projectKey;
 
     protected void setOutputDirectory(final File outputDirectory) {

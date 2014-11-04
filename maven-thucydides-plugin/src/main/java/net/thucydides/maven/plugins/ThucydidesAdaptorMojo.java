@@ -7,40 +7,37 @@ import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import  org.apache.maven.plugins.annotations.Parameter;
+import org.springframework.beans.factory.annotation.Required;
 
 import java.io.File;
 import java.io.IOException;
 
 /**
  * This plugin generates converts external (e.g. xUnit) files into Thucydides reports.
- * @goal import
- * @requiresProject false
- * @description Import other test output formats into Thucydides
  */
+@Mojo( name = "import", requiresProject=false)
 public class ThucydidesAdaptorMojo extends AbstractMojo {
 
     /**
      * Aggregate reports are generated here
-     * @parameter expression="${import.target}" default-value="target/site/thucydides/"
-     * @required
      */
+    @Parameter(property = "import.target", defaultValue = "target/site/thucydides", required=true)
     public File outputDirectory;
 
     /**
      * External test reports are read from here
-     *
-     * @parameter expression="${import.format}"
-     * @required
      */
+    @Parameter(property = "import.format", required=true)
     public String format;
 
     /**
      * External test reports are read from here if necessary.
      * This could be either a directory or a single file, depending on the adaptor used.
      * For some adaptors (e.g. database connectors), it will not be necessary.
-     *
-     * @parameter expression="${import.source}"
      */
+    @Parameter(property = "import.source")
     public File source;
 
     private final EnvironmentVariables environmentVariables;
