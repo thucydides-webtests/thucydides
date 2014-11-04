@@ -29,6 +29,7 @@ public abstract class TestFinder {
 
     /**
      * Create a new test finder instance that will look for tests in the packages underneath the given root package.
+     * @param rootPackage The root package used as the starting point when looking for test classes.
      */
     protected TestFinder(final String rootPackage) {
         this.rootPackage = rootPackage;

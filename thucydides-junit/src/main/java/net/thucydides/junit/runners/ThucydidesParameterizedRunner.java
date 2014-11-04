@@ -37,7 +37,12 @@ public class ThucydidesParameterizedRunner extends Suite {
     private final ParameterizedTestsOutcomeAggregator parameterizedTestsOutcomeAggregator = ParameterizedTestsOutcomeAggregator.from(this);
 
     /**
-     * Only used for testing.
+     * Test runner used for testing purposes.
+     * @param klass The test class to run
+     * @param configuration current system configuration (usually mocked)
+     * @param webDriverFactory a webdriver factory (can be mocked)
+     * @param batchManager a batch manager to process batched testing
+     * @throws Throwable - cause anything can happen!
      */
     public ThucydidesParameterizedRunner(final Class<?> klass,
                                          Configuration configuration,

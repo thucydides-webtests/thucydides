@@ -82,12 +82,20 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     /**
      * Creates a new test runner for WebDriver web tests.
      *
+     * @param klass the class under test
      * @throws InitializationError if some JUnit-related initialization problem occurred
      */
     public ThucydidesRunner(final Class<?> klass) throws InitializationError {
         this(klass, Injectors.getInjector());
     }
 
+    /**
+     * Creates a new test runner for WebDriver web tests.
+     *
+     * @param klass the class under test
+     * @param module used to inject a custom Guice module
+     * @throws InitializationError if some JUnit-related initialization problem occurred
+     */
     public ThucydidesRunner(Class<?> klass, Module module) throws InitializationError {
         this(klass, Injectors.getInjector(module));
     }
@@ -219,7 +227,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     @Override
     public void run(final RunNotifier notifier) {
-        RunNotifier localNotifier = null;
+        RunNotifier localNotifier;
         if (!skipThisTest()) {
             try {
                 setupFixtureServices();
@@ -527,6 +535,12 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     /**
      * Instantiate the @Managed-annotated WebDriver instance with current WebDriver.
      */
+
+    /**
+     * Instantiate the @Managed-annotated WebDriver instance with current WebDriver.
+     * @param testCase A Thucydides-annotated test class
+     * @param method
+     */
     protected void injectDriverInto(final Object testCase,
                                     final FrameworkMethod method) {
         TestCaseAnnotations.forTestCase(testCase).injectDriver(driverFor(method));
@@ -545,6 +559,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     /**
      * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
+     * @param testCase A Thucydides-annotated test class
      */
     protected void injectScenarioStepsInto(final Object testCase) {
         StepAnnotations.injectScenarioStepsInto(testCase, stepFactory);
@@ -552,7 +567,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     /**
      * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
-     */
+     * @param testCase A Thucydides-annotated test class
+         */
     protected void injectAnnotatedPagesObjectInto(final Object testCase) {
         StepAnnotations.injectAnnotatedPagesObjectInto(testCase, pages);
     }
@@ -565,6 +581,10 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
         return getWebdriverManager().getWebdriver(driver);
     }
 
+    /**
+     * Find the current set of test outcomes produced by the test execution.
+     * @return the current list of test outcomes
+     */
     public List<TestOutcome> getTestOutcomes() {
         return getStepListener().getTestOutcomes();
     }
