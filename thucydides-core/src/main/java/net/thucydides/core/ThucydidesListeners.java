@@ -56,6 +56,7 @@ public class ThucydidesListeners {
     /**
      * The configuration manages output directories and driver types.
      * They can be defined as system values, or have sensible defaults.
+     * @return current configuration object
      */
     protected Configuration getSystemConfiguration() {
         if (systemConfiguration == null) {

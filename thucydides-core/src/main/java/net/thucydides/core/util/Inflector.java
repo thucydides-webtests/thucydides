@@ -315,6 +315,9 @@ public class Inflector {
      * to uppercase or lowercase the backreferences. For example, <code>\L1</code> would lowercase the first backreference, and
      * <code>&#92;u3</code> would uppercase the 3rd backreference.
      *
+     * @param input the input string
+     * @param regex regular expression to replace
+     * @param groupNumberToUppercase the regex group to convert to uppercase
      * @return the input string with the appropriate characters converted to upper-case
      */
     protected static String replaceAllWithUppercase( String input,

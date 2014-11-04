@@ -77,12 +77,13 @@ public class TestStatistics {
     }
 
     /**
-     * Calculate the pass rate over a given number of tests, e.g.
+     * Find the pass rate over a given number of tests
      * <pre>
      *     <code>
      *     Double recentPassRate = stats.getPassRate().overTheLast(5).testRuns();
      *     </code>
      * </pre>
+     * @return the pass rate over a given number of tests
      */
     public PassRateBuilder getPassRate() {
         return new PassRateBuilder(OVERALL);

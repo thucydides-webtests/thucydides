@@ -57,6 +57,9 @@ public class StepFactory {
      * Returns a new ScenarioSteps instance, of the specified type.
      * This is actually a proxy that allows reporting and screenshots to
      * be performed at each step.
+     * @param scenarioStepsClass the scenario step class
+     * @param <T> the scenario step class type
+     * @return the instrumented step library
      */
     public <T> T getStepLibraryFor(final Class<T> scenarioStepsClass) {
         if (isStepLibraryInstantiatedFor(scenarioStepsClass)) {

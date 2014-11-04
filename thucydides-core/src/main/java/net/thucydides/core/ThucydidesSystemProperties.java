@@ -18,7 +18,7 @@ public class ThucydidesSystemProperties {
     }
 
     /**
-     * Determines whether a Thucydides system property has been set or not.
+     * @return True if a Thucydides system property has been set.
      */
     public boolean isDefined(final ThucydidesSystemProperty property) {
         return (System.getProperty(property.getPropertyName()) != null);
@@ -29,7 +29,7 @@ public class ThucydidesSystemProperties {
     }
 
     /**
-     * Determines whether or not a Thucydides system property has been set to a non-empty value.
+     * @return True if a given Thucydides system property has been set to a non-empty value.
      */
     public boolean isEmpty(final ThucydidesSystemProperty property) {
         String value = System.getProperty(property.getPropertyName());
@@ -38,6 +38,8 @@ public class ThucydidesSystemProperties {
 
     /**
      * Sets a Thucydides system property to s specified value.
+     * @param property the name of the property
+     * @param value the property value
      */
     public void setValue(final ThucydidesSystemProperty property, final String value) {
         System.setProperty(property.getPropertyName(), value);

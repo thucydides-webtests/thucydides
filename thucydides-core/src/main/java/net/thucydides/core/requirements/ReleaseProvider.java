@@ -11,13 +11,13 @@ import java.util.List;
  */
 public interface ReleaseProvider {
     /**
-     * Return a full tree-structure of known releases.
+     * @return a full tree-structure of known releases.
      */
     List<Release> getReleases();
 
     /**
-     * Is this provider currently activated
      * Some release providers can be deactivated via system properties.
+     * @return Is this provider currently activated
      */
     boolean isActive();
 }

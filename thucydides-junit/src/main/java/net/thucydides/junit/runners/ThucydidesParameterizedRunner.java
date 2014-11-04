@@ -163,6 +163,7 @@ public class ThucydidesParameterizedRunner extends Suite {
     /**
      * Only called reflectively. Do not use programmatically.
      * @param klass The test class to run
+     * @throws Throwable Cause shit happens
      */
     public ThucydidesParameterizedRunner(final Class<?> klass) throws Throwable {
         this(klass, Injectors.getInjector().getInstance(Configuration.class), new WebDriverFactory(),

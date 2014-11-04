@@ -34,6 +34,7 @@ public class Thucydides {
     /**
      * Initialize Thucydides-related fields in the specified object.
      * This includes managed WebDriver instances,
+     * @param testCase any object (testcase or other) containing injectable Thucydides components
      */
     public static void initialize(final Object testCase) {
         setupWebDriverFactory();
@@ -70,6 +71,7 @@ public class Thucydides {
     /**
      * Initialize Thucydides-related fields in the specified object.
      * This includes managed WebDriver instances,
+     * @param testCase any object (testcase or other) containing injectable Thucydides components
      */
     public static void initializeWithNoStepListener(final Object testCase) {
         setupWebDriverFactory();
@@ -107,6 +109,7 @@ public class Thucydides {
 
     /**
      * Instantiate the @Managed-annotated WebDriver instance with current WebDriver.
+     * @param testCase any object (testcase or other) containing injectable Thucydides components
      */
     protected static void injectDriverInto(final Object testCase) {
         TestCaseAnnotations.forTestCase(testCase).injectDriver(getDriver());
@@ -114,6 +117,7 @@ public class Thucydides {
 
     /**
      * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
+     * @param testCase any object (testcase or other) containing injectable Thucydides components
      */
     public static void injectScenarioStepsInto(final Object testCase) {
         StepAnnotations.injectScenarioStepsInto(testCase, getStepFactory());
@@ -121,6 +125,7 @@ public class Thucydides {
 
     /**
      * Instantiates the @ManagedPages-annotated Pages instance using current WebDriver.
+     * @param testCase any object (testcase or other) containing injectable Thucydides components
      */
     protected static void injectAnnotatedPagesObjectInto(final Object testCase) {
         StepAnnotations.injectOptionalAnnotatedPagesObjectInto(testCase, getPages());
@@ -199,7 +204,7 @@ public class Thucydides {
     }
 
     /**
-     * The current working directory name is used as a default project key if no other key is provided.
+     * @return The current working directory name is used as a default project key if no other key is provided.
      */
     public static String getDefaultProjectKey() {
         String workingDirPath = System.getProperty("user.dir");

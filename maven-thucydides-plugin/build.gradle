@@ -20,6 +20,25 @@ task generatePom << {
                 }
             }
             packaging 'maven-plugin'
+            scm {
+                url 'scm:git:git@github.com:thucydides-webtests/$project.name.git'
+                connection 'scm:git:git@github.com:thucydides-webtests/$project.name.git'
+                developerConnection 'scm:git:git@github.com:thucydides-webtests/$project.name.git'
+            }
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/license/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+            developers {
+                developer {
+                    id 'johnsmart'
+                    name 'John Ferguson Smart'
+                    email 'john.smart@wakaleo.com'
+                }
+            }
         }
     }.writeTo("pom.xml")
 }

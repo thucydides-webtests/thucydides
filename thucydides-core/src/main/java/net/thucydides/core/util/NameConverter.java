@@ -19,6 +19,8 @@ public final class NameConverter {
 
     /**
      * Converts a class or method name into a human-readable sentence.
+     * @param name a class or method name
+     * @return the human-readable form
      */
     public static String humanize(final String name) {
         if ((name == null) || (name.trim().length() == 0)) {
@@ -50,6 +52,8 @@ public final class NameConverter {
 
     /**
      * Inserts spaces between words in a CamelCase name.
+     * @param name a name in camel-case
+     * @return the name with spaces instead of underscores
      */
     public static String splitCamelCase(final String name) {
         StringBuffer splitWords = new StringBuffer();
@@ -137,6 +141,8 @@ public final class NameConverter {
 
     /**
      * Transform a camel-case word to underscored-version.
+     * @param name name to be converted
+     * @return a name with underscore separators
      */
     public static String underscore(final String name) {
         if (name != null) {

@@ -5,5 +5,5 @@ include 'thucydides-test-utils',
         'thucydides-junit',
         'thucydides-ant-task',
         'thucydides-gradle-plugin',
-        'thucydides-maven-plugin',
+        'maven-thucydides-plugin',
         'thucydides-browsermob-plugin'

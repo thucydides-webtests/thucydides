@@ -19,7 +19,6 @@ allprojects {
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
     apply plugin: 'com.jfrog.bintray'
-//    apply from: "$rootDir/gradle/versioning.gradle"
     apply plugin: 'build-version'
 
 
@@ -31,8 +30,6 @@ allprojects {
     targetCompatibility = 1.7
     group = 'net.thucydides'
     version = buildVersion.version
-
-//    version = new ProjectVersion(ext.majorVersion, ext.minorVersion, System.env.SOURCE_BUILD_NUMBER)
 
     repositories {
         mavenLocal()
@@ -147,10 +144,6 @@ allprojects {
 }
 
 subprojects {
-//    project.version = new ProjectVersion(ext.majorVersion, ext.minorVersion, System.env.SOURCE_BUILD_NUMBER)
-
-    println "Processing $project.name : version $project.version"
-
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'
         from sourceSets.main.allSource
@@ -169,6 +162,9 @@ subprojects {
     publishing {
         publications {
             mavenJava(MavenPublication) {
+
+                println "Publishing $project.name / $project.group"
+
                 from components.java
 
                 artifact sourcesJar {
@@ -178,8 +174,6 @@ subprojects {
                 artifact javadocJar {
                     classifier "javadoc"
                 }
-
-                println "Generation pom for $project.name"
 
                 pom.withXml {
                     asNode().children().last() + {

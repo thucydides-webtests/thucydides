@@ -43,23 +43,23 @@ public class ExtendedTemporaryFolder extends ExternalResource {
     }
 
     /**
-     * Returns a new fresh file with a random name under the temporary folder.
+     * @return a new fresh file with a random name under the temporary folder.
      */
     public File newFile() throws IOException {
         return File.createTempFile("junit", null, getRoot());
     }
 
     /**
-     * Returns a new fresh folder with the given name under the temporary
-     * folder.
+     * @param  folder name of the new temporary directory
+     * @return a new fresh folder with the given name under the temporary folder.
      */
     public File newFolder(String folder) throws IOException {
         return newFolder(new String[]{folder});
     }
 
     /**
-     * Returns a new fresh folder with the given name(s) under the temporary
-     * folder.
+     * @param  folderNames a sequence of folder names used to create a temporary directory
+     * @return a new fresh folder with the given name(s) under the temporary folder.
      */
     public File newFolder(String... folderNames) throws IOException {
         File file = getRoot();
