@@ -1,3 +1,5 @@
+group = 'net.thucydides.maven.plugins'
+
 dependencies {
     compile project(':thucydides-core')
 

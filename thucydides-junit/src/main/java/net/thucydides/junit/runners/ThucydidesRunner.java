@@ -174,8 +174,9 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     /**
-     * The getConfiguration().manages output directories and driver types.
+     * The Configuration class manages output directories and driver types.
      * They can be defined as system values, or have sensible defaults.
+     * @return the current configuration
      */
     protected Configuration getConfiguration() {
         return configuration;
@@ -183,6 +184,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     /**
      * Batch Manager used for running tests in parallel batches
+     * @return the current batch manager object
      */
     protected BatchManager getBatchManager() {
         return batchManager;
@@ -212,6 +214,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * To generate reports, different AcceptanceTestReporter instances need to
      * subscribe to the listener. The listener will tell them when the test is
      * done, and the reporter can decide what to do.
+     * @param reporter an implementation of the AcceptanceTestReporter interface.
      */
     public void subscribeReporter(final AcceptanceTestReporter reporter) {
         getReportService().subscribe(reporter);
@@ -283,6 +286,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
      * The Step Listener observes and records what happens during the execution of the test.
      * Once the test is over, the Step Listener can provide the acceptance test outcome in the
      * form of an TestOutcome object.
+     * @return the current step listener
      */
     protected JUnitStepListener getStepListener() {
         if (stepListener == null) {
@@ -534,12 +538,8 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
 
     /**
      * Instantiate the @Managed-annotated WebDriver instance with current WebDriver.
-     */
-
-    /**
-     * Instantiate the @Managed-annotated WebDriver instance with current WebDriver.
      * @param testCase A Thucydides-annotated test class
-     * @param method
+     * @param method the test method
      */
     protected void injectDriverInto(final Object testCase,
                                     final FrameworkMethod method) {
@@ -590,7 +590,7 @@ public class ThucydidesRunner extends BlockJUnit4ClassRunner {
     }
 
     /**
-     * The default reporters applicable for standard test runs.
+     *  @return The default reporters applicable for standard test runs.
      */
     protected Collection<AcceptanceTestReporter> getDefaultReporters() {
         return ReportService.getDefaultReporters();
