@@ -68,6 +68,7 @@ public class TestOutcome {
     /**
      * The name of the method implementing this test.
      */
+    @NotNull
     private final String methodName;
 
     /**
