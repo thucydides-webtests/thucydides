@@ -1,5 +1,6 @@
 package net.thucydides.core.model
 
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import javax.validation.Validation

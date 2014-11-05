@@ -13,42 +13,44 @@ dependencies {
 
     compile project(':thucydides-report-resources')
 
-    compile "com.fasterxml.jackson.core:jackson-core:2.3.4"
-    compile "com.fasterxml.jackson.core:jackson-annotations:2.3.4"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.3.4"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-joda:2.3.4"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-guava:2.3.4"
+    compile "com.fasterxml.jackson.core:jackson-core:2.4.3"
+    compile "com.fasterxml.jackson.core:jackson-annotations:2.4.3"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.4.3"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-joda:2.4.3"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-guava:2.4.3"
 
     compile ("cglib:cglib:2.2.2") {
-        exclude module: 'asm'
+        exclude group: 'asm', module: 'asm'
     }
 
     compile "commons-codec:commons-codec:1.9"
     compile "commons-io:commons-io:2.4"
 
     compile ("com.opera:operadriver:1.5") {
-        exclude group: 'org.seleniumhq.selenium'
-        exclude module: 'guava'
+        exclude group: 'org.seleniumhq.selenium', module:'selenium-java'
+        exclude group: 'org.seleniumhq.selenium', module:'selenium-remote-driver'
+        exclude group: 'com.google.guava', module: 'guava'
     }
 
     compile ("org.seleniumhq.selenium:selenium-server:2.43.1") {
-        exclude group: 'cglib'
-        exclude module: 'guava'
-        exclude module: 'commons-io'
+        exclude group: 'cglib', module: 'cglib-nodep'
+        exclude group: 'guava', module: 'guava'
+        exclude group: 'commons-io', module: 'commons-io'
     }
 
-    compile("com.github.detro.ghostdriver:phantomjsdriver:1.1.0") {
-        exclude group: 'org.seleniumhq.selenium'
+    compile ('com.github.detro:phantomjsdriver:1.2.0') {
+        exclude group: 'org.seleniumhq.selenium', module: 'selenium-java'
+        exclude group: 'org.seleniumhq.selenium', module: 'selenium-remote-driver'
     }
 
     compile "net.sf.opencsv:opencsv:2.0"
     compile "commons-beanutils:commons-beanutils-core:1.8.3"
 
     compile ("com.googlecode.lambdaj:lambdaj:2.3.3") {
-        exclude group: 'org.hamcrest'
-        exclude group: 'cglib'
+        exclude group: 'org.hamcrest', module: 'hamcrest-all'
+        exclude group: 'cglib', module: 'cglib-nodep'
     }
-    compile "com.google.guava:guava:17.0"
+    compile "com.google.guava:guava:18.0"
     compile "joda-time:joda-time:2.0"
     compile "com.thoughtworks.xstream:xstream:1.4.1"
     compile "org.apache.commons:commons-lang3:3.1"
@@ -65,14 +67,15 @@ dependencies {
     compile 'org.hamcrest:hamcrest-library:1.3'
     compile "com.thoughtworks.xstream:xstream:1.4.1"
     compile "commons-collections:commons-collections:3.2.1"
+    compile "org.apache.httpcomponents:httpclient:4.3.4"
     compile "org.apache.commons:commons-lang3:3.0.1"
     compile "net.sf.flexjson:flexjson:2.1"
     compile "joda-time:joda-time:2.0"
     compile "net.sourceforge.htmlunit:htmlunit:2.9"
     compile "org.freemarker:freemarker:2.3.18"
     compile("org.fluentlenium:fluentlenium-core:0.10.2") {
-        exclude module: 'selenium-java'
-        exclude module: 'junit-dep'
+        exclude group: 'org.seleniumhq.selenium', module:'selenium-java'
+        exclude group: 'junit', module: 'junit-dep'
     }
     compile "xml-apis:xml-apis:1.4.01"
     compile "com.jhlabs:filters:2.0.235"

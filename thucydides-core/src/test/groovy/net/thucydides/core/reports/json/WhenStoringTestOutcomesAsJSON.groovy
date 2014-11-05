@@ -20,6 +20,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 import sample.steps.FailingStep
 import spock.lang.Specification
 import spock.lang.Unroll
+import net.thucydides.core.annotations.Story
 
 class WhenStoringTestOutcomesAsJSON extends Specification {
 
