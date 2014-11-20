@@ -65,7 +65,7 @@ public class SauceRemoteDriverCapabilities implements RemoteDriverCapabilities {
 
     private void setAppropriateSaucelabsPlatformVersionForSafari(DesiredCapabilities capabilities)
     {
-        if (ThucydidesSystemProperty.SAUCELABS_DRIVER_VERSION.from(environmentVariables).equalsIgnoreCase("mac"))
+        if (ThucydidesSystemProperty.SAUCELABS_TARGET_PLATFORM.from(environmentVariables).equalsIgnoreCase("mac"))
         {
             String browserVersion = ThucydidesSystemProperty.SAUCELABS_DRIVER_VERSION.from(environmentVariables);
             if (browserVersion.equals("5"))
