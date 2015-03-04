@@ -1,5 +1,6 @@
 package net.thucydides.core.csv;
 
+import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
 import ch.lambdaj.function.convert.Converter;
 import com.google.common.base.Preconditions;
@@ -19,15 +20,21 @@ import static ch.lambdaj.Lambda.convert;
  * Test data from a CSV file.
  */
 public class CSVTestDataSource implements TestDataSource {
-    
+
     private final List<Map<String, String>> testData;
     private final char separator;
+    private final char quotechar;
+    private final char escape;
+    private final int line;
     private final List<String> headers;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CSVTestDataSource.class);
 
-    public CSVTestDataSource(final String path, final char separatorValue) throws IOException {
+    public CSVTestDataSource(final String path, final char separatorValue, final char quotechar, final char escape, final int line) throws IOException {
         this.separator = separatorValue;
+        this.quotechar = quotechar;
+        this.escape = escape;
+        this.line = line;
         List<String[]> csvDataRows = getCSVDataFrom(getDataFileFor(path));
         String[] titleRow = csvDataRows.get(0);
 
@@ -40,6 +47,10 @@ public class CSVTestDataSource implements TestDataSource {
 
         testData = loadTestDataFrom(csvDataRows);
 
+    }
+
+    public CSVTestDataSource(final String path, final char separatorValue) throws IOException {
+        this(path, separatorValue, CSVParser.DEFAULT_QUOTE_CHARACTER, CSVParser.DEFAULT_ESCAPE_CHARACTER, CSVReader.DEFAULT_SKIP_LINES);
     }
 
     public CSVTestDataSource(final String path) throws IOException {
@@ -58,19 +69,19 @@ public class CSVTestDataSource implements TestDataSource {
     private Reader getDataFileFor(final String path) throws FileNotFoundException {
         Preconditions.checkNotNull(path,"Test data source was not defined");
         if (isAClasspathResource(path)) {
-        		return new InputStreamReader(getClass().getClassLoader().getResourceAsStream(path));
+            return new InputStreamReader(getClass().getClassLoader().getResourceAsStream(path));
         } else if (validFileSystemPath(path)){
-        	return new FileReader(new File(path));
+            return new FileReader(new File(path));
         }
-    	throw new FileNotFoundException("Could not load test data from " + path);
+        throw new FileNotFoundException("Could not load test data from " + path);
     }
 
     private static boolean isAClasspathResource(final String path) {
-    	if (CSVTestDataSource.class.getClassLoader().getResourceAsStream(path) == null){
-    		return false;
-    	}
+        if (CSVTestDataSource.class.getClassLoader().getResourceAsStream(path) == null){
+            return false;
+        }
         return true;
-        
+
     }
 
     private static boolean validFileSystemPath(final String path) {
@@ -80,7 +91,7 @@ public class CSVTestDataSource implements TestDataSource {
 
     protected List<String[]> getCSVDataFrom(final Reader testDataReader) throws IOException {
 
-        CSVReader reader = new CSVReader(testDataReader, separator);
+        CSVReader reader = new CSVReader(testDataReader, separator, quotechar, escape, line);
         List<String[]> rows = Lists.newArrayList();
         try {
             rows = reader.readAll();
@@ -140,7 +151,7 @@ public class CSVTestDataSource implements TestDataSource {
 
     public <T> List<T> getInstanciatedInstancesFrom(final Class<T> clazz, final StepFactory factory) {
         List<Map<String, String>> data = getData();
-        
+
         List<T> resultsList = new ArrayList<T>();
         for (Map<String, String> rowData : data) {
             resultsList.add(newInstanceFrom(clazz, factory, rowData));
@@ -160,8 +171,8 @@ public class CSVTestDataSource implements TestDataSource {
     private <T> T newInstanceFrom(final Class<T> clazz,
                                   final StepFactory factory,
                                   final Map<String,String> rowData) {
-    	
-    	T newObject = factory.getUniqueStepLibraryFor(clazz);
+
+        T newObject = factory.getUniqueStepLibraryFor(clazz);
         assignPropertiesFromTestData(clazz, rowData, newObject);
         return newObject;
     }
@@ -182,8 +193,8 @@ public class CSVTestDataSource implements TestDataSource {
         }
         if (!validPropertyFound) {
             throw new FailedToInitializeTestData("No properties or public fields matching the data columns were found "
-                                                 + "or could be assigned for the class " + clazz.getName()
-                                                 + "using test data: " + rowData);
+                    + "or could be assigned for the class " + clazz.getName()
+                    + "using test data: " + rowData);
         }
     }
 
