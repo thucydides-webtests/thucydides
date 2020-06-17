@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/thucydides-webtests/thucydides.png?label=ready&title=Ready)](https://waffle.io/thucydides-webtests/thucydides)
 ## Thudcydides
 
 
