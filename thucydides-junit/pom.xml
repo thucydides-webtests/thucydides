@@ -10,7 +10,7 @@
     <artifactId>thucydides-junit</artifactId>
     <name>thucydides-junit</name>
     <properties>
-        <spring.version>3.1.1.RELEASE</spring.version>
+        <spring.version>5.3.19</spring.version>
     </properties>
     <build>
         <plugins>
